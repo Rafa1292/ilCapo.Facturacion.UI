@@ -1,0 +1,110 @@
+
+.custom_navbar {
+  justify-content: space-around;
+  display: flex;
+  align-items: center;
+  background-color: rgb(33, 37, 41);
+  height: 50px;
+  position: absolute;
+  top: 0;
+  right: 0vw;
+  color: white;
+  width: 40vw;
+  border-bottom-left-radius: 10px;
+  padding: 0 0px;
+  border: 2px solid rgba(255, 193, 7, 0.9);
+  border-top: none;
+  border-right: none;
+}
+
+.orders_icon {
+  background-image: url('../assets/icons/orders.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
+.workDayUser_icon {
+  background-image: url('../assets/icons/workDayUser.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
+.expense_icon {
+  background-image: url('../assets/icons/expense.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
+.investment_icon {
+  background-image: url('../assets/icons/investment.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
+.entry_icon {
+  background-image: url('../assets/icons/entry.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
+.nav_option{
+   font-size: 16px;
+   transition: all 0.3s ease;
+   cursor: pointer;
+   border-right: 2px solid rgba(0,0,0,.1);
+   height: 100%;
+   align-content: center;
+   justify-content: center;
+   display: flex;
+   flex-wrap: wrap;
+}
+
+.nav_option:hover {
+  color: #ffc107;
+  text-shadow: 0px 0px 60px white;
+  .orders_icon {
+    background-image: url('../assets/icons/ordersYL.png');
+  }
+  .workDayUser_icon {
+    background-image: url('../assets/icons/workDayUserYL.png');
+  }
+  .expense_icon {
+    background-image: url('../assets/icons/expenseYL.png');
+  }
+  .investment_icon {
+    background-image: url('../assets/icons/investmentYL.png');
+  }
+  .entry_icon {
+    background-image: url('../assets/icons/entryYL.png');
+  }
+}

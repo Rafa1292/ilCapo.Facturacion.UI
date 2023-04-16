@@ -1,0 +1,70 @@
+.table {}
+
+.table>:not(caption)>*>* {
+  padding: 0.75rem !important;
+  position: relative;
+
+}
+
+.table-container::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.table-container::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.table-container::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.table-container::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: none;
+}
+
+.table-container::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.table-dark .btn-outline-success {
+  color: #fff;
+  background-color: rgba(40, 167, 69, .2);
+  border-color: #28a745;
+}
+
+.table-dark .btn-outline-success:hover {
+  color: #fff;
+  background-color: rgba(40, 167, 69, .6);
+  border-color: rgba(255, 255, 255, .5);
+}
+
+.table-dark .btn-outline-secondary {
+  color: #fff;
+  background-color: rgba(108, 117, 125, .2);
+  border-color: #6c757d;
+}
+
+.table-dark .btn-outline-secondary:hover {
+  color: #fff;
+  background-color: rgba(108, 117, 125, .6);
+  border-color: rgba(255, 255, 255, .5);
+}
+
+.table-dark .btn-outline-danger {
+  color: #fff;
+  background-color: rgba(220, 53, 69, .2);
+  border-color: #dc3545;
+}
+
+.table-dark .btn-outline-danger:hover {
+  color: #fff;
+  background-color: rgba(220, 53, 69, .6);
+  border-color: rgba(255, 255, 255, .5);
+}

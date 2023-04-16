@@ -1,0 +1,107 @@
+.sidebar {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 193, 7, 0.9);
+  background: rgba(33,37,41);
+  transition: all ease 400ms;
+  position: fixed;
+  top: 0;
+  width: 400px;
+  left: -260px;
+  display: flex;
+  /* rtl:raw:
+      right: 0;
+      */
+  bottom: 0;
+  /* rtl:remove */
+  z-index: 100;
+  /* Behind the navbar */
+  padding: 0px 10px 0 0;
+  /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  justify-content: end !important;
+  a {
+    padding: 15px 0px;
+    display: flex;
+    justify-content: end;
+  }
+
+}
+
+.logo_container {
+  transition: all ease 400ms;
+  width: 400px;
+  display: flex !important;
+  justify-content: start !important;
+}
+
+.sidebar:hover {
+  left: 0;
+  .logo_container {
+    width: 400px;
+  }
+  .user_info{
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  height: calc(100vh - 48px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #727272;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+}
+
+.orders-togo_header {
+  border-top: 1px solid rgba(255, 193, 7, 0.8);
+  border-bottom: 1px solid rgba(255, 193, 7, 0.8);
+  color: rgba(255, 193, 7, 0.8);
+  box-sizing: border-box;
+}
+
+.user_info {
+  transition: all ease 0.5s;
+  opacity: 0;
+  color: rgba(255, 193, 7, 0.8);
+}
+
+.orders-togo {
+  padding: 0 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+}
+

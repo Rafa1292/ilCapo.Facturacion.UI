@@ -1,0 +1,66 @@
+.leftViewBar_container {
+  cursor: pointer;
+  position: absolute;
+  width: 150px;
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.leftViewBar_container:hover {
+  .bar {
+    opacity: 1;
+  }
+
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+}
+
+.leftViewBar {
+  background-image: url('../assets/icons/bar.png');
+  display: flex;
+  height: 100%;
+  width: 70px;
+  transform: rotate(-90deg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.leftViewBar_background {
+  background: rgba(255, 255, 255, 1);
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  z-index: -2;
+}
+
+.leftViewBar_background-color {
+  background-color: rgba(0, 0, 0, .15);
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  z-index: 0;
+}
+
+.progress_bar-leftViewBar {
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  z-index: -4;
+  filter: blur(4px);
+}
