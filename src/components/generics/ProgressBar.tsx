@@ -32,14 +32,14 @@ const ProgressBar = ({ waitingTime, isCommanded, tableNumber, styleClass }: Prop
     const minutesToSeconds = waitingMinutes * 60
     const totalSeconds = hoursToSeconds + minutesToSeconds + waitingSeconds
     if (totalSeconds >= waitingTime * 60) {
-      return `linear-gradient(0deg, rgba(228, 41, 11, .8) 0%, rgba(228, 41, 11, 1) ${fill > 30 ? fill - 30 : fill - 2}%, rgba(228, 41, 11, 0) ${fill}%)`
+      return `linear-gradient(0deg, rgba(228, 41, 11, .8) 0%, rgba(228, 41, 11, 1) ${fill > 20 ? fill - 20 : fill - 2}%, rgba(228, 41, 11, 0) ${fill}%)`
     }
 
     if (isCommanded) {
-      return `linear-gradient(0deg, rgba(50, 200, 50, 1) 0%, rgba(50, 200, 50, 1) ${fill > 30 ? fill - 30 : fill - 2}%, rgba(50, 200, 50, 0) ${fill}%)`
+      return `linear-gradient(0deg, rgba(50, 200, 50, 1) 0%, rgba(50, 200, 50, 1) ${fill > 20 ? fill - 20 : fill - 2}%, rgba(50, 200, 50, 0) ${fill}%)`
     }
 
-    return `linear-gradient(0deg, rgba(77, 160, 90, 1) 0%, rgba(77, 160, 90, 1) ${fill > 30 ? fill - 30 : fill - 2}%, rgba(77, 160, 90, 0) ${fill}%)`
+    return `linear-gradient(0deg, rgba(77, 160, 90, 1) 0%, rgba(77, 160, 90, 1) ${fill > 20 ? fill - 20 : fill - 2}%, rgba(77, 160, 90, 0) ${fill}%)`
   }
 
 

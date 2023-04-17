@@ -12,7 +12,7 @@ const Navbar = () => {
     <>
       <nav
         id="sidebarMenu"
-        className="sidebar shadow"
+        className="sidebar"
       >
         <div className="position-sticky sidebar-sticky">
           <Link className='logo_container my-2' to="/">
