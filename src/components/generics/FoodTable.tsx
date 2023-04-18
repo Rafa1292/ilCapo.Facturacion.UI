@@ -11,6 +11,7 @@ const FoodTable = ({ top, left, tableNumber }: Props) => {
 
   return (
     <div className="table_container d-flex flex-wrap p-2" style={{ top: `${top}vh`, left: `${left}vw` }}>
+      <strong># {tableNumber}</strong>
       <div className='table'></div>
       <div className="table_background"></div>
       <div className="table_background-color"></div>

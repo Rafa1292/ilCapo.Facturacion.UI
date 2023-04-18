@@ -7,7 +7,7 @@ interface Props {
   styleClass: string
 }
 
-const ProgressBar = ({ waitingTime, isCommanded, tableNumber, styleClass }: Props) => {
+const ProgressBar = ({ waitingTime, isCommanded, styleClass }: Props) => {
   const [waitingMinutes, setWaitingMinutes] = useState(0)
   const [waitingSeconds, setWaitingSeconds] = useState(0)
   const [waitingHours, setWaitingHours] = useState(0)
@@ -48,15 +48,10 @@ const ProgressBar = ({ waitingTime, isCommanded, tableNumber, styleClass }: Prop
   }, [waitingSeconds])
 
   return (
-    <>
-      <div className={`mt-1 ${styleClass}`} style={{ background: setProgressBarClass() }}></div>
-      <div className="d-flex flex-wrap position-relative pt-3">
-        <small className="col-12 text-center" style={{position: 'absolute', top: '5px'}}>{waitingMinutes}:{waitingSeconds}</small>
-        <div className="col-12 text-center" style={{minWidth: '40px'}}>
-          <strong>#{tableNumber}</strong>
-        </div>
-      </div>
-    </>
+    <div className='d-flex flex-wrap'>
+      <div className={`mt-1 col-12 ${styleClass}`} style={{ background: setProgressBarClass() }}></div>
+      <small className="col-12 text-center mt-2" style={{width: '40px'}}>{waitingHours > 0 ? `${waitingHours}:` : ''}{waitingMinutes < 10 ? `0${waitingMinutes}` : waitingMinutes}:{waitingSeconds}</small>
+    </div>
 
   )
 }

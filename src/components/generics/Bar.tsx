@@ -6,14 +6,14 @@ interface Props {
   top: number
   left: number
   tableNumber: number
-  rotate?: number
 }
 
-const Bar = ({ top, left, tableNumber, rotate }: Props) => {
+const Bar = ({ top, left, tableNumber }: Props) => {
 
   return (
     <div className="bar_container d-flex flex-wrap" style={{ top: `${top}vh`, left: `${left}vw` }}>
-      <div className='bar' style={{ transform: `rotate(${rotate}deg)` }}></div>
+      <strong>#{tableNumber}</strong>
+      <div className='bar'></div>
       <div className="bar_background"></div>
       <div className="bar_background-color"></div>
       <ProgressBar styleClass='progress_bar-bar' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />

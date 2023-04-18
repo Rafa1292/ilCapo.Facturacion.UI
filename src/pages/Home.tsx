@@ -28,11 +28,11 @@ const Home = () => {
           <Bar tableNumber={10} top={15} left={96} />
 
           <LeftViewBar tableNumber={5} top={15} left={20} />
-          <LeftViewBar tableNumber={6} top={25} left={20} />
-          <LeftViewBar tableNumber={7} top={35} left={20} />
-          <LeftViewBar tableNumber={8} top={45} left={20} />
-          <LeftViewBar tableNumber={9} top={55} left={20} />
-          <LeftViewBar tableNumber={10} top={65} left={20} />
+          <LeftViewBar tableNumber={6} top={24} left={20} />
+          <LeftViewBar tableNumber={7} top={33} left={20} />
+          <LeftViewBar tableNumber={8} top={42} left={20} />
+          <LeftViewBar tableNumber={9} top={51} left={20} />
+          <LeftViewBar tableNumber={10} top={60} left={20} />
         </>
         ||
         <Login/>

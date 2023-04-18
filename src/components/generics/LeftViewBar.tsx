@@ -13,6 +13,7 @@ const Bar = ({ top, left, tableNumber }: Props) => {
 
   return (
     <div className="leftViewBar_container" style={{ top: `${top}vh`, left: `${left}vw` }}>
+      <strong>#{tableNumber}</strong>
       <div className='leftViewBar'></div>
       <div className="leftViewBar_background"></div>
       <div className="leftViewBar_background-color"></div>
