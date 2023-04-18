@@ -20,11 +20,32 @@ const initialWorkDayUser: WorkDayUser = {
   createdBy: 0
 }
 
+interface currencyCount{
+  value: number
+  count: number
+}
+
+const initialCurrencies: currencyCount[] = [
+  { value: 50000, count: 0 },
+  { value: 20000, count: 0 },
+  { value: 10000, count: 0 },
+  { value: 5000, count: 0 },
+  { value: 2000, count: 0 },
+  { value: 1000, count: 0 },
+  { value: 500, count: 0 },
+  { value: 100, count: 0 },
+  { value: 50, count: 0 },
+  { value: 25, count: 0 },
+  { value: 10, count: 0 },
+  { value: 5, count: 0 },
+]
+
 
 const WorkDayUserForm = () => {
   const { setWorkDayUser, user }  = useContext(AppContext)
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState({...initialWorkDayUser })
   const [errors, setErrors] = useState([])
+  const [currencies, setCurrencies] = useState([...initialCurrencies])
   const submitText = 'Agregar'
 
   const addWorkDayUser = async () => {
@@ -49,13 +70,23 @@ const WorkDayUserForm = () => {
     setCurrentWorkDayUser({ ...currentWorkDayUser, [name]: value })
   }
 
+  const handleCurrencyChange = (event: any, index: number) => {
+    const { value } = event.target
+    console.log(value)
+    const newCurrencies = [...currencies]
+    newCurrencies[index].count = value
+    const total = newCurrencies.reduce((total, currency) => total + (currency.value * currency.count), 0)
+    setCurrentWorkDayUser({ ...currentWorkDayUser, initialCash: total })
+    setCurrencies(newCurrencies)
+  }
+
   useEffect(() => {
     getWorkDayUser()
   }, [])
   
 
   return (
-    <div className="col-6 d-flex flex-wrap">
+    <div className="col-8 d-flex flex-wrap">
       <GenericForm errors={errors} submitText={submitText} handleSubmit={addWorkDayUser}>
         <div className="col-12 text-center fs-4">
           Inicia tu jornada
@@ -66,6 +97,25 @@ const WorkDayUserForm = () => {
             handleChange: handleChange, pattern: regexOptions.decimal, validationMessage: 'Cantidad inicial invalida'
           }
         } />
+        <div className="col-12 text-center fs-5 my-3">
+          Conteo individual de dinero
+        </div>
+        <div className="col-12">
+          <div className="row">
+            {currencies.map((currency, index) => (
+              <div className="col-3 my-2" key={index}>
+                <div className="row">
+                  <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{alignContent: 'center'}}>
+                    <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{alignContent: 'center'}}>{currency.value}</label>
+                  </div>
+                  <div className="col-8">
+                    <input type="number" className="form-control" name={`currency${currency.value}`} value={currency.count} onChange={(event) => handleCurrencyChange(event, index)} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </GenericForm>
     </div>
   )

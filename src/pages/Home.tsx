@@ -32,12 +32,12 @@ const Home = () => {
           <Bar tableNumber={9} top={15} left={91} />
           <Bar tableNumber={10} top={15} left={96} />
 
-          <LeftViewBar tableNumber={5} top={15} left={20} />
-          <LeftViewBar tableNumber={6} top={24} left={20} />
-          <LeftViewBar tableNumber={7} top={33} left={20} />
-          <LeftViewBar tableNumber={8} top={42} left={20} />
-          <LeftViewBar tableNumber={9} top={51} left={20} />
-          <LeftViewBar tableNumber={10} top={60} left={20} />
+          <LeftViewBar tableNumber={5} top={15} left={27} />
+          <LeftViewBar tableNumber={6} top={26} left={27} />
+          <LeftViewBar tableNumber={7} top={37} left={27} />
+          <LeftViewBar tableNumber={8} top={48} left={27} />
+          <LeftViewBar tableNumber={9} top={59} left={27} />
+          <LeftViewBar tableNumber={10} top={70} left={27} />
         </>
       }
     </Content>
