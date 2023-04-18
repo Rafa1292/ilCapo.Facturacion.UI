@@ -28,7 +28,7 @@ class CustomResponse<T> {
   }
 }
 
-const billingApi = 'http://localhost:3001/api/v1/'
+const billingApi = 'http://localhost:4001/api/v1/'
 const dashboardApi = 'http://localhost:4001/api/v1/'
 
 const useGetList = async<T>(route: string, api: boolean): Promise<CustomResponse<T>> => {

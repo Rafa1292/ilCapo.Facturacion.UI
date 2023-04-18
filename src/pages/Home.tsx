@@ -6,15 +6,20 @@ import Bar from '../components/generics/Bar'
 import LeftViewBar from '../components/generics/LeftViewBar'
 import AppContext from '../context/AppContext'
 import Login from '../containers/auth/Login'
+import WorkDayUserForm from '../components/WorkDayUserForm'
 
 const Home = () => {
   const state = useContext(AppContext)
   const [isLoading, setIsLoading] = useState(false)
-
+  
   return (
     <Content isLoading={isLoading}>
       {
-        state.user.loggedIn &&
+        state.user.loggedIn === false && 
+        <Login/>
+        || state.user.workDayUser.id <= 0 &&
+        <WorkDayUserForm/>
+        ||
         <>
           <FoodTable tableNumber={1} top={40} left={40} />
           <FoodTable tableNumber={2} top={40} left={50} />
@@ -34,8 +39,6 @@ const Home = () => {
           <LeftViewBar tableNumber={9} top={51} left={20} />
           <LeftViewBar tableNumber={10} top={60} left={20} />
         </>
-        ||
-        <Login/>
       }
     </Content>
   )

@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { appState, systemState, userState } from '../types/appState'
+import { WorkDayUser } from '../types/workDayUser'
+import { User } from '../types/user'
 
 
 const initialUser: userState = {
-  loggedIn: false,
+  loggedIn: true,
+  user: { id: 1 } as User,
+  workDayUser: { id: 0} as WorkDayUser
 }
 
 const initialSystem: systemState = {
   loader: false
 }
 
-const useInitialState = () : appState => {
+const useInitialState = (): appState => {
   const [user, setUser] = useState(initialUser)
   const [system, setSystem] = useState(initialSystem)
 
@@ -21,10 +25,18 @@ const useInitialState = () : appState => {
     })
   }
 
+  const setWorkDayUser = (workDayUser: WorkDayUser) => {
+    setUser({
+      ...user,
+      workDayUser
+    })
+  }
+
   return {
     user,
     system,
-    login
+    login,
+    setWorkDayUser
   }
 }
 
