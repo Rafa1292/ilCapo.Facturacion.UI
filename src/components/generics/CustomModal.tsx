@@ -15,7 +15,7 @@ function CustomModal({ children, title, show, handleClose }: Props) {
         <Modal.Header closeButton>
           <Modal.Title className='w-100 fw-bold text-center'>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body className='p-4'>
+        <Modal.Body className='p-4 d-flex flex-wrap justify-content-center'>
           {children}
         </Modal.Body>
       </Modal>

@@ -1,0 +1,18 @@
+.expense-form {
+  form{
+    background: transparent;
+    box-shadow: none;
+    color: gray;
+  }
+
+  button {
+    background: rgba(33,37,41,1);
+    color: white;
+    border: 1px solid #198754;
+  }
+
+  button:hover {
+    background: #198754;
+    color: white;
+  }
+}

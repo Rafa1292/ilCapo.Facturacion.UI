@@ -6,6 +6,7 @@ export interface appState {
   user: userState;
   login: () => void;
   setWorkDayUser: (workDayUser: WorkDayUser) => void;
+  logout: () => void;
 }
 
 export interface userState {

@@ -15,22 +15,25 @@ const Home = () => {
   return (
     <Content isLoading={isLoading}>
       {
-        state.user.loggedIn === false && 
+        state.user.loggedIn === false || state.user.workDayUser?.close && 
         <Login/>
         || state.user.workDayUser.id <= 0 &&
         <WorkDayUserForm/>
         ||
         <>
-          <FoodTable tableNumber={1} top={40} left={40} />
-          <FoodTable tableNumber={2} top={40} left={50} />
-          <FoodTable tableNumber={3} top={40} left={60} />
-          <Bar tableNumber={4} top={15} left={66} />
-          <Bar tableNumber={5} top={15} left={71} />
-          <Bar tableNumber={6} top={15} left={76} />
-          <Bar tableNumber={7} top={15} left={81} />
-          <Bar tableNumber={8} top={15} left={86} />
-          <Bar tableNumber={9} top={15} left={91} />
-          <Bar tableNumber={10} top={15} left={96} />
+          <FoodTable tableNumber={1} top={45} left={50} />
+          <FoodTable tableNumber={2} top={45} left={62} />
+          <FoodTable tableNumber={3} top={45} left={74} />
+          <FoodTable tableNumber={1} top={70} left={50} />
+          <FoodTable tableNumber={2} top={70} left={62} />
+          <FoodTable tableNumber={3} top={70} left={74} />
+          <Bar tableNumber={4} top={15} left={50} />
+          <Bar tableNumber={5} top={15} left={56} />
+          <Bar tableNumber={6} top={15} left={62} />
+          <Bar tableNumber={7} top={15} left={68} />
+          <Bar tableNumber={8} top={15} left={74} />
+          <Bar tableNumber={9} top={15} left={80} />
+          <Bar tableNumber={10} top={15} left={86} />
 
           <LeftViewBar tableNumber={5} top={15} left={27} />
           <LeftViewBar tableNumber={6} top={26} left={27} />

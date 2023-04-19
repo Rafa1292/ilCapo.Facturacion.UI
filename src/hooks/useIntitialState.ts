@@ -25,6 +25,17 @@ const useInitialState = (): appState => {
     })
   }
 
+  const logout = () => {
+    setUser({
+      ...user,
+      user: {
+        ...user.user,
+        id: 0
+      },
+      loggedIn: false
+    })
+  }
+
   const setWorkDayUser = (workDayUser: WorkDayUser) => {
     setUser({
       ...user,
@@ -36,7 +47,8 @@ const useInitialState = (): appState => {
     user,
     system,
     login,
-    setWorkDayUser
+    setWorkDayUser,
+    logout
   }
 }
 
