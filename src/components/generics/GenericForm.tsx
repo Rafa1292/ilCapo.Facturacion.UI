@@ -40,7 +40,7 @@ const GenericForm = ({ children, submitText, handleSubmit, errors, cancel, formN
           <ul className="list-group list-group-flush">
             {
               errors.map((error, index) => (
-                <li key={index} className="list-group-item text-danger">{error}</li>
+                <li key={index} style={{border: 'none'}} className="list-group-item p-1 text-danger">{error}</li>
               ))
             }
           </ul>

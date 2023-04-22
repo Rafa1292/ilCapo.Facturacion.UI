@@ -8,6 +8,7 @@ export interface Expense {
   providerId: number
   workDayUserId: number
   expenseAccountHistories: ExpenseAccountHistory[]
+  pendingPay: boolean
   delete: boolean
   createdBy?: number
   updatedBy?: number

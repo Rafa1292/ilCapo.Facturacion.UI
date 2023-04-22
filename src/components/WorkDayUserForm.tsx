@@ -14,13 +14,14 @@ const initialWorkDayUser: WorkDayUser = {
   finalCash: 0,
   sales: 0,
   diference: 0,
+  expenses: [],
   close: false,
   delete: false,
   updatedBy: 0,
   createdBy: 0
 }
 
-interface currencyCount{
+interface currencyCount {
   value: number
   count: number
 }
@@ -42,27 +43,20 @@ const initialCurrencies: currencyCount[] = [
 
 
 const WorkDayUserForm = () => {
-  const { setWorkDayUser, user }  = useContext(AppContext)
-  const [currentWorkDayUser, setCurrentWorkDayUser] = useState({...initialWorkDayUser })
+  const { setWorkDayUser, user, logout } = useContext(AppContext)
+  const [currentWorkDayUser, setCurrentWorkDayUser] = useState({ ...initialWorkDayUser })
   const [errors, setErrors] = useState([])
   const [currencies, setCurrencies] = useState([...initialCurrencies])
   const submitText = 'Agregar'
 
   const addWorkDayUser = async () => {
-    const response = await usePost<WorkDayUser>('workDayUsers', {...currentWorkDayUser, userId: user.user?.id}, true)
+    const response = await usePost<WorkDayUser>('workDayUsers', { ...currentWorkDayUser, userId: user.user?.id }, true)
     if (!response.error) {
       setCurrentWorkDayUser(response.data)
-      setWorkDayUser(response.data)
+      setWorkDayUser()
     }
   }
 
-  const getWorkDayUser = async () => {
-    const response = await useGet<WorkDayUser>(`workDayUsers/${user.user?.id}`, true)
-    if (!response.error && response.data !== null) {
-      setCurrentWorkDayUser(response.data)
-      setWorkDayUser(response.data)
-    }
-  }
 
 
   const handleChange = (event: any) => {
@@ -72,7 +66,6 @@ const WorkDayUserForm = () => {
 
   const handleCurrencyChange = (event: any, index: number) => {
     const { value } = event.target
-    console.log(value)
     const newCurrencies = [...currencies]
     newCurrencies[index].count = value
     const total = newCurrencies.reduce((total, currency) => total + (currency.value * currency.count), 0)
@@ -80,14 +73,13 @@ const WorkDayUserForm = () => {
     setCurrencies(newCurrencies)
   }
 
-  useEffect(() => {
-    getWorkDayUser()
-  }, [])
-  
+
+
 
   return (
     <div className="col-8 d-flex flex-wrap">
       <GenericForm errors={errors} submitText={submitText} handleSubmit={addWorkDayUser}>
+        <div className='col-12 text-end logout-btn' onClick={logout}>Cerrar sesion</div>
         <div className="col-12 text-center fs-4">
           Inicia tu jornada
         </div>
@@ -105,8 +97,8 @@ const WorkDayUserForm = () => {
             {currencies.map((currency, index) => (
               <div className="col-3 my-2" key={index}>
                 <div className="row">
-                  <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{alignContent: 'center'}}>
-                    <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{alignContent: 'center'}}>{currency.value}</label>
+                  <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{ alignContent: 'center' }}>
+                    <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{ alignContent: 'center' }}>{currency.value}</label>
                   </div>
                   <div className="col-8">
                     <input type="number" className="form-control" name={`currency${currency.value}`} value={currency.count} onChange={(event) => handleCurrencyChange(event, index)} />

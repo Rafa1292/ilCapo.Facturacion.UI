@@ -18,7 +18,6 @@ export const hideErrorMsg = (name: string) => {
 
 export const validateNumber = (value: any, name: string, regex: RegExp, couldBeZero?: boolean): boolean => {
   const isValid = regex.test(value)
-
   if (isValid) {
     if (!couldBeZero) {
       if (!higherThanZero(value)) {

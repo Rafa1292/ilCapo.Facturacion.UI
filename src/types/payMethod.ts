@@ -7,6 +7,8 @@ export interface PayMethod {
   active: boolean
   comision: number
   accountHistories: AccountHistory[]
+  isPublic: boolean
+  isSemiPublic: boolean
   delete: boolean
   createdBy?: number
   updatedBy?: number

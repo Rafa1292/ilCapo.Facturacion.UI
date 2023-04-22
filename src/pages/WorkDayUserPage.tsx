@@ -15,6 +15,7 @@ const initialWordayUser: WorkDayUser = {
   delete: false,
   diference: 0,
   finalCash: 0,
+  expenses: [],
   workDayId: 0,
   userId: 0,
   createdBy: 0,
@@ -46,6 +47,7 @@ const WorkDayUserPage = () => {
   const { user, logout, setWorkDayUser } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
   const navigate = useNavigate()
+  
   const handleCurrencyChange = (event: any, index: number) => {
     const { value } = event.target
     const newCurrencies = [...currencies]
@@ -64,7 +66,7 @@ const WorkDayUserPage = () => {
     const response = await usePatch<WorkDayUser>('workDayUsers', currentWorkDayUser, true)
     if (!response.error) {
       await logout()
-      await setWorkDayUser({...currentWorkDayUser, close: true})
+      await setWorkDayUser()
       navigate('/')
     }
   }
@@ -75,7 +77,7 @@ const WorkDayUserPage = () => {
 
 
   return (
-    <>
+    <div className='col-12 d-flex flex-wrap justify-content-center align-items-center' style={{height: '100vh' }}>
       {currentWorkDayUser.id === 0 &&
         <WorkDayUserForm />
         ||
@@ -154,7 +156,7 @@ const WorkDayUserPage = () => {
           }
         </div>
       }
-    </>
+    </div>
   )
 }
 

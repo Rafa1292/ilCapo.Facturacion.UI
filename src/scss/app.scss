@@ -40,6 +40,14 @@ a{
   border-radius: 10px;
 }
 
+.logout-btn {
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  color:rgba(255, 193, 7, .6);
+}
+
 
 .bd-placeholder-img {
   font-size: 1.125rem;
@@ -144,7 +152,7 @@ form{
 }
 
 .form-control {
-  height: 28px;
+  height: 32px;
   font-size: 0.875rem;
 }
 

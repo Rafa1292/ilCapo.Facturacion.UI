@@ -5,7 +5,7 @@ export interface appState {
   system: systemState;
   user: userState;
   login: () => void;
-  setWorkDayUser: (workDayUser: WorkDayUser) => void;
+  setWorkDayUser: () => void;
   logout: () => void;
 }
 

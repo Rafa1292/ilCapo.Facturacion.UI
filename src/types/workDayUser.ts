@@ -1,3 +1,4 @@
+import { Expense } from './expense'
 
 export interface WorkDayUser {
   id: number
@@ -7,6 +8,7 @@ export interface WorkDayUser {
   finalCash: number
   sales: number
   diference: number
+  expenses: Expense[]
   close: boolean
   delete: boolean,
   createdBy?: number

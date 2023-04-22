@@ -8,11 +8,57 @@
   button {
     background: rgba(33,37,41,1);
     color: white;
-    border: 1px solid #198754;
+    border: 1px solid rgba(255,255,255,.1);
   }
 
   button:hover {
     background: #198754;
     color: white;
   }
+}
+
+.expense {
+  box-sizing: border-box;
+  height: fit-content;
+}
+
+.expense:hover {
+  background: rgba(33,37,41,.05);
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.expense-container {
+  margin-top: 20px;
+  max-height: 50vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.expense-container::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.expense-container::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.expense-container::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.expense-container::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+.expense-container::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: none;
+}
+
+.expense-container::-webkit-scrollbar-track {
+  border-radius: 10px;
 }
