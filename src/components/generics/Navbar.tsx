@@ -29,12 +29,12 @@ const Header = () => {
         </div>
         Inversiones
       </span>
-      <span className='nav_option px-2' style={{ width: '8vw' }}>
+      <Link to={'/entries'} className='nav_option px-2' style={{ width: '8vw' }}>
         <div className='col-12 d-flex justify-content-center'>
           <div className='entry_icon'></div>
         </div>
         Ingresos
-      </span>
+      </Link>
     </div>
   )
 }

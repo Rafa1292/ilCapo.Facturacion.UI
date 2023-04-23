@@ -16,6 +16,7 @@ const initialWordayUser: WorkDayUser = {
   diference: 0,
   finalCash: 0,
   expenses: [],
+  entries: [],
   workDayId: 0,
   userId: 0,
   createdBy: 0,

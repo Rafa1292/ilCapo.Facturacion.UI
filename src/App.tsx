@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import WorkDayUserPage from './pages/WorkDayUserPage'
 import ExpensePage from './pages/ExpensePage'
 import Layout from './containers/generics/Layout'
+import EntryPage from './pages/EntryPage'
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/workDays" element={<WorkDayUserPage />} />
             <Route path="/expenses" element={<ExpensePage />} />
+            <Route path="/entries" element={<EntryPage />} />
           </Routes>
         </Layout>
       </BrowserRouter>

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ExpenseForm from '../components/ExpenseForm'
 import AppContext from '../context/AppContext'
-import { Expense } from '../types/expense'
 import { useGetList } from '../hooks/useAPI'
 import { Provider } from '../types/provider'
 import { PayMethod } from '../types/payMethod'
@@ -42,7 +41,7 @@ const ExpensePage = () => {
   }, [])
 
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center' style={{marginTop: '15vh'}}>
+    <div className='col-12 d-flex flex-wrap justify-content-center' >
       <h4 className='col-12 text-center'>Estos son tus gastos de hoy</h4>
       <ExpenseForm />
       <div className='d-flex col-8 justify-content-center flex-wrap expense-container' >
@@ -72,6 +71,12 @@ const ExpensePage = () => {
                   {expense.description}
                 </div>
                 <div className='col-8 text-center'>
+                  {
+                    expense.expenseAccountHistories.length === 0 &&
+                    <div className='col-12 text-center'>
+                      Pago pendiente
+                    </div>
+                  }
                   <div className="col-12 d-flex flex-wrap">
                     {
                       expense.expenseAccountHistories.length > 0 &&

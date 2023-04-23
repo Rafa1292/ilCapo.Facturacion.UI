@@ -1,3 +1,4 @@
+import { Entry } from './entry'
 import { Expense } from './expense'
 
 export interface WorkDayUser {
@@ -9,6 +10,7 @@ export interface WorkDayUser {
   sales: number
   diference: number
   expenses: Expense[]
+  entries: Entry[]
   close: boolean
   delete: boolean,
   createdBy?: number
