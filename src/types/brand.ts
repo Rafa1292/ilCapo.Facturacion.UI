@@ -1,9 +1,6 @@
-
-export interface Provider {
+export interface Brand {
   id: number
   name: string
-  phone: number
-  fixedExpense: boolean
   delete: boolean
   createdBy?: number
   updatedBy?: number

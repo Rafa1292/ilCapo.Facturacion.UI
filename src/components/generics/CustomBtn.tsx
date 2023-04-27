@@ -46,7 +46,7 @@ const CustomBtn = ({ buttonType, action, height }: Props) => {
     initializeBtn()
   }, [])
   return (
-    <div style={{cursor: 'pointer'}} onClick={action} className='hover d-flex flex-wrap justify-content-center'>
+    <div style={{cursor: 'pointer'}} onClick={action} className='hover d-flex flex-wrap justify-content-center align-items-center'>
       <img src={btn} style={{height: height}}/>
     </div>
   )

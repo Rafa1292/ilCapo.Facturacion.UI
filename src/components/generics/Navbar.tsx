@@ -23,12 +23,12 @@ const Header = () => {
         </div>
         Gastos
       </Link>
-      <span className='nav_option px-2' style={{ width: '8vw' }}>
+      <Link to={'/investments'} className='nav_option px-2' style={{ width: '8vw' }}>
         <div className='col-12 d-flex justify-content-center'>
           <div className='investment_icon'></div>
         </div>
         Inversiones
-      </span>
+      </Link>
       <Link to={'/entries'} className='nav_option px-2' style={{ width: '8vw' }}>
         <div className='col-12 d-flex justify-content-center'>
           <div className='entry_icon'></div>

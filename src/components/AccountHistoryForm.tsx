@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { AccountHistory } from '../types/accountHistory'
 import { PayMethod } from '../types/payMethod'
 import CustomInputNumber from './generics/CustomInputNumber'
-import { regexOptions } from '../enums/regexOptions'
 import CustomInputSelect from './generics/CustomInputSelect'
 import { useGetList } from '../hooks/useAPI'
-import CustomBtn from './generics/CustomBtn'
-import { buttonTypes } from '../enums/buttonTypes'
 
 const initialAccountHistory: AccountHistory = {
   amount: 0,
@@ -22,17 +19,18 @@ const initialAccountHistory: AccountHistory = {
 }
 
 interface Props {
+  selectedPayMethodsId?: number[]
   handleAccountHistory: (accountHistory: AccountHistory) => boolean
   isPay: boolean
 }
 
-const AccountHistoryForm = ({ handleAccountHistory, isPay }: Props) => {
+const AccountHistoryForm = ({ handleAccountHistory, isPay, selectedPayMethodsId }: Props) => {
   const [accountHistory, setAccountHistory] = useState<AccountHistory>(initialAccountHistory)
   const [payMethods, setPayMethods] = useState<PayMethod[]>([])
 
   const handleChange = (event: any) => {
     const { name, value } = event.target
-    setAccountHistory({ ...accountHistory, [name]: value })
+    setAccountHistory({ ...accountHistory, [name]: Number(value) })
   }
 
   const handlePaymethod = (event: any) => {
@@ -77,7 +75,7 @@ const AccountHistoryForm = ({ handleAccountHistory, isPay }: Props) => {
               label: 'Proveedores', name: 'measureId',
               handleChange: handlePaymethod, pattern: '', validationMessage: 'Seleccione un metodo de pago'
             }}
-          data={payMethods.map(paymethod => { return { value: paymethod.id, label: paymethod.name } })}
+          data={payMethods.filter(x => !selectedPayMethodsId?.includes(x.id) ).map(paymethod => { return { value: paymethod.id, label: paymethod.name } })}
           defaultLegend={'Metodo de pago'}
         />
       </div>

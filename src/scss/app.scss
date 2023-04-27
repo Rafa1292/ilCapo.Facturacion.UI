@@ -202,10 +202,6 @@ form{
   justify-content: center;
 }
 
-.react-datalist-input__textbox {
-  height: 28px !important;
-}
-
 
 .custom-center {
   display: flex;
@@ -272,12 +268,18 @@ main {
   border-radius: 10px;
 }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .react-datalist-input__label {
   display: none;
 }
 
 .react-datalist-input__textbox {
-  height: 38px;
+  height: 32px;
 }
 
 label {

@@ -16,6 +16,7 @@ const initialWorkDayUser: WorkDayUser = {
   diference: 0,
   expenses: [],
   entries: [],
+  investments: [],
   close: false,
   delete: false,
   updatedBy: 0,

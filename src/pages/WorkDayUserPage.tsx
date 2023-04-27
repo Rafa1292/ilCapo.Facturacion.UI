@@ -6,6 +6,7 @@ import AppContext from '../context/AppContext'
 import CustomInputNumber from '../components/generics/CustomInputNumber'
 import { regexOptions } from '../enums/regexOptions'
 import { usePatch } from '../hooks/useAPI'
+import { parseCurrency } from '../utils/currencyParser'
 
 const initialWordayUser: WorkDayUser = {
   id: 0,
@@ -17,6 +18,7 @@ const initialWordayUser: WorkDayUser = {
   finalCash: 0,
   expenses: [],
   entries: [],
+  investments: [],
   workDayId: 0,
   userId: 0,
   createdBy: 0,
@@ -95,13 +97,13 @@ const WorkDayUserPage = () => {
               Dinero inicial:
             </div>
             <div className="col-5 mx-3 text-start">
-              ¢ 100.000
+              { parseCurrency(currentWorkDayUser.initialCash.toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Gastos:
             </div>
             <div className="col-5 mx-3 text-start">
-              ¢ 10.000
+              { parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Inversiones:
@@ -113,7 +115,7 @@ const WorkDayUserPage = () => {
               Ingresos:
             </div>
             <div className="col-5 mx-3 text-start">
-              ¢ 15.000
+              { parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString()) }
             </div>
             <div className="col-5 fw-bold text-end">
               Ventas:

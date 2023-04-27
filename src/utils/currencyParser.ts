@@ -1,5 +1,5 @@
 export const parseCurrency = (value: string): string => {
-  const stringLength = value.length
+  const stringLength = value?.length
   if(stringLength < 4) return `¢${value}`
   let finalValue = ''
   let position = 0

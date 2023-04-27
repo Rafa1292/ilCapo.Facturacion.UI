@@ -1,5 +1,6 @@
 import { Entry } from './entry'
 import { Expense } from './expense'
+import { Investment } from './investment'
 
 export interface WorkDayUser {
   id: number
@@ -11,6 +12,7 @@ export interface WorkDayUser {
   diference: number
   expenses: Expense[]
   entries: Entry[]
+  investments: Investment[]
   close: boolean
   delete: boolean,
   createdBy?: number
