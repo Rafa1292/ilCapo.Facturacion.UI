@@ -1,0 +1,22 @@
+.bill-makerContainer{
+  transition: all ease 300ms;
+  position: absolute;
+  height: 0vh;
+  width: 0vw;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255,1);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.bill-makerContainer_show {
+  height: 100vh;
+  width: 100vw;
+}
+
+.bill-makerContainer_hide {
+  height: 0vh;
+  width: 0vw;
+}
+

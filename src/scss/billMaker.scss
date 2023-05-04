@@ -1,0 +1,32 @@
+.bill-maker {
+  height: calc(100vh - 120px);
+  margin: 50px 0;
+  overflow-y: scroll;
+}
+
+.bill-maker::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.bill-maker::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.bill-maker::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.bill-maker::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+.bill-maker::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: none;
+}
+
+.bill-maker::-webkit-scrollbar-track {
+  border-radius: 10px;
+}

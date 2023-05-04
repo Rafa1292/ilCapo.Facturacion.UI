@@ -6,7 +6,7 @@ import { useGet } from './useAPI'
 
 
 const initialUser: userState = {
-  loggedIn: false,
+  loggedIn: true,
   user: { id: 1 } as User,
   workDayUser: { id: 0 } as WorkDayUser
 }
@@ -44,7 +44,6 @@ const useInitialState = (): appState => {
   const setWorkDayUser = async () => {
     const response = await useGet<WorkDayUser>(`workDayUsers/${user.user?.id}`, true)
     if (!response.error && response.data !== null) {
-      console.log(response.data)
       setUser({
         ...user,
         workDayUser: { ...response.data }

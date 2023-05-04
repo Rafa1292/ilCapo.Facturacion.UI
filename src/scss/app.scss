@@ -264,6 +264,12 @@ main {
   border: none;
 }
 
+.break-text{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .modal::-webkit-scrollbar-track {
   border-radius: 10px;
 }
@@ -394,5 +400,8 @@ label {
   filter: blur(3px);
 }
 
-
+.pointer {
+  cursor: pointer;
+  user-select: none;
+}
 
