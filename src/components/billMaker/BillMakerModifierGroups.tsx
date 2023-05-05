@@ -4,15 +4,18 @@ import { Product } from '../../types/product'
 import BillMakerElements from './BillMakerElements'
 import { ModifierElement } from '../../types/modifierElement'
 import { BillItem } from '../../types/billItem'
+import { LinkedProduct } from '../../types/linkedProduct'
 
 interface Props {
   product: Product
   billItem: BillItem
+  saleItemProductId: number
   addLinkedProductModifierElement: (modifierElement: ModifierElement) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement) => void
+  newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
-const BillMakerModifierGroups = ({ product, addLinkedProductModifierElement, removeLinkedProductModifierElement, billItem }: Props) => {
+const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductModifierElement, removeLinkedProductModifierElement, billItem, newCombinedLinkedProduct }: Props) => {
   const [modifierGroup, setModifierGroup] = useState<ModifierGroup>(product.productModifiers[0]?.modifierGroup)
 
   useEffect(() => {
@@ -40,7 +43,7 @@ const BillMakerModifierGroups = ({ product, addLinkedProductModifierElement, rem
       </div>
       {
         modifierGroup &&
-        <BillMakerElements billItem={billItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={addLinkedProductModifierElement} modifierGroup={modifierGroup} />
+        <BillMakerElements saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} billItem={billItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={addLinkedProductModifierElement} modifierGroup={modifierGroup} />
       }
     </>
   )

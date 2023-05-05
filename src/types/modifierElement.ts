@@ -1,4 +1,5 @@
 import { ModifierElementUpgrade } from './modifierElementUpgrade'
+import { ProductReference } from './productReference'
 
 export interface ModifierElement {
   id: number
@@ -10,6 +11,7 @@ export interface ModifierElement {
   combinable: boolean
   numberOfParts: number
   combinableModifierGroupId: number
+  productReference?: ProductReference
   modifierUpgrade: ModifierElementUpgrade
   modifierGroupId: number
   createdBy?: number

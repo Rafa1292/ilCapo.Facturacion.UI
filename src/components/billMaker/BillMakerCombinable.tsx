@@ -3,19 +3,47 @@ import { ModifierElement } from '../../types/modifierElement'
 import { ModifierGroup } from '../../types/modifierGroup'
 import { useGet } from '../../hooks/useAPI'
 import { parseCurrency } from '../../utils/currencyParser'
+import { LinkedProduct } from '../../types/linkedProduct'
 
 interface Props {
   element: ModifierElement
+  saleItemProductId: number
+  newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
-const BillMakerCombinable = ({ element }: Props) => {
+const initialLinkedProduct: LinkedProduct = {
+  id: 0,
+  billItemLinkedProductId: 0,
+  delete: false,
+  linkedProductModifiers: [],
+  name: '',
+  productId: 0,
+  unitPrice: 0,
+  createdBy: 0,
+  updatedBy: 0
+}
+
+const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProductId }: Props) => {
   const [tmpModifierGroup, setTmpModifierGroup] = useState<ModifierGroup>()
   const [modifierGroup, setModifierGroup] = useState<ModifierGroup>()
   const [upgradeModifierGroup, setUpgradeModifierGroup] = useState<ModifierGroup>()
   const [selectedElement, setSelectedElement] = useState<ModifierElement>()
   const [combine, setCombine] = useState(false)
 
+  const addElement = (currentElement: ModifierElement) => {
+    const linkedProduct: LinkedProduct = {
+      ...initialLinkedProduct,
+      name: currentElement.name,
+      unitPrice: upgradeModifierGroup?.id === tmpModifierGroup?.id ? element.modifierUpgrade?.price : 0,
+      productId: currentElement.productReference?.id || 0
+    }
+    setSelectedElement(currentElement)
+    newCombinedLinkedProduct(1, linkedProduct, saleItemProductId)
+    console.log(currentElement)
+  }
+
   useEffect(() => {
+    console.log(saleItemProductId)
     const getModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.combinableModifierGroupId}`, false)
       if (!response.error) {
@@ -60,7 +88,7 @@ const BillMakerCombinable = ({ element }: Props) => {
           tmpModifierGroup && combine &&
           tmpModifierGroup.elements?.map((tmpElement, index) => {
             return (
-              <div key={index} className="col-3 p-2 pointer" onClick={() => setSelectedElement(tmpElement)}>
+              <div key={index} className="col-3 p-2 pointer" onClick={() => addElement(tmpElement)}>
                 <div className="card shadow" style={{ border: `${tmpElement?.id === selectedElement?.id ? '1px' : '0px'} solid rgba(255,193,7,.8)` }}>
                   <div className="card-body">
                     <h5 className="card-title">{tmpElement.name}</h5>

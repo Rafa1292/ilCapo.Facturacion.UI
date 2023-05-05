@@ -1,0 +1,39 @@
+.bill-resume {
+  height: 100vh;
+  padding-bottom: 5vh;
+  overflow-y: scroll;
+}
+
+.bill-resume::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.bill-resume::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.bill-resume::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.bill-resume::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+.bill-resume::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: none;
+}
+
+.bill-resume::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.bill-item_content {
+  overflow: hidden;
+  background-color: rgba(0,0,0,.03);
+  transition: all ease 200ms;
+  max-height: 0;
+}

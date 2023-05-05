@@ -87,6 +87,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
     saleItem.saleItemProducts.map((saleItemProduct, index) => {
       const billItemLinkedProduct = {
         ...initialBillItemLinkedProduct,
+        id: saleItemProduct.id,
         itemNumber: 1,
         linkedProducts: [newLinkedProduct(saleItemProduct)]
       }
@@ -98,6 +99,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
   const newLinkedProduct = (saleItemProduct: SaleItemProduct): LinkedProduct => {
     const linkedProduct = {
       ...initialLinkedProduct,
+      id: billItem.billItemLinkedProducts.length + 1,
       productId: saleItemProduct.product.id,
       unitPrice: saleItemProduct.product.price,
       name: saleItemProduct.product.name,
@@ -146,6 +148,16 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
     }
   }
 
+  const newCombinedLinkedProduct = (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId:number) => {
+    for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
+      if(billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.id === billItemLinkedProductId) {
+        const tmpLinkedProducts = billItemLinkedProduct.linkedProducts.filter((linkedProduct) => linkedProduct.id !== 0)
+        tmpLinkedProducts.push(linkedProduct)
+        billItemLinkedProduct.linkedProducts = tmpLinkedProducts
+      }
+    }
+  }
+
   const removeLinkedProductModifierElement = (modifierElement: ModifierElement) => {
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
       for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
@@ -169,7 +181,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
 
   return (
     <>
-      <button type="button" className="btn btn-primary" onClick={()=> console.log(billItem) } >Print item</button>
+      <button type="button" className="btn btn-primary" onClick={() => console.log(billItem)} >Print item</button>
       <div className="col-12 d-flex flex-wrap justify-content-center">
         {
           saleItem === undefined &&
@@ -189,7 +201,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
         }
         {
           saleItem &&
-          <BillMakerProducts setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={newLinkedProductModifierElement} addBillItem={addBillItem} billItem={billItem} saleItem={saleItem} />
+          <BillMakerProducts newCombinedLinkedProduct={newCombinedLinkedProduct} setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={newLinkedProductModifierElement} addBillItem={addBillItem} billItem={billItem} saleItem={saleItem} />
         }
       </div>
     </>

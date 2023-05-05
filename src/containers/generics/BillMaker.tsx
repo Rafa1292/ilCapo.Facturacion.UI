@@ -62,7 +62,7 @@ const BillMaker = ({ tableNumber }: Props) => {
           <BillMakerItems addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
         }
       </div>
-      <div className="col-4 shadow" style={{ height: '100vh' }}>
+      <div className="col-4 shadow bill-resume" style={{ height: '100vh', zIndex: '100' }}>
         <button className="btn btn-warning" onClick={() => printBill()}>Print</button>
         <BillResume bill={bill}/>
       </div>

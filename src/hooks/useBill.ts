@@ -9,7 +9,7 @@ const initialBillAccounthistory: BillAccountHistory = {
   id: 0,
   billId: 0,
   accountHistoryId: 0,
-  accountHistory: {} as AccountHistory, 
+  accountHistory: {} as AccountHistory,
   delete: false,
   createdBy: 0,
   updatedBy: 0
@@ -29,16 +29,30 @@ const initialBill: Bill = {
   createdBy: 0,
   updatedBy: 0
 }
-  
+
 
 const useBill = (): BillFunctions => {
   const [bill, setBill] = useState<Bill>(initialBill)
 
   const addBillItem = (billItem: BillItem) => {
-    setBill({
-      ...bill,
-      billItems: [...bill.billItems, billItem]
-    })
+    if (bill.billItems.map(item => item.saleItemId).includes(billItem.saleItemId)) {
+      const tmpBillItems = bill.billItems.filter(item => item.saleItemId !== billItem.saleItemId)
+      const tmpBillItem = bill.billItems.find(item => item.saleItemId === billItem.saleItemId)
+      if (tmpBillItem) {
+        tmpBillItem.quantity += billItem.quantity
+        tmpBillItem.billItemLinkedProducts = [...tmpBillItem.billItemLinkedProducts, ...billItem.billItemLinkedProducts]
+        setBill({
+          ...bill,
+          billItems: [...tmpBillItems, tmpBillItem]
+        })
+      }
+    }
+    else {
+      setBill({
+        ...bill,
+        billItems: [...bill.billItems, billItem]
+      })
+    }
   }
 
   const removeBillItem = (billItem: BillItem) => {
@@ -51,7 +65,7 @@ const useBill = (): BillFunctions => {
   const addAccountHistory = (accountHistory: AccountHistory) => {
     setBill({
       ...bill,
-      billAccountHistories: [...bill.billAccountHistories, {...initialBillAccounthistory, accountHistoryId: accountHistory.id, accountHistory: accountHistory}]
+      billAccountHistories: [...bill.billAccountHistories, { ...initialBillAccounthistory, accountHistoryId: accountHistory.id, accountHistory: accountHistory }]
     })
   }
 
