@@ -87,7 +87,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
     saleItem.saleItemProducts.map((saleItemProduct, index) => {
       const billItemLinkedProduct = {
         ...initialBillItemLinkedProduct,
-        id: saleItemProduct.id,
+        id: saleItem.id,
         itemNumber: 1,
         linkedProducts: [newLinkedProduct(saleItemProduct)]
       }
@@ -148,9 +148,9 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
     }
   }
 
-  const newCombinedLinkedProduct = (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId:number) => {
+  const newCombinedLinkedProduct = (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => {
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
-      if(billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.id === billItemLinkedProductId) {
+      if (billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.id === billItemLinkedProductId) {
         const tmpLinkedProducts = billItemLinkedProduct.linkedProducts.filter((linkedProduct) => linkedProduct.id !== 0)
         tmpLinkedProducts.push(linkedProduct)
         billItemLinkedProduct.linkedProducts = tmpLinkedProducts
@@ -201,7 +201,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
         }
         {
           saleItem &&
-          <BillMakerProducts newCombinedLinkedProduct={newCombinedLinkedProduct} setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={newLinkedProductModifierElement} addBillItem={addBillItem} billItem={billItem} saleItem={saleItem} />
+          <BillMakerProducts setSaleItem={setSaleItem} newCombinedLinkedProduct={newCombinedLinkedProduct} setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={newLinkedProductModifierElement} addBillItem={addBillItem} billItem={billItem} saleItem={saleItem} />
         }
       </div>
     </>

@@ -14,7 +14,7 @@ interface Props {
 const BillMaker = ({ tableNumber }: Props) => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
-  const { bill, addBillItem, printBill } = useBill()
+  const { bill, addBillItem, printBill, removeLinkedProduct } = useBill()
 
   const setCategory = (saleItemCategory: SaleItemCategory) => {
     setSaleItemCategory(saleItemCategory)
@@ -42,6 +42,7 @@ const BillMaker = ({ tableNumber }: Props) => {
     getSaleItemCategories()
   }, [saleItemCategory])
 
+
   return (
     <div className='col-12 d-flex flex-wrap'>
       <div className="col-8 bill-maker" >
@@ -64,7 +65,7 @@ const BillMaker = ({ tableNumber }: Props) => {
       </div>
       <div className="col-4 shadow bill-resume" style={{ height: '100vh', zIndex: '100' }}>
         <button className="btn btn-warning" onClick={() => printBill()}>Print</button>
-        <BillResume bill={bill}/>
+        <BillResume removeLinkedProduct={removeLinkedProduct} bill={bill}/>
       </div>
     </div>
   )

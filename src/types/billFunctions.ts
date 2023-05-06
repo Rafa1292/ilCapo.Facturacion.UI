@@ -9,4 +9,5 @@ export interface BillFunctions {
   addAccountHistory: (accountHistory: AccountHistory) => void
   removeAccountHistory: (accountHistory: AccountHistory) => void
   printBill: () => void
+  removeLinkedProduct: (saleItemId: number, itemNumber: number, billItemLinkedProductId: number) => void
 }

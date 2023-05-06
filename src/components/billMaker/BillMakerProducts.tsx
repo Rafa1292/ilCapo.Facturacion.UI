@@ -7,10 +7,12 @@ import { BillItem } from '../../types/billItem'
 import { ModifierElement } from '../../types/modifierElement'
 import { LinkedProduct } from '../../types/linkedProduct'
 import { parseCurrency } from '../../utils/currencyParser'
+import { SaleItemCategory } from '../../types/saleItemCategory'
 
 interface Props {
   saleItem: SaleItem
   billItem: BillItem
+  setSaleItem: (saleItem: SaleItem | undefined) => void
   addBillItem: (billItem: BillItem) => void
   addLinkedProductModifierElement: (modifierElement: ModifierElement) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement) => void
@@ -18,7 +20,7 @@ interface Props {
   newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
-const BillMakerProducts = ({ saleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
+const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
   const [product, setProduct] = useState<Product>()
   const [incompleteProducts, setIncompleteProducts] = useState<number[]>([])
   const [validate, setValidate] = useState<boolean>(false)
@@ -27,8 +29,9 @@ const BillMakerProducts = ({ saleItem, billItem, newCombinedLinkedProduct, setNe
   const addNewBillItem = () => {
     if (validateBillItem()) {
       addBillItem(billItem)
+      setNewBillItem()
+      setSaleItem(undefined)
     }
-    setNewBillItem()
   }
 
   const validateBillItem = (): boolean => {
@@ -59,7 +62,6 @@ const BillMakerProducts = ({ saleItem, billItem, newCombinedLinkedProduct, setNe
   }
 
   const addProduct = (product: Product, saleItemProductId: number) => {
-    console.log(saleItemProductId)
     setProduct(product)
     setSaleItemProductId(saleItemProductId)
   }

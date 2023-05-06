@@ -7,9 +7,10 @@ import BillResumeItem from './BillResumeItem'
 
 interface Props {
   bill: Bill
+  removeLinkedProduct (saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
 }
 
-const BillResume = ({ bill }: Props) => {
+const BillResume = ({ bill, removeLinkedProduct }: Props) => {
   return (
     <>
       <div className="col-12 d-flex flex-wrap mt-5 p-0">
@@ -24,7 +25,7 @@ const BillResume = ({ bill }: Props) => {
         {
           bill.billItems.map((billItem, index) => {
             return (
-              <BillResumeItem key={index} billItem={billItem} />
+              <BillResumeItem removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
             )
           })
         }

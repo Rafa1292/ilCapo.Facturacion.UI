@@ -4,6 +4,7 @@ import { BillFunctions } from '../types/billFunctions'
 import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
+import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
 
 const initialBillAccounthistory: BillAccountHistory = {
   id: 0,
@@ -39,7 +40,8 @@ const useBill = (): BillFunctions => {
       const tmpBillItems = bill.billItems.filter(item => item.saleItemId !== billItem.saleItemId)
       const tmpBillItem = bill.billItems.find(item => item.saleItemId === billItem.saleItemId)
       if (tmpBillItem) {
-        tmpBillItem.quantity += billItem.quantity
+        tmpBillItem.quantity = tmpBillItem.quantity + 1
+        billItem.billItemLinkedProducts = billItem.billItemLinkedProducts.map(x => { return { ...x, itemNumber: tmpBillItem.quantity } as BillItemLinkedProduct })
         tmpBillItem.billItemLinkedProducts = [...tmpBillItem.billItemLinkedProducts, ...billItem.billItemLinkedProducts]
         setBill({
           ...bill,
@@ -76,6 +78,24 @@ const useBill = (): BillFunctions => {
     })
   }
 
+  const removeLinkedProduct = (saleItemId: number, itemNumber: number, billItemLinkedProductId: number) => {
+    for (const billItem of bill.billItems) {
+      if (billItem.saleItemId === saleItemId) {
+        billItem.quantity = billItem.quantity - 1
+        billItem.billItemLinkedProducts = billItem.billItemLinkedProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber -1 : x.itemNumber } as BillItemLinkedProduct })
+        if (billItem.billItemLinkedProducts.length === 0) {
+          removeBillItem(billItem)
+        }
+        else {
+          setBill({
+            ...bill,
+            billItems: bill.billItems.map(item => item.saleItemId === saleItemId ? billItem : item)
+          })
+        }
+      }
+    }
+  }
+
   const printBill = () => {
     console.log(bill)
   }
@@ -86,7 +106,8 @@ const useBill = (): BillFunctions => {
     removeBillItem,
     addAccountHistory,
     removeAccountHistory,
-    printBill
+    printBill,
+    removeLinkedProduct
   }
 }
 

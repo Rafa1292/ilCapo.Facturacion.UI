@@ -7,9 +7,10 @@ import '../scss/billResume.scss'
 
 interface Props {
   billItem: BillItem
+  removeLinkedProduct (saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
 }
 
-const BillResumeItem = ({ billItem }: Props) => {
+const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
   const getBillItemTotal = (billItem: BillItem): number => {
     return ((billItem.unitPrice + billItem.tax - billItem.discount) * billItem.quantity) + getBillItemModifiersPrice(billItem)
@@ -66,10 +67,12 @@ const BillResumeItem = ({ billItem }: Props) => {
                 billItemLinkedProduct.linkedProducts.map((linkedProduct, index) => {
                   return (
                     index < 1 &&
-                    <div key={index} className='col-12 d-flex flex-wrap p-0'>
-                      <div  className="col-8 d-flex flex-wrap p-2">
+                    <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
+                      <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
+                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={()=> removeLinkedProduct(billItemLinkedProduct.id, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)}/>
+                      </div>
+                      <div className="col-8 d-flex flex-wrap p-2 ">
                         {billItem.billItemLinkedProducts?.length > 1 ? linkedProduct.name === billItem.description ? '' : linkedProduct.name : ''}
-
                         {
                           linkedProduct.linkedProductModifiers.map((linkedProductModifier, index) => {
                             return (
