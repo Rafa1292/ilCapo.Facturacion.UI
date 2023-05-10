@@ -1,33 +1,51 @@
 .bill-resume {
   height: 100vh;
-  padding-bottom: 5vh;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 
-.bill-resume::-webkit-scrollbar {
+.bill-resume_content {
+  height: 72vh;
+  overflow-y: scroll;
+  align-content: baseline;
+}
+
+.bill-resume_header {
+  margin-top: 8vh;
+  height: 4vh; 
+  border-top: 3px solid rgba(33,37,41,.8); 
+  border-bottom: 3px solid rgba(33,37,41,.8);
+
+  strong{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.bill-resume_content::-webkit-scrollbar {
   -webkit-appearance: none;
 }
 
-.bill-resume::-webkit-scrollbar:vertical {
+.bill-resume_content::-webkit-scrollbar:vertical {
   width: 5px;
 }
 
-.bill-resume::-webkit-scrollbar-button:increment,
+.bill-resume_content::-webkit-scrollbar-button:increment,
 .contenedor::-webkit-scrollbar-button {
   display: none;
 }
 
-.bill-resume::-webkit-scrollbar:horizontal {
+.bill-resume_content::-webkit-scrollbar:horizontal {
   height: 5px;
 }
 
-.bill-resume::-webkit-scrollbar-thumb {
+.bill-resume_content::-webkit-scrollbar-thumb {
   background-color: #797979;
   border-radius: 20px;
   border: none;
 }
 
-.bill-resume::-webkit-scrollbar-track {
+.bill-resume_content::-webkit-scrollbar-track {
   border-radius: 10px;
 }
 
@@ -36,4 +54,81 @@
   background-color: rgba(0,0,0,.03);
   transition: all ease 200ms;
   max-height: 0;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-top: 25px solid #fff;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  background: rgba(0,0,0,.05);
+}
+
+.command_btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: black;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  padding: 10px;
+  box-shadow: 0px 0px 15px -5px rgba(0,0,0,.6);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid white;
+}
+
+.command_icon {
+  background-image: url('../assets/icons/white-bell.png');
+  height: 60px;
+  width: 60px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.command_btn:hover {
+  background: white;
+  border: 2px solid black;
+  box-shadow: 0px 0px 20px -5px rgba(0,0,0,.7);
+  .command_icon {
+    background-image: url('../assets/icons/black-bell.png');
+  }
+}
+
+.cash_btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: black;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  padding: 10px;
+  box-shadow: 0px 0px 15px -5px rgba(0,0,0,.6);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid white;
+}
+
+.cash_icon {
+  background-image: url('../assets/icons/white-cash.png');
+  height: 60px;
+  width: 60px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.cash_btn:hover {
+  background: white;
+  border: 2px solid black;
+  box-shadow: 0px 0px 20px -5px rgba(0,0,0,.7);
+  .cash_icon {
+    background-image: url('../assets/icons/black-cash.png');
+  }
 }

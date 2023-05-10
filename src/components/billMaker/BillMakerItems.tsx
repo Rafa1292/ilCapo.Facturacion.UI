@@ -13,6 +13,7 @@ import { ModifierElement } from '../../types/modifierElement'
 
 interface Props {
   saleItemCategory: SaleItemCategory
+  saleItemId: number
   addBillItem: (billItem: BillItem) => void
 }
 
@@ -61,12 +62,13 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
   delete: false,
   price: 0,
   name: '',
+  quantity: 1,
   modifierElementId: 0,
   createdBy: 0,
   updatedBy: 0
 }
 
-const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
+const BillMakerItems = ({ saleItemCategory, addBillItem, saleItemId }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
 
@@ -87,7 +89,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
     saleItem.saleItemProducts.map((saleItemProduct, index) => {
       const billItemLinkedProduct = {
         ...initialBillItemLinkedProduct,
-        id: saleItem.id,
+        id: saleItemProduct.id,
         itemNumber: 1,
         linkedProducts: [newLinkedProduct(saleItemProduct)]
       }
@@ -135,22 +137,30 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
       ...initialLinkedProductModifierElement,
       modifierElementId: modifierElement.id,
       name: modifierElement.name,
-      price: modifierElement.price
+      price: modifierElement.price,
+      quantity: 1
     }
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
       for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
         for (const productModifier of linkedProduct.linkedProductModifiers) {
           if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
-            productModifier.linkedProductModifierElements.push(newLinkedProductModifierElement)
+            const currentLinkedProductModifierElement = productModifier.linkedProductModifierElements.find(
+              (linkedProductModifierElement) => linkedProductModifierElement.modifierElementId === modifierElement.id
+            )
+            if (currentLinkedProductModifierElement) {
+              currentLinkedProductModifierElement.quantity = currentLinkedProductModifierElement.quantity + 1
+            } else {
+              productModifier.linkedProductModifierElements.push(newLinkedProductModifierElement)
+            }
           }
         }
       }
     }
   }
 
-  const newCombinedLinkedProduct = (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => {
+  const newCombinedLinkedProduct = (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => {
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
-      if (billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.id === billItemLinkedProductId) {
+      if (billItemLinkedProduct.id === billItemLinkedProductId) {
         const tmpLinkedProducts = billItemLinkedProduct.linkedProducts.filter((linkedProduct) => linkedProduct.id !== 0)
         tmpLinkedProducts.push(linkedProduct)
         billItemLinkedProduct.linkedProducts = tmpLinkedProducts
@@ -163,7 +173,14 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
       for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
         for (const productModifier of linkedProduct.linkedProductModifiers) {
           if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
-            productModifier.linkedProductModifierElements = productModifier.linkedProductModifierElements.filter((linkedProductModifierElement) => linkedProductModifierElement.modifierElementId !== modifierElement.id)
+            const tmpLinkedProductModifier = productModifier.linkedProductModifierElements.find((linkedProductModifierElement) => linkedProductModifierElement.modifierElementId === modifierElement.id)
+            if (tmpLinkedProductModifier) {
+              if (tmpLinkedProductModifier.quantity > 1) {
+                tmpLinkedProductModifier.quantity = tmpLinkedProductModifier.quantity - 1
+              } else {
+                productModifier.linkedProductModifierElements = productModifier.linkedProductModifierElements.filter((linkedProductModifierElement) => linkedProductModifierElement.modifierElementId !== modifierElement.id)
+              }
+            }
           }
         }
       }
@@ -176,7 +193,17 @@ const BillMakerItems = ({ saleItemCategory, addBillItem }: Props) => {
 
 
   useEffect(() => {
-    setSaleItem(undefined)
+    if (saleItemId > 0) {
+      const tmpSaleItem = saleItemCategory?.saleItems.find((saleItem) => saleItem.id === saleItemId)
+      if (tmpSaleItem) {
+        newBillItem(tmpSaleItem)
+      } else {
+        setSaleItem(undefined)
+      }
+    }
+    else {
+      setSaleItem(undefined)
+    }
   }, [saleItemCategory])
 
   return (

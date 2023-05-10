@@ -17,7 +17,7 @@ interface Props {
   addLinkedProductModifierElement: (modifierElement: ModifierElement) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement) => void
   setNewBillItem: () => void
-  newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
+  newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
 const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
@@ -54,7 +54,6 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
         }
       }
     }
-    console.log(tmpIncompleteProducts)
     const tmpProducts = tmpIncompleteProducts.filter((productId) => !tmpCompleteProducts.includes(productId))
     setIncompleteProducts(tmpProducts)
     setValidate(true)

@@ -7,11 +7,12 @@ import '../scss/billResume.scss'
 
 interface Props {
   billItem: BillItem
-  removeLinkedProduct (saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
+  removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
 }
 
 const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
+
   const getBillItemTotal = (billItem: BillItem): number => {
     return ((billItem.unitPrice + billItem.tax - billItem.discount) * billItem.quantity) + getBillItemModifiersPrice(billItem)
   }
@@ -29,11 +30,10 @@ const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
     let price = 0
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
       for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
-        console.log(linkedProduct.unitPrice)
         price += Number(linkedProduct.unitPrice)
         for (const iterator of linkedProduct.linkedProductModifiers) {
           for (const linkedProductModifierElement of iterator.linkedProductModifierElements) {
-            price += Number(linkedProductModifierElement.price)
+            price += Number(linkedProductModifierElement.price * linkedProductModifierElement.quantity)
           }
         }
       }
@@ -42,7 +42,7 @@ const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
   }
 
   return (
-    <div className="col-12 d-flex flex-wrap p-0" style={{ borderBottom: '2px solid rgba(33,37,41,.8)' }}>
+    <div className="col-12 d-flex flex-wrap p-0" style={{ height: 'fit-content', borderBottom: '2px solid rgba(33,37,41,.8)' }}>
       <div className="col-12 d-flex flex-wrap p-2 shadow-sm">
         <strong className='text-center col-3'>{billItem.description}</strong>
         <strong className='text-center col-2'>{parseCurrency(Number(billItem.unitPrice).toString())}</strong>
@@ -69,10 +69,10 @@ const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
                     index < 1 &&
                     <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
                       <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={()=> removeLinkedProduct(billItemLinkedProduct.id, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)}/>
+                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItemLinkedProduct.id, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)} />
                       </div>
-                      <div className="col-8 d-flex flex-wrap p-2 ">
-                        {billItem.billItemLinkedProducts?.length > 1 ? linkedProduct.name === billItem.description ? '' : linkedProduct.name : ''}
+                      <div className="col-10 d-flex flex-wrap p-2 ">
+                        {linkedProduct.name}
                         {
                           linkedProduct.linkedProductModifiers.map((linkedProductModifier, index) => {
                             return (
@@ -85,11 +85,15 @@ const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
                                     return (
                                       <div key={index} className="col-12 d-flex flex-wrap" style={{ paddingLeft: '15px' }}>
                                         <div className="col-6 text-start px-2 break-text">
-                                          *{linkedProductModifierElement.name}
+                                          -
+                                          <strong className='mx-2'>
+                                            {linkedProductModifierElement.quantity}
+                                          </strong>
+                                          {linkedProductModifierElement.name}
                                           {getDottedLine(linkedProductModifierElement.name)}
                                         </div>
                                         <strong className='col-6 text-start'>
-                                          {parseCurrency(Number(linkedProductModifierElement.price).toString())}
+                                          {parseCurrency(Number(linkedProductModifierElement.price * linkedProductModifierElement.quantity).toString())}
                                         </strong>
                                       </div>
                                     )

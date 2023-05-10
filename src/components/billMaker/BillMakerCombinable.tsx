@@ -8,7 +8,7 @@ import { LinkedProduct } from '../../types/linkedProduct'
 interface Props {
   element: ModifierElement
   saleItemProductId: number
-  newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
+  newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
 const initialLinkedProduct: LinkedProduct = {
@@ -38,12 +38,10 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
       productId: currentElement.productReference?.id || 0
     }
     setSelectedElement(currentElement)
-    newCombinedLinkedProduct(1, linkedProduct, saleItemProductId)
-    console.log(currentElement)
+    newCombinedLinkedProduct(linkedProduct, saleItemProductId)
   }
 
   useEffect(() => {
-    console.log(saleItemProductId)
     const getModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.combinableModifierGroupId}`, false)
       if (!response.error) {

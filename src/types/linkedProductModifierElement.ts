@@ -6,6 +6,7 @@ export interface LinkedProductModifierElement {
   price: number
   delete: boolean
   name: string
+  quantity: number
   createdBy?: number
   updatedBy?: number
 }

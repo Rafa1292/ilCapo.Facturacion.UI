@@ -25,7 +25,7 @@ const FoodTable = ({ top, left, tableNumber }: Props) => {
   return (
     <>
       <div className='bill-makerContainer' id={`billMakerContainer${tableNumber}`}>
-        <span className='position-absolute' onClick={closeTable} style={{ cursor: 'pointer', right: '1vw', top: '1vw', background: 'white', borderRadius: '50px'}}>
+        <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '1vw', top: '1vw', background: 'white', borderRadius: '50px'}}>
           <CustomBtn height='40px' buttonType={buttonTypes.cancel}/>
         </span>
         <BillMaker tableNumber={tableNumber}/>

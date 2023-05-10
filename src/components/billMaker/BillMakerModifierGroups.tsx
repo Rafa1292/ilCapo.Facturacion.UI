@@ -12,7 +12,7 @@ interface Props {
   saleItemProductId: number
   addLinkedProductModifierElement: (modifierElement: ModifierElement) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement) => void
-  newCombinedLinkedProduct: (itemNumber: number, linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
+  newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
 const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductModifierElement, removeLinkedProductModifierElement, billItem, newCombinedLinkedProduct }: Props) => {

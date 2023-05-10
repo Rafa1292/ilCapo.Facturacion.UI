@@ -6,6 +6,7 @@ export interface ModifierElement {
   name: string
   price: number
   quantity: number
+  selectedQuantity: number
   delete: boolean
   defaultRecipeId: number
   combinable: boolean
