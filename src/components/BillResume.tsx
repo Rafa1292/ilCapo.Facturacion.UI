@@ -8,9 +8,10 @@ import BillResumeItem from './BillResumeItem'
 interface Props {
   bill: Bill
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
+  handleEditLinkedProduct (saleItemId: number, itemNumber: number): void
 }
 
-const BillResume = ({ bill, removeLinkedProduct }: Props) => {
+const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
 
   const getBillTax = () => {
@@ -75,7 +76,7 @@ const BillResume = ({ bill, removeLinkedProduct }: Props) => {
           {
             bill.billItems.map((billItem, index) => {
               return (
-                <BillResumeItem removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
+                <BillResumeItem handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
               )
             })
           }

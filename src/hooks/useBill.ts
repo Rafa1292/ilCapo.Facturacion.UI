@@ -60,7 +60,7 @@ const useBill = (): BillFunctions => {
   const removeBillItem = (billItem: BillItem) => {
     setBill({
       ...bill,
-      billItems: bill.billItems.filter(item => item.id !== billItem.id)
+      billItems: bill.billItems.filter(item => item.saleItemId !== billItem.saleItemId)
     })
   }
 
@@ -79,7 +79,7 @@ const useBill = (): BillFunctions => {
   }
 
   const removeLinkedProduct = (saleItemId: number, itemNumber: number, billItemLinkedProductId: number) => {
-    for (const billItem of bill.billItems) {
+    for (const billItem of bill.billItems) {      
       if (billItem.saleItemId === saleItemId) {
         billItem.quantity = billItem.quantity - 1
         billItem.billItemLinkedProducts = billItem.billItemLinkedProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber -1 : x.itemNumber } as BillItemLinkedProduct })
@@ -96,6 +96,26 @@ const useBill = (): BillFunctions => {
     }
   }
 
+  const editLinkedProduct = (saleItemId: number, itemNumber: number): BillItem | undefined => {
+    for (const billItem of bill.billItems) {      
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillItemLinkedProducts = billItem.billItemLinkedProducts.filter(linkedProduct => linkedProduct.itemNumber === itemNumber)
+        billItem.billItemLinkedProducts = billItem.billItemLinkedProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber -1 : x.itemNumber } as BillItemLinkedProduct })
+        if (billItem.billItemLinkedProducts.length === 0) {
+          removeBillItem(billItem)
+        }
+        else {
+          setBill({
+            ...bill,
+            billItems: bill.billItems.map(item => item.saleItemId === saleItemId ? {...billItem, quantity: billItem.quantity - 1} : item)
+          })
+        }
+        return {...billItem, billItemLinkedProducts: tmpBillItemLinkedProducts}
+      }
+    }
+    return undefined
+  }
+
   const printBill = () => {
     console.log(bill)
   }
@@ -107,7 +127,8 @@ const useBill = (): BillFunctions => {
     addAccountHistory,
     removeAccountHistory,
     printBill,
-    removeLinkedProduct
+    removeLinkedProduct,
+    editLinkedProduct
   }
 }
 

@@ -6,6 +6,7 @@ import { parseCurrency } from '../../utils/currencyParser'
 import { LinkedProduct } from '../../types/linkedProduct'
 
 interface Props {
+  productId: number | undefined
   element: ModifierElement
   saleItemProductId: number
   newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
@@ -23,7 +24,7 @@ const initialLinkedProduct: LinkedProduct = {
   updatedBy: 0
 }
 
-const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProductId }: Props) => {
+const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProductId, productId }: Props) => {
   const [tmpModifierGroup, setTmpModifierGroup] = useState<ModifierGroup>()
   const [modifierGroup, setModifierGroup] = useState<ModifierGroup>()
   const [upgradeModifierGroup, setUpgradeModifierGroup] = useState<ModifierGroup>()
@@ -35,7 +36,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
       ...initialLinkedProduct,
       name: currentElement.name,
       unitPrice: upgradeModifierGroup?.id === tmpModifierGroup?.id ? element.modifierUpgrade?.price : 0,
-      productId: currentElement.productReference?.id || 0
+      productId: currentElement.productReference?.productId || 0
     }
     setSelectedElement(currentElement)
     newCombinedLinkedProduct(linkedProduct, saleItemProductId)
@@ -45,13 +46,29 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
     const getModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.combinableModifierGroupId}`, false)
       if (!response.error) {
+        response.data.elements?.map((tmpElement, index) => {
+          if (tmpElement.productReference?.productId === productId) {
+            setCombine(true)
+            setSelectedElement(tmpElement)
+            setTmpModifierGroup(response.data)
+          }
+        })
+        if(productId === 0 || productId === undefined) {
+          setTmpModifierGroup(response.data)
+        }
         setModifierGroup(response.data)
-        setTmpModifierGroup(response.data)
       }
     }
     const getUpgradeModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.modifierUpgrade.newModifierGroupId}`, false)
       if (!response.error) {
+        response.data.elements?.map((tmpElement, index) => {
+          if (tmpElement.productReference && tmpElement.productReference?.productId === productId) {
+            setCombine(true)
+            setSelectedElement(tmpElement)
+            setTmpModifierGroup(response.data)
+          }
+        })
         setUpgradeModifierGroup(response.data)
       }
     }
@@ -59,8 +76,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
       getUpgradeModifierGroup()
 
     getModifierGroup()
-    setCombine(false)
-  }, [element])
+  }, [element, productId])
   return (
     <>
       {

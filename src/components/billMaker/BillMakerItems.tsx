@@ -10,10 +10,11 @@ import { Product } from '../../types/product'
 import { LinkedProductModifier } from '../../types/linkedProductModifier'
 import { LinkedProductModifierElement } from '../../types/linkedProductModifierElement'
 import { ModifierElement } from '../../types/modifierElement'
+import { parseCurrency } from '../../utils/currencyParser'
 
 interface Props {
   saleItemCategory: SaleItemCategory
-  saleItemId: number
+  editBilItem: BillItem
   addBillItem: (billItem: BillItem) => void
 }
 
@@ -68,7 +69,7 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
   updatedBy: 0
 }
 
-const BillMakerItems = ({ saleItemCategory, addBillItem, saleItemId }: Props) => {
+const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
 
@@ -193,18 +194,15 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, saleItemId }: Props) =>
 
 
   useEffect(() => {
-    if (saleItemId > 0) {
-      const tmpSaleItem = saleItemCategory?.saleItems.find((saleItem) => saleItem.id === saleItemId)
-      if (tmpSaleItem) {
-        newBillItem(tmpSaleItem)
-      } else {
-        setSaleItem(undefined)
-      }
+    if (editBilItem?.saleItemId > 0) {
+      const tmpSaleItem = saleItemCategory?.saleItems.find((saleItem) => saleItem.id === editBilItem?.saleItemId)
+      setSaleItem(tmpSaleItem)
+      setBillItem(editBilItem)
     }
     else {
       setSaleItem(undefined)
     }
-  }, [saleItemCategory])
+  }, [saleItemCategory, editBilItem])
 
   return (
     <>
@@ -219,7 +217,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, saleItemId }: Props) =>
                   <div className="card-body">
                     <h5 className="card-title">{tmpSaleItem.name}</h5>
                     <h6 className="card-subtitle mb-2 text-muted">{tmpSaleItem.description}</h6>
-                    <p className="card-text">{tmpSaleItem.price}</p>
+                    <p className="card-text">{ Number(tmpSaleItem.price) === 0 ? '' : parseCurrency(Number(tmpSaleItem.price).toString())}</p>
                   </div>
                 </div>
               </div>

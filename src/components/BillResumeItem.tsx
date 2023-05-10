@@ -8,9 +8,10 @@ import '../scss/billResume.scss'
 interface Props {
   billItem: BillItem
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
+  handleEditLinkedProduct (saleItemId: number, itemNumber: number): void
 }
 
-const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
 
   const getBillItemTotal = (billItem: BillItem): number => {
@@ -69,7 +70,10 @@ const BillResumeItem = ({ billItem, removeLinkedProduct }: Props) => {
                     index < 1 &&
                     <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
                       <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItemLinkedProduct.id, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)} />
+                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)} />
+                      </div>
+                      <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
+                        <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billItemLinkedProduct.itemNumber)} />
                       </div>
                       <div className="col-10 d-flex flex-wrap p-2 ">
                         {linkedProduct.name}

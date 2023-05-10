@@ -7,6 +7,8 @@ import BillMakerItems from '../../components/billMaker/BillMakerItems'
 import useBill from '../../hooks/useBill'
 import BillResume from '../../components/BillResume'
 import CustomInputSelect from '../../components/generics/CustomInputSelect'
+import { BillItemLinkedProduct } from '../../types/billItemLinkedProduct'
+import { BillItem } from '../../types/billItem'
 
 interface Props {
   tableNumber: number
@@ -27,12 +29,11 @@ const initialSearchProduct: SearchProduct = {
 }
 
 const BillMaker = ({ tableNumber }: Props) => {
-  const [saleItemId, setSaleItemId] = useState<number>(0)
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
-  const { bill, addBillItem, printBill, removeLinkedProduct } = useBill()
+  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct } = useBill()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
-
+  const [editBillItem, setEditBillItem] = useState<BillItem>({saleItemId:0} as BillItem)
 
   const handleChange = (event: any) => {
     const { value } = event.target
@@ -43,15 +44,15 @@ const BillMaker = ({ tableNumber }: Props) => {
         setSaleItemCategory(tmpSaleItemCategory)
         const tmpSaleItem = tmpSaleItemCategory.saleItems.find(saleItem => saleItem.id === tmpSearchProduct.saleItemId)
         if (tmpSaleItem) {
-          setSaleItemId(tmpSaleItem.id)
+          setEditBillItem({saleItemId:tmpSaleItem.id} as BillItem)
         }
       }
     }
   }
 
   const setCategory = (saleItemCategory: SaleItemCategory) => {
+    setEditBillItem({saleItemId:0} as BillItem)
     setSaleItemCategory(saleItemCategory)
-    setSaleItemId(0)
   }
 
   const initializeSearchProducts = (saleItemCategories: SaleItemCategory[]) => {
@@ -70,7 +71,13 @@ const BillMaker = ({ tableNumber }: Props) => {
     setSearchProducts(tmpSearchProducts)
   }
 
-
+  const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
+    const tmpBillItem = editLinkedProduct(saleItemId, itemNumber)
+    if (tmpBillItem)
+    {
+      setEditBillItem(tmpBillItem)
+    }
+  }
 
   useEffect(() => {
     const getSaleItemCategories = async () => {
@@ -102,7 +109,7 @@ const BillMaker = ({ tableNumber }: Props) => {
       <div className="col-8 bill-maker" >
         <div className="col-12 d-flex flex-wrap justify-content-end p-2">
           <div className="col-6">
-            <CustomInputSelect showLabel={false} value={saleItemId}
+            <CustomInputSelect showLabel={false} value={editBillItem?.saleItemId}
               customInputSelect={
                 {
                   label: 'Productos', name: 'id',
@@ -127,11 +134,11 @@ const BillMaker = ({ tableNumber }: Props) => {
         </div>
         {
           saleItemCategory &&
-          <BillMakerItems saleItemId={saleItemId} addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
+          <BillMakerItems editBilItem={editBillItem ? editBillItem : { saleItemId: 0 } as BillItem} addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
         }
       </div>
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
   )

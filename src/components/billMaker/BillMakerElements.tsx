@@ -6,6 +6,7 @@ import { BillItem } from '../../types/billItem'
 import { LinkedProduct } from '../../types/linkedProduct'
 import CustomBtn from '../generics/CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
+import { parseCurrency } from '../../utils/currencyParser'
 
 interface Props {
   modifierGroup: ModifierGroup
@@ -98,7 +99,7 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
               <div className="card shadow" onClick={tmpElement?.quantity === 1 ? () => addElement(tmpElement) : undefined} style={{ border: `${elements.map(x => x.id).includes(tmpElement?.id) ? '1px' : '0px'} solid rgba(255,193,7,.8)` }}>
                 <div className="card-body">
                   <h5 className="card-title">{tmpElement.name}</h5>
-                  <h6 className="card-subtitle mb-2 text-muted">{tmpElement.price}</h6>
+                  <h6 className="card-subtitle mb-2 text-muted">{Number(tmpElement.price) === 0 ? '' : parseCurrency(Number(tmpElement.price).toString())}</h6>
                   {
                     tmpElement?.quantity > 1 &&
                     <div className="col-12 d-flex flex-wrap justify-content-center">
@@ -121,7 +122,7 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
       }
       {
         elements && modifierGroup.maxSelectable === 1 && elements[0]?.combinableModifierGroupId > 0 && elements[0]?.quantity === 1 &&
-        <BillMakerCombinable saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} element={elements[0]} />
+        <BillMakerCombinable productId={billItem.billItemLinkedProducts.find(x => x.id === saleItemProductId)?.linkedProducts.find(y => y.id === 0)?.productId} saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} element={elements[0]} />
       }
 
     </>
