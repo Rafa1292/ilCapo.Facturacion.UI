@@ -53,7 +53,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
             setTmpModifierGroup(response.data)
           }
         })
-        if(productId === 0 || productId === undefined) {
+        if (productId === 0 || productId === undefined) {
           setTmpModifierGroup(response.data)
         }
         setModifierGroup(response.data)
@@ -96,17 +96,24 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
           }
         </div>
       }
-      <div className="col-12 d-flex py-4 flex-wrap justify-content-center">
+      {
+        combine &&
+        <div className="col-12 d-flex flex-wrap pt-3 justify-content-end px-2" style={{ borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)' }}>Elementos para combinar</div>
+      }
+      <div className="col-12 d-flex py-4 flex-wrap justify-content-center align-items-center" style={{ height: '25vh' }}>
 
         {
           tmpModifierGroup && combine &&
           tmpModifierGroup.elements?.map((tmpElement, index) => {
             return (
               <div key={index} className="col-3 p-2 pointer" onClick={() => addElement(tmpElement)}>
-                <div className="card shadow" style={{ border: `${tmpElement?.id === selectedElement?.id ? '1px' : '0px'} solid rgba(255,193,7,.8)` }}>
-                  <div className="card-body">
-                    <h5 className="card-title">{tmpElement.name}</h5>
-                    <h6 className="card-subtitle mb-2 text-muted">{tmpElement.price}</h6>
+                <div className="card shadow combinable_item" style={{ border: `${tmpElement?.id === selectedElement?.id ? '3px' : '0px'} solid rgba(255,193,7,.8)`, height: `${tmpElement?.id === selectedElement?.id ? '14vh' : '12vh'}` }}>
+                  <div className="card-body d-flex flex-wrap align-content-center">
+                    <h5 className="card-title col-12 text-center">{tmpElement.name}</h5>
+                    {
+                      tmpElement.price > 0 &&
+                      <h6 className="card-subtitle col-12 text-center mb-2 ">{parseCurrency(Number(tmpElement.price).toString())}</h6>
+                    }
                   </div>
                 </div>
               </div>

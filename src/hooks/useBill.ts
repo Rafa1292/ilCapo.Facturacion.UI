@@ -5,6 +5,8 @@ import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
+import { useGet } from './useAPI'
+import { Client } from '../types/client'
 
 const initialBillAccounthistory: BillAccountHistory = {
   id: 0,
@@ -16,9 +18,20 @@ const initialBillAccounthistory: BillAccountHistory = {
   updatedBy: 0
 }
 
+const initialClient: Client = {
+  id: 0,
+  name: '',
+  phone: '',
+  addressess: [],
+  delete: false,
+  createdBy: 0,
+  updatedBy: 0
+}
+
 const initialBill: Bill = {
   id: 0,
   addressId: 0,
+  client: initialClient,
   clientId: 0,
   close: false,
   deliveryMethod: 0,
@@ -32,8 +45,8 @@ const initialBill: Bill = {
 }
 
 
-const useBill = (): BillFunctions => {
-  const [bill, setBill] = useState<Bill>(initialBill)
+const useBill = (tableNumber: number): BillFunctions => {
+  const [bill, setBill] = useState<Bill>({...initialBill, tableNumber: tableNumber})
 
   const addBillItem = (billItem: BillItem) => {
     if (bill.billItems.map(item => item.saleItemId).includes(billItem.saleItemId)) {
@@ -116,6 +129,18 @@ const useBill = (): BillFunctions => {
     return undefined
   }
 
+  const getClient = async (phone: string) => {
+    const response = await useGet<Client>(`clients/phone/${phone}`, true)
+    if (!response.error && response.data !== null) {
+      const client = response.data
+      setBill({
+        ...bill,
+        clientId: client.id,
+        client: client
+      })
+    }
+  }
+
   const printBill = () => {
     console.log(bill)
   }
@@ -128,7 +153,8 @@ const useBill = (): BillFunctions => {
     removeAccountHistory,
     printBill,
     removeLinkedProduct,
-    editLinkedProduct
+    editLinkedProduct,
+    getClient
   }
 }
 

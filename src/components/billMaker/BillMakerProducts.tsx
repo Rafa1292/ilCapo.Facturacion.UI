@@ -14,8 +14,8 @@ interface Props {
   billItem: BillItem
   setSaleItem: (saleItem: SaleItem | undefined) => void
   addBillItem: (billItem: BillItem) => void
-  addLinkedProductModifierElement: (modifierElement: ModifierElement) => void
-  removeLinkedProductModifierElement: (modifierElement: ModifierElement) => void
+  addLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
+  removeLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
   setNewBillItem: () => void
   newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
@@ -36,31 +36,25 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
 
   const validateBillItem = (): boolean => {
     let isValid = true
-    const tmpIncompleteProducts: number[] = incompleteProducts
-    const tmpCompleteProducts: number[] = []
+    setValidate(true)
+    const tmpIncompleteProducts: number[] = []
     for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
       for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
         for (const productModifier of linkedProduct.linkedProductModifiers) {
           const elementsQuantity = productModifier.linkedProductModifierElements.length
           if (elementsQuantity < productModifier.minSelectable || elementsQuantity > productModifier.maxSelectable) {
-            if (!incompleteProducts.includes(linkedProduct.productId)) {
-              tmpIncompleteProducts.push(linkedProduct.productId)
-              isValid = false
-            }
-          }
-          else {
-            tmpCompleteProducts.push(linkedProduct.productId)
+            tmpIncompleteProducts.push(billItemLinkedProduct.id)
+            isValid = false
           }
         }
       }
     }
-    const tmpProducts = tmpIncompleteProducts.filter((productId) => !tmpCompleteProducts.includes(productId))
-    setIncompleteProducts(tmpProducts)
-    setValidate(true)
+    setIncompleteProducts(tmpIncompleteProducts)
     return isValid
   }
 
   const addProduct = (product: Product, saleItemProductId: number) => {
+    console.log(saleItemProductId)
     setProduct(product)
     setSaleItemProductId(saleItemProductId)
   }
@@ -74,28 +68,29 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
 
   return (
     <>
-      {
-        saleItem !== undefined &&
-        saleItem.saleItemProducts.map((saleItemProduct, index) => {
-          return (
-            <div key={index} className="col-3 p-2 pointer" onClick={() => addProduct(saleItemProduct.product, saleItemProduct.id)}>
-              <div className="card shadow" style={{ border: `${saleItemProduct.product?.id === product?.id ? '1px' : '0px'} solid rgba(255,193,7,.8)` }}>
-                <div className="card-body">
-                  <h5 className="card-title">{saleItemProduct.product.name}</h5>
-                  <h6 className="card-subtitle mb-2 text-muted">{saleItemProduct.product.description}</h6>
-                  <p className="card-text">{Number(saleItemProduct.product.price) === 0 ? '' :parseCurrency(saleItemProduct.product.price.toString())}</p>
+      <div className='col-12 d-flex justify-content-start align-items-center scroll' style={{ height: '24vh', overflowX: 'scroll' }}>
+        {
+          saleItem !== undefined &&
+          saleItem.saleItemProducts.map((saleItemProduct, index) => {
+            return (
+              <div key={index} className="p-2 pointer" onClick={() => addProduct(saleItemProduct.product, saleItemProduct.id)}>
+                <div className="card product_item" style={{ height: `${saleItemProduct.id === saleItemProductId ? '17vh' : '15vh'}`, color: saleItemProduct.id === saleItemProductId ? 'white' : 'black', boxShadow: `inset 0px 0px ${saleItemProduct.id === saleItemProductId ? '180px -5px' : '25px -15px'} rgba(0,0,0,.76)` }}>
+                  <div className="card-body d-flex flex-wrap justify-content-center align-items-center">
+                    <span className="card-title text-center" >{saleItemProduct.product.name}</span>
+                  </div>
                 </div>
+                {
+                  incompleteProducts.includes(saleItemProduct.id) && validate &&
+                  <div className="col-12 d-flex justify-content-center">
+                    <span className='text-danger'>Producto incompleto</span>
+                  </div>
+                }
               </div>
-              {
-                incompleteProducts.includes(saleItemProduct.product.id) && validate &&
-                <div className="col-12 d-flex justify-content-center">
-                  <span className='text-danger'>Producto incompleto</span>
-                </div>
-              }
-            </div>
-          )
-        })
-      }
+            )
+          })
+        }
+      </div>
+      <div className="col-12 d-flex flex-wrap pt-3 justify-content-end px-2" style={{borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)'}}>Grupos modificadores</div>
       {
         product &&
         <BillMakerModifierGroups saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} billItem={billItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={addLinkedProductModifierElement} product={product} />

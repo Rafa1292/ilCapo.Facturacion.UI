@@ -35,7 +35,8 @@ const CustomInputSelect = ({ defaultLegend, customInputSelect, value, data, show
           <Form.Label className='m-0'>{customInputSelect.label}</Form.Label>
         }
         <InputGroup hasValidation>
-          <DatalistInput            
+          <DatalistInput
+            aria-autocomplete='none'
             value={currentValue}
             placeholder={defaultLegend}
             label={customInputSelect.label}

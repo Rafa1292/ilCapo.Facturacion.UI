@@ -75,7 +75,7 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
                       <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
                         <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billItemLinkedProduct.itemNumber)} />
                       </div>
-                      <div className="col-10 d-flex flex-wrap p-2 ">
+                      <div className="col-7 d-flex flex-wrap p-2 ">
                         {linkedProduct.name}
                         {
                           linkedProduct.linkedProductModifiers.map((linkedProductModifier, index) => {
@@ -108,7 +108,7 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
                           })
                         }
                       </div>
-                      <div className="col-4 p-2">
+                      <div className="col-5 p-2">
                         {
                           billItemLinkedProduct.linkedProducts.length > 1 &&
                           <div className="col-12 d-flex flex-wrap">

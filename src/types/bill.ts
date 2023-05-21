@@ -1,9 +1,11 @@
 import { BillAccountHistory } from './billAccountHistory'
 import { BillItem } from './billItem'
+import { Client } from './client'
 
 export interface Bill {
   id: number
   close: boolean
+  client: Client
   tableNumber: number
   deliveryMethod: number
   clientId: number

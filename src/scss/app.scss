@@ -264,6 +264,40 @@ main {
   border: none;
 }
 
+.scroll::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.scroll::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.scroll::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.scroll::-webkit-scrollbar:horizontal {
+  height: 2px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: none;
+}
+
+.btn-yellow {
+  background-color: rgba(33,37,41, 1);
+  color: white;
+  border: 3px solid rgba(33,37,41, 1);
+}
+.btn-yellow:hover {
+  background-color: rgba(33,37,41, 1);
+  color: rgba(255, 193, 7, 1);
+  border: 3px solid rgba(255, 193, 7, 1);
+}
+
 .break-text{
   white-space: nowrap;
   text-overflow: ellipsis;

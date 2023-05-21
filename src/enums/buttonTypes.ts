@@ -5,4 +5,6 @@ export enum buttonTypes {
   delete,
   arrowDown,
   arrowUp,
+  add,
+  substract
 }

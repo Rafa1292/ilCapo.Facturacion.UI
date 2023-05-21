@@ -6,6 +6,7 @@ export interface BillItemLinkedProduct {
   itemNumber: number
   linkedProducts: LinkedProduct[]
   combined: boolean
+  isCommanded: boolean
   delete: boolean
   createdBy?: number
   updatedBy?: number

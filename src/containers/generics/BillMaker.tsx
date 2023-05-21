@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { useGetList, useGet } from '../../hooks/useAPI'
+import { useGetList, useGet, usePost } from '../../hooks/useAPI'
 import { ProductModifier } from '../../types/productModifier'
 import BillMakerItems from '../../components/billMaker/BillMakerItems'
 import useBill from '../../hooks/useBill'
@@ -28,12 +28,28 @@ const initialSearchProduct: SearchProduct = {
   name: ''
 }
 
+const initialBillItem: BillItem = {
+  id: 0,
+  quantity: 1,
+  billId: 0,
+  saleItemId: 0,
+  billItemLinkedProducts: [],
+  delete: false,
+  description: '',
+  discount: 0,
+  kitchenMessage: false,
+  tax: 0,
+  unitPrice: 0,
+  createdBy: 0,
+  updatedBy: 0
+}
+
 const BillMaker = ({ tableNumber }: Props) => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
-  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct } = useBill()
+  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient } = useBill(tableNumber)
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
-  const [editBillItem, setEditBillItem] = useState<BillItem>({saleItemId:0} as BillItem)
+  const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
 
   const handleChange = (event: any) => {
     const { value } = event.target
@@ -44,14 +60,14 @@ const BillMaker = ({ tableNumber }: Props) => {
         setSaleItemCategory(tmpSaleItemCategory)
         const tmpSaleItem = tmpSaleItemCategory.saleItems.find(saleItem => saleItem.id === tmpSearchProduct.saleItemId)
         if (tmpSaleItem) {
-          setEditBillItem({saleItemId:tmpSaleItem.id} as BillItem)
+          setEditBillItem({ ...initialBillItem, saleItemId: tmpSaleItem.id })
         }
       }
     }
   }
 
   const setCategory = (saleItemCategory: SaleItemCategory) => {
-    setEditBillItem({saleItemId:0} as BillItem)
+    setEditBillItem({ saleItemId: 0 } as BillItem)
     setSaleItemCategory(saleItemCategory)
   }
 
@@ -73,10 +89,17 @@ const BillMaker = ({ tableNumber }: Props) => {
 
   const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
     const tmpBillItem = editLinkedProduct(saleItemId, itemNumber)
-    if (tmpBillItem)
-    {
+    if (tmpBillItem) {
       setEditBillItem(tmpBillItem)
     }
+  }
+
+  const commandBill = async () => {
+    console.log(bill)
+    // const response = await usePost('bills', bill, true)
+    // if (!response.error) {
+    //   console.log('saveBill')
+    // }
   }
 
   useEffect(() => {
@@ -105,7 +128,7 @@ const BillMaker = ({ tableNumber }: Props) => {
 
   return (
     <div className='col-12 d-flex flex-wrap'>
-      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '30vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
+      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
       <div className="col-8 bill-maker" >
         <div className="col-12 d-flex flex-wrap justify-content-end p-2">
           <div className="col-6">
@@ -138,7 +161,7 @@ const BillMaker = ({ tableNumber }: Props) => {
         }
       </div>
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
   )
