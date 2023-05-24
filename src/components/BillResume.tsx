@@ -33,30 +33,36 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
 
   const getBillTax = () => {
     let billTax = 0
-    for (const billItem of bill.billItems) {
+    for (const billItem of bill.items) {
       billTax += billItem.tax
     }
     return billTax
   }
 
   const getBillItemModifiersPrice = (billItem: BillItem): number => {
-    let price = 0
-    for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
-      for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
-        price += Number(linkedProduct.unitPrice)
-        for (const iterator of linkedProduct.linkedProductModifiers) {
-          for (const linkedProductModifierElement of iterator.linkedProductModifierElements) {
-            price += Number(linkedProductModifierElement.price)
+    try {
+      let price = 0
+      for (const billProduct of billItem.billProducts) {
+        for (const product of billProduct.products) {
+          price += Number(product.unitPrice)
+          for (const modifier of product.modifiers) {
+            if (typeof modifier.elements === 'undefined') continue
+            for (const element of modifier.elements) {
+              price += Number(element.price)
+            }
           }
         }
       }
+      return price
+    } catch (error) {
+      return 0
     }
-    return price
+
   }
 
   const getBillSubtotal = () => {
     let billSubtotal = 0
-    for (const billItem of bill.billItems) {
+    for (const billItem of bill.items) {
       billSubtotal += Number(billItem.unitPrice) * Number(billItem.quantity) + getBillItemModifiersPrice(billItem)
     }
     return billSubtotal
@@ -85,7 +91,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
 
   const getBillDiscount = () => {
     let billDiscount = 0
-    for (const billItem of bill.billItems) {
+    for (const billItem of bill.items) {
       billDiscount += Number(billItem.discount)
     }
     return billDiscount
@@ -93,17 +99,17 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
 
   const getBillTotal = () => {
     let billTotal = 0
-    for (const billItem of bill.billItems) {
+    for (const billItem of bill.items) {
       billTotal += Number(billItem.unitPrice) * Number(billItem.quantity) + getBillItemModifiersPrice(billItem) + Number(billItem.tax) - Number(billItem.discount)
     }
     return billTotal
   }
 
   const saveNewAddress = async () => {
-    const response = await usePost<Address>('addresses', { id: 0, delete: false, description: newAddress, clientId: bill.client.id, createdBy: 1, updatedBy: 1 }, true)
+    const response = await usePost<Address>('addresses', { id: 0, delete: false, description: newAddress, clientId: bill.client?.id, createdBy: 1, updatedBy: 1 }, true)
     if (!response.error) {
       bill.client.addressess.push(response.data)
-      setAddressId(response.data.id)
+      setAddressId(response.data?.id)
       setNewAddressState(false)
       setNewAddress('')
     }
@@ -117,6 +123,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
   }
 
   useEffect(() => {
+    console.log(bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
@@ -149,7 +156,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
             } />
           </div>
           {
-            newAddressState && phone.length > 0 && bill.client.id > 0 &&
+            newAddressState && phone.length > 0 && bill.client?.id > 0 &&
             <>
               <div className="col-4 d-flex flex-wrap p-1">
                 <CustomInputText value={newAddress}
@@ -170,7 +177,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
             </>
           }
           {
-            !newAddressState && phone.length > 0 && bill.client.id > 0 &&
+            !newAddressState && phone.length > 0 && bill.client?.id > 0 &&
             <>
               <div className="col-4 d-flex flex-wrap p-1">
                 <CustomInputSelect showLabel={false} value={addressId}
@@ -179,7 +186,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
                       label: '', name: 'addressId',
                       handleChange: handleChangeAddress, pattern: '', validationMessage: 'Seleccione una direccion'
                     }}
-                  data={bill.client?.addressess?.length > 0 ? bill.client.addressess.map(address => { return { value: address.id, label: address.description } }) : []}
+                  data={bill.client?.addressess?.length > 0 ? bill.client.addressess.map(address => { return { value: address?.id, label: address.description } }) : []}
                   defaultLegend={'Direccion'}
                 />
               </div>
@@ -189,7 +196,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
             </>
           }
           {
-            bill.client.id === 0 && name.length > 0 && phone.length > 0 &&
+            bill.client?.id === 0 && name.length > 0 && phone.length > 0 &&
             <div className="col-1 d-flex align-content-center justify-content-center" style={{ height: '30px' }}>
               <CustomBtn buttonType={buttonTypes.success} action={() => saveNewClient()} height='30px' />
             </div>
@@ -205,7 +212,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
         </div>
         <div className="col-12 d-flex flex-wrap p-0 bill-resume_content">
           {
-            bill.billItems.map((billItem, index) => {
+            bill.items.map((billItem, index) => {
               return (
                 <BillResumeItem handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
               )

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { useGetList, useGet, usePost } from '../../hooks/useAPI'
@@ -9,6 +9,8 @@ import BillResume from '../../components/BillResume'
 import CustomInputSelect from '../../components/generics/CustomInputSelect'
 import { BillItemLinkedProduct } from '../../types/billItemLinkedProduct'
 import { BillItem } from '../../types/billItem'
+import Swal from 'sweetalert2'
+import AppContext from '../../context/AppContext'
 
 interface Props {
   tableNumber: number
@@ -33,7 +35,7 @@ const initialBillItem: BillItem = {
   quantity: 1,
   billId: 0,
   saleItemId: 0,
-  billItemLinkedProducts: [],
+  billProducts: [],
   delete: false,
   description: '',
   discount: 0,
@@ -47,10 +49,12 @@ const initialBillItem: BillItem = {
 const BillMaker = ({ tableNumber }: Props) => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
-  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient } = useBill(tableNumber)
+  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill } = useBill(tableNumber)
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
-
+  const { user } = useContext(AppContext)
+  const [loading , setLoading] = useState(true)
+  
   const handleChange = (event: any) => {
     const { value } = event.target
     const tmpSearchProduct = searchProducts.find(searchProduct => searchProduct.saleItemId === value)
@@ -95,11 +99,41 @@ const BillMaker = ({ tableNumber }: Props) => {
   }
 
   const commandBill = async () => {
+    bill.workDayUserId = user.workDayUser.id
     console.log(bill)
+    if (validateBill()) {
+      const response = await usePost('bills', bill, true)
+      if (!response.error) {
+        console.log('commandBill')
+      }
+    }
     // const response = await usePost('bills', bill, true)
     // if (!response.error) {
     //   console.log('saveBill')
     // }
+  }
+
+  const validateBill = ():boolean => {
+    let valid = false
+    for (const billItem of bill.items) {
+      for (const billItemLinkedProduct of billItem.billProducts) {
+        for (const linkedProduct of billItemLinkedProduct.products) {
+          if (!linkedProduct.isCommanded)
+            valid = true
+        }
+      }
+    }
+
+    if (!valid) {
+      Swal.fire('Error', 'No hay productos nuevos para comandar', 'error')
+    } else {
+      if (bill.clientId === 0) {
+        valid = false
+        Swal.fire('Error', 'Debe asignar un cliente', 'error')
+      }
+    }
+    
+    return valid
   }
 
   useEffect(() => {
@@ -123,10 +157,13 @@ const BillMaker = ({ tableNumber }: Props) => {
       }
     }
     getSaleItemCategories()
+    getBill()
+    setLoading(false) 
   }, [saleItemCategory])
 
 
   return (
+    !loading &&
     <div className='col-12 d-flex flex-wrap'>
       <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
       <div className="col-8 bill-maker" >
@@ -164,6 +201,8 @@ const BillMaker = ({ tableNumber }: Props) => {
         <BillResume getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
+    ||
+    <></>
   )
 }
 

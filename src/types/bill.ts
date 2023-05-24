@@ -11,7 +11,7 @@ export interface Bill {
   clientId: number
   addressId: number
   workDayUserId: number
-  billItems: BillItem[]
+  items: BillItem[]
   billAccountHistories: BillAccountHistory[]
   delete: boolean
   createdBy?: number

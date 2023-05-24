@@ -14,9 +14,10 @@ interface Props {
 
 const initialLinkedProduct: LinkedProduct = {
   id: 0,
-  billItemLinkedProductId: 0,
+  billProductId: 0,
   delete: false,
-  linkedProductModifiers: [],
+  modifiers: [],
+  isCommanded: false,
   name: '',
   productId: 0,
   unitPrice: 0,

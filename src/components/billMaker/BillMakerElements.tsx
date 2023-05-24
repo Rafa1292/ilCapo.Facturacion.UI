@@ -39,13 +39,13 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
   }
 
   const setInitialElements = () => {
-    for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
+    for (const billItemLinkedProduct of billItem.billProducts) {
       if (billItemLinkedProduct.id === saleItemProductId) {
-        for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
-          for (const productModifier of linkedProduct.linkedProductModifiers) {
+        for (const linkedProduct of billItemLinkedProduct.products) {
+          for (const productModifier of linkedProduct.modifiers) {
             if (productModifier.modifierGroupId === modifierGroup.id) {
               const tmpElements: ModifierElement[] = []
-              for (const linkedProductModifierElement of productModifier.linkedProductModifierElements) {
+              for (const linkedProductModifierElement of productModifier.elements) {
                 const tmpElement = modifierGroup.elements?.find(x => x.id === linkedProductModifierElement.modifierElementId)
                 if (tmpElement) {
                   tmpElements.push({ ...tmpElement, selectedQuantity: linkedProductModifierElement.quantity })
@@ -133,7 +133,7 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
 
       {
         elements && modifierGroup.maxSelectable === 1 && elements[0]?.combinableModifierGroupId > 0 && elements[0]?.quantity === 1 &&
-        <BillMakerCombinable productId={billItem.billItemLinkedProducts.find(x => x.id === saleItemProductId)?.linkedProducts.find(y => y.id === 0)?.productId} saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} element={elements[0]} />
+        <BillMakerCombinable productId={billItem.billProducts.find(x => x.id === saleItemProductId)?.products.find(y => y.id === 0)?.productId} saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} element={elements[0]} />
       }
 
     </>

@@ -5,8 +5,9 @@ export interface LinkedProduct {
   productId: number
   unitPrice: number
   name: string
-  billItemLinkedProductId: number
-  linkedProductModifiers: LinkedProductModifier[]
+  isCommanded: boolean
+  billProductId: number
+  modifiers: LinkedProductModifier[]
   delete: boolean
   createdBy?: number
   updatedBy?: number

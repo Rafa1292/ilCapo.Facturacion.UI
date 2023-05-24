@@ -38,10 +38,10 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
     let isValid = true
     setValidate(true)
     const tmpIncompleteProducts: number[] = []
-    for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
-      for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
-        for (const productModifier of linkedProduct.linkedProductModifiers) {
-          const elementsQuantity = productModifier.linkedProductModifierElements.length
+    for (const billItemLinkedProduct of billItem.billProducts) {
+      for (const linkedProduct of billItemLinkedProduct.products) {
+        for (const productModifier of linkedProduct.modifiers) {
+          const elementsQuantity = productModifier.elements.length
           if (elementsQuantity < productModifier.minSelectable || elementsQuantity > productModifier.maxSelectable) {
             tmpIncompleteProducts.push(billItemLinkedProduct.id)
             isValid = false

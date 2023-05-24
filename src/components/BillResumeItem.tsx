@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BillItem } from '../types/billItem'
 import { parseCurrency } from '../utils/currencyParser'
 import CustomBtn from './generics/CustomBtn'
@@ -8,7 +8,7 @@ import '../scss/billResume.scss'
 interface Props {
   billItem: BillItem
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
-  handleEditLinkedProduct (saleItemId: number, itemNumber: number): void
+  handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
 }
 
 const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct }: Props) => {
@@ -19,7 +19,7 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
   }
 
   const getDottedLine = (name: string): string => {
-    const nameLength = name.length
+    const nameLength = name?.length
     let dottedLine = ''
     for (let index = 0; index < (30 - nameLength); index++) {
       dottedLine += '...'
@@ -28,19 +28,26 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
   }
 
   const getBillItemModifiersPrice = (billItem: BillItem): number => {
-    let price = 0
-    for (const billItemLinkedProduct of billItem.billItemLinkedProducts) {
-      for (const linkedProduct of billItemLinkedProduct.linkedProducts) {
-        price += Number(linkedProduct.unitPrice)
-        for (const iterator of linkedProduct.linkedProductModifiers) {
-          for (const linkedProductModifierElement of iterator.linkedProductModifierElements) {
-            price += Number(linkedProductModifierElement.price * linkedProductModifierElement.quantity)
+    try {
+      let price = 0
+      for (const billItemLinkedProduct of billItem.billProducts) {
+        for (const linkedProduct of billItemLinkedProduct.products) {
+          price += Number(linkedProduct.unitPrice)
+          for (const modifier of linkedProduct.modifiers) {
+            for (const linkedProductModifierElement of modifier.elements) {
+              price += Number(linkedProductModifierElement.price) * linkedProductModifierElement.quantity
+            }
           }
         }
       }
+      return price
+
+    } catch (error) {
+      return 0
     }
-    return price
   }
+
+
 
   return (
     <div className="col-12 d-flex flex-wrap p-0" style={{ height: 'fit-content', borderBottom: '2px solid rgba(33,37,41,.8)' }}>
@@ -56,48 +63,48 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
         </div>
       </div>
       {
-        billItem.billItemLinkedProducts.map((billItemLinkedProduct, index) => {
+        billItem?.billProducts?.map((billProduct, index) => {
           return (
             <div key={index} className="col-12 d-flex flex-wrap bill-item_content p-0" style={
               {
-                borderBottom: billItem.billItemLinkedProducts.length === (index + 1) ? '' : show ? '1px solid rgba(0,0,0,.2)' : 'none',
+                borderBottom: billItem.billProducts.length === (index + 1) ? '' : show ? '1px solid rgba(0,0,0,.2)' : 'none',
                 maxHeight: show ? '1000px' : '0px'
               }
             }>
               {
-                billItemLinkedProduct.linkedProducts.map((linkedProduct, index) => {
+                billProduct?.products?.map((product, index) => {
                   return (
                     index < 1 &&
                     <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
                       <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billItemLinkedProduct.itemNumber, billItemLinkedProduct.id)} />
+                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billProduct.id)} />
                       </div>
                       <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billItemLinkedProduct.itemNumber)} />
+                        <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billProduct.itemNumber)} />
                       </div>
                       <div className="col-7 d-flex flex-wrap p-2 ">
-                        {linkedProduct.name}
+                        {product.name}
                         {
-                          linkedProduct.linkedProductModifiers.map((linkedProductModifier, index) => {
+                          product?.modifiers?.map((modifier, index) => {
                             return (
                               <div key={index} className="col-12 d-flex flex-wrap" style={{ paddingLeft: '10px' }}>
                                 <strong>
-                                  {linkedProductModifier.linkedProductModifierElements.length > 0 ? `-${linkedProductModifier.name}` : ''}
+                                  {modifier.elements.length > 0 ? `-${modifier.name}` : ''}
                                 </strong>
                                 {
-                                  linkedProductModifier.linkedProductModifierElements.map((linkedProductModifierElement, index) => {
+                                  modifier.elements?.map((element, index) => {
                                     return (
                                       <div key={index} className="col-12 d-flex flex-wrap" style={{ paddingLeft: '15px' }}>
                                         <div className="col-6 text-start px-2 break-text">
                                           -
                                           <strong className='mx-2'>
-                                            {linkedProductModifierElement.quantity}
+                                            {element.quantity}
                                           </strong>
-                                          {linkedProductModifierElement.name}
-                                          {getDottedLine(linkedProductModifierElement.name)}
+                                          {element.name}
+                                          {getDottedLine(element.name)}
                                         </div>
                                         <strong className='col-6 text-start'>
-                                          {parseCurrency(Number(linkedProductModifierElement.price * linkedProductModifierElement.quantity).toString())}
+                                          {parseCurrency(Number(element.price * element.quantity).toString())}
                                         </strong>
                                       </div>
                                     )
@@ -110,15 +117,15 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
                       </div>
                       <div className="col-5 p-2">
                         {
-                          billItemLinkedProduct.linkedProducts.length > 1 &&
+                          billProduct.products.length > 1 &&
                           <div className="col-12 d-flex flex-wrap">
                             <span className='col-12 text-start'>
                               Combinar con:
                             </span>
                             <strong className='col-12 text-start'>
-                              {billItemLinkedProduct.linkedProducts[1]?.name}
+                              {billProduct.products[1]?.name}
                               <span className='px-2'>
-                                {parseCurrency(billItemLinkedProduct.linkedProducts[1]?.unitPrice.toString())}
+                                {parseCurrency(billProduct.products[1]?.unitPrice.toString())}
                               </span>
                             </strong>
                           </div>

@@ -10,7 +10,7 @@ export interface BillItem {
   billId: number
   saleItemId: number
   kitchenMessage: boolean
-  billItemLinkedProducts: BillItemLinkedProduct[]
+  billProducts: BillItemLinkedProduct[]
   delete: boolean
   createdBy?: number
   updatedBy?: number
