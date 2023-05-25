@@ -53,7 +53,7 @@ const BillMaker = ({ billFunctions }: Props) => {
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user } = useContext(AppContext)
-  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill } = billFunctions
+  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct } = billFunctions
 
   const handleChange = (event: any) => {
     const { value } = event.target
@@ -216,7 +216,7 @@ const BillMaker = ({ billFunctions }: Props) => {
         }
       </div>
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||

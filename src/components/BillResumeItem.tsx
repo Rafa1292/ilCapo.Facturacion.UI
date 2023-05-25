@@ -9,9 +9,10 @@ interface Props {
   billItem: BillItem
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
+  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
 }
 
-const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
 
   const getBillItemTotal = (billItem: BillItem): number => {
@@ -119,7 +120,10 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
                         {
                           billProduct.products.length > 1 &&
                           <div className="col-12 d-flex flex-wrap">
-                            <span className='col-12 text-start'>
+                            <span className='col-12 text-start flex-wrap d-flex position-relative'>
+                              <div style={{ position: 'absolute', left: '-20px' }}>
+                                <CustomBtn buttonType={buttonTypes.cancel} action={() => removeCombinedLinkedProduct(billProduct.saleItemProductId, billProduct.products[1]?.productId, billItem.saleItemId)} height='20px' />
+                              </div>
                               Combinar con:
                             </span>
                             <strong className='col-12 text-start'>

@@ -13,4 +13,5 @@ export interface BillFunctions {
   editLinkedProduct: (saleItemId: number, itemNumber: number ) => BillItem | undefined
   getClient: (phone: string) => void
   getBill: () => void
+  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
 }

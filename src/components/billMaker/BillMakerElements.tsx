@@ -21,6 +21,7 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
   const [elements, setElements] = useState<ModifierElement[]>([])
 
   const addElement = (currentElement: ModifierElement) => {
+    console.log(currentElement)
     const maxSelectable = modifierGroup.maxSelectable
     if (elements.map(x => x.id).includes(currentElement.id)) {
       setElements(elements.filter(x => x.id !== currentElement.id))
@@ -39,9 +40,9 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
   }
 
   const setInitialElements = () => {
-    for (const billItemLinkedProduct of billItem.billProducts) {
-      if (billItemLinkedProduct.id === saleItemProductId) {
-        for (const linkedProduct of billItemLinkedProduct.products) {
+    for (const billProduct of billItem.billProducts) {
+      if (billProduct.saleItemProductId === saleItemProductId) {
+        for (const linkedProduct of billProduct.products) {
           for (const productModifier of linkedProduct.modifiers) {
             if (productModifier.modifierGroupId === modifierGroup.id) {
               const tmpElements: ModifierElement[] = []
@@ -68,6 +69,7 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
   const upQuantity = (element: ModifierElement) => {
     const currentQuantity = getElementQuantity(element.id)
     if (element.quantity > currentQuantity) {
+      console.log('upQuantity')
       addLinkedProductModifierElement(element, saleItemProductId)
       setInitialElements()
     }

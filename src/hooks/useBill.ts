@@ -111,6 +111,23 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
+  const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number) => {
+    const billItem = bill.items.find(item => item.saleItemId === saleItemId)
+    console.log(billItem)
+    if (!billItem) return
+    for (const billItemLinkedProduct of billItem.billProducts) {
+      if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
+        console.log('productId', productId)
+        billItemLinkedProduct.products = billItemLinkedProduct.products.filter((x) => x.productId !== productId)
+        billItemLinkedProduct.products = billItemLinkedProduct.products.map(x => { return { ...x, isCommanded: false } as LinkedProduct })
+      }
+    }
+    setBill({
+      ...bill,
+      items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
+    })
+  }
+
   const editLinkedProduct = (saleItemId: number, itemNumber: number): BillItem | undefined => {
     for (const billItem of bill.items) {
       if (billItem.saleItemId === saleItemId) {
@@ -195,7 +212,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     removeLinkedProduct,
     editLinkedProduct,
     getClient,
-    getBill
+    getBill,
+    removeCombinedLinkedProduct
   }
 }
 

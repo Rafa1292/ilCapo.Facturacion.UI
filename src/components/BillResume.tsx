@@ -21,9 +21,10 @@ interface Props {
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
   getClient(phone: string): void
+  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
 }
 
-const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient }: Props) => {
+const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -213,7 +214,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
           {
             bill.items.map((billItem, index) => {
               return (
-                <BillResumeItem handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
+                <BillResumeItem removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
               )
             })
           }

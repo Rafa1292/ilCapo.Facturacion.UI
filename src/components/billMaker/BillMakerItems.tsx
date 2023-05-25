@@ -39,6 +39,7 @@ const initialBillItemLinkedProduct: BillItemLinkedProduct = {
   billItemId: 0,
   delete: false,
   itemNumber: 0,
+  saleItemProductId: 0,
   combined: false,
   products: [],
   createdBy: 0,
@@ -91,7 +92,8 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
     saleItem.saleItemProducts.map((saleItemProduct, index) => {
       const billItemLinkedProduct = {
         ...initialBillItemLinkedProduct,
-        id: saleItemProduct.id,
+        id: 0,
+        saleItemProductId: saleItemProduct.id,
         itemNumber: 1,
         products: [newLinkedProduct(saleItemProduct)]
       }
@@ -134,7 +136,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
     return linkedProductModifiers
   }
 
-  const newLinkedProductModifierElement = (modifierElement: ModifierElement, billItemLinkedProductId: number) => {
+  const newLinkedProductModifierElement = (modifierElement: ModifierElement, saleItemProductId: number) => {
     const newLinkedProductModifierElement: LinkedProductModifierElement = {
       ...initialLinkedProductModifierElement,
       modifierElementId: modifierElement.id,
@@ -143,7 +145,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
       quantity: 1
     }
     for (const billItemLinkedProduct of billItem.billProducts) {
-      if (billItemLinkedProduct.id === billItemLinkedProductId) {
+      if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
         for (const linkedProduct of billItemLinkedProduct.products) {
           for (const productModifier of linkedProduct.modifiers) {
             if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
@@ -160,9 +162,9 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
     }
   }
 
-  const newCombinedLinkedProduct = (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => {
+  const newCombinedLinkedProduct = (linkedProduct: LinkedProduct, saleItemProductId: number) => {
     for (const billItemLinkedProduct of billItem.billProducts) {
-      if (billItemLinkedProduct.id === billItemLinkedProductId) {
+      if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
         const tmpLinkedProducts = billItemLinkedProduct.products.filter((linkedProduct) => linkedProduct.id !== 0)
         tmpLinkedProducts.push(linkedProduct)
         billItemLinkedProduct.products = tmpLinkedProducts
@@ -170,9 +172,9 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
     }
   }
 
-  const removeLinkedProductModifierElement = (modifierElement: ModifierElement, billItemLinkedProductId: number) => {
+  const removeLinkedProductModifierElement = (modifierElement: ModifierElement, saleItemProductId: number) => {
     for (const billItemLinkedProduct of billItem.billProducts) {
-      if (billItemLinkedProduct.id === billItemLinkedProductId) {
+      if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
         for (const linkedProduct of billItemLinkedProduct.products) {
           for (const productModifier of linkedProduct.modifiers) {
             if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
