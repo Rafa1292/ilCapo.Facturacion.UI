@@ -54,7 +54,6 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
   }
 
   const addProduct = (product: Product, saleItemProductId: number) => {
-    console.log(saleItemProductId)
     setProduct(product)
     setSaleItemProductId(saleItemProductId)
   }

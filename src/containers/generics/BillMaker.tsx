@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { useGetList, useGet, usePost } from '../../hooks/useAPI'
+import { useGetList, useGet, usePost, usePatch } from '../../hooks/useAPI'
 import { ProductModifier } from '../../types/productModifier'
 import BillMakerItems from '../../components/billMaker/BillMakerItems'
 import useBill from '../../hooks/useBill'
@@ -11,9 +11,10 @@ import { BillItemLinkedProduct } from '../../types/billItemLinkedProduct'
 import { BillItem } from '../../types/billItem'
 import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
+import { BillFunctions } from '../../types/billFunctions'
 
 interface Props {
-  tableNumber: number
+  billFunctions: BillFunctions
 }
 
 interface SearchProduct {
@@ -46,15 +47,14 @@ const initialBillItem: BillItem = {
   updatedBy: 0
 }
 
-const BillMaker = ({ tableNumber }: Props) => {
+const BillMaker = ({ billFunctions }: Props) => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
-  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill } = useBill(tableNumber)
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user } = useContext(AppContext)
-  const [loading , setLoading] = useState(true)
-  
+  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill } = billFunctions
+
   const handleChange = (event: any) => {
     const { value } = event.target
     const tmpSearchProduct = searchProducts.find(searchProduct => searchProduct.saleItemId === value)
@@ -94,26 +94,46 @@ const BillMaker = ({ tableNumber }: Props) => {
   const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
     const tmpBillItem = editLinkedProduct(saleItemId, itemNumber)
     if (tmpBillItem) {
+      for (const category of saleItemCategories) {
+        const tmpSaleItem = category.saleItems.find(saleItem => saleItem.id === tmpBillItem.saleItemId)
+        if (tmpSaleItem) {
+          setSaleItemCategory(category)
+          break
+        }
+      }
       setEditBillItem(tmpBillItem)
     }
   }
 
   const commandBill = async () => {
     bill.workDayUserId = user.workDayUser.id
-    console.log(bill)
     if (validateBill()) {
-      const response = await usePost('bills', bill, true)
-      if (!response.error) {
-        console.log('commandBill')
+      if (bill.id === 0) {
+        await newBill()
+      }
+      else {
+        await updateBill()
       }
     }
-    // const response = await usePost('bills', bill, true)
-    // if (!response.error) {
-    //   console.log('saveBill')
-    // }
   }
 
-  const validateBill = ():boolean => {
+  const newBill = async () => {
+    const response = await usePost('bills', bill, true)
+    if (!response.error) {
+      console.log('commandBill')
+    }
+  }
+
+  const updateBill = async () => {
+    console.log(bill)
+    const response = await usePatch('bills', bill, true)
+    if (!response.error) {
+      console.log('updateBill')
+    }
+  }
+
+
+  const validateBill = (): boolean => {
     let valid = false
     for (const billItem of bill.items) {
       for (const billItemLinkedProduct of billItem.billProducts) {
@@ -132,7 +152,7 @@ const BillMaker = ({ tableNumber }: Props) => {
         Swal.fire('Error', 'Debe asignar un cliente', 'error')
       }
     }
-    
+
     return valid
   }
 
@@ -158,12 +178,10 @@ const BillMaker = ({ tableNumber }: Props) => {
     }
     getSaleItemCategories()
     getBill()
-    setLoading(false) 
-  }, [saleItemCategory])
+  }, [])
 
 
   return (
-    !loading &&
     <div className='col-12 d-flex flex-wrap'>
       <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
       <div className="col-8 bill-maker" >

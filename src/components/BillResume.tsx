@@ -123,7 +123,6 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
   }
 
   useEffect(() => {
-    console.log(bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)

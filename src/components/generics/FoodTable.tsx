@@ -4,6 +4,7 @@ import BillMaker from '../../containers/generics/BillMaker'
 import '../../scss/foodTable.scss'
 import CustomBtn from './CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
+import useBill from '../../hooks/useBill'
 interface Props {
   top: number
   left: number
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const FoodTable = ({ top, left, tableNumber }: Props) => {
+  const billFunctions = useBill(tableNumber)
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainer${tableNumber}`)
@@ -28,7 +30,7 @@ const FoodTable = ({ top, left, tableNumber }: Props) => {
         <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '30vw', top: '1vw', background: 'white', borderRadius: '50px'}}>
           <CustomBtn height='40px' buttonType={buttonTypes.cancel}/>
         </span>
-        <BillMaker tableNumber={tableNumber}/>
+        <BillMaker billFunctions={billFunctions} />
       </div>
       <div className="table_container d-flex flex-wrap p-2" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
         <strong># {tableNumber}</strong>

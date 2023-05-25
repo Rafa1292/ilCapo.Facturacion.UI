@@ -114,18 +114,25 @@ const useBill = (tableNumber: number): BillFunctions => {
   const editLinkedProduct = (saleItemId: number, itemNumber: number): BillItem | undefined => {
     for (const billItem of bill.items) {
       if (billItem.saleItemId === saleItemId) {
-        const tmpBillItemLinkedProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber === itemNumber)
+        const tmpBillProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber === itemNumber)
+
+        for (const billProduct of tmpBillProducts) {
+          for (const product of billProduct.products) {
+            product.isCommanded = false
+          }
+        }
+
         billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber - 1 : x.itemNumber } as BillItemLinkedProduct })
         if (billItem.billProducts.length === 0) {
           removeBillItem(billItem)
         }
-        else {
+        else {      
           setBill({
             ...bill,
             items: bill.items.map(item => item.saleItemId === saleItemId ? { ...billItem, quantity: billItem.quantity - 1 } : item)
           })
         }
-        return { ...billItem, billProducts: tmpBillItemLinkedProducts }
+        return { ...billItem, billProducts: tmpBillProducts }
       }
     }
     return undefined
@@ -144,10 +151,10 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const getBill = async () => {
+    console.log('cargando factura...')
     const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
     if (!response.error && response.data !== null) {
       const bill = response.data
-      console.log(bill)
       for (const billItem of bill.items) {
         for (const billItemLinkedProduct of billItem.billProducts) {
           const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
