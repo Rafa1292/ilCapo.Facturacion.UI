@@ -12,6 +12,7 @@ export interface Bill {
   addressId: number
   workDayUserId: number
   items: BillItem[]
+  isCommanded: boolean
   billAccountHistories: BillAccountHistory[]
   delete: boolean
   createdBy?: number

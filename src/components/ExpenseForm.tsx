@@ -193,7 +193,7 @@ const ExpenseForm = () => {
         {
           !expense.pendingPay &&
           <div className="col-6 d-flex flex-wrap align-items-center">
-            <AccountHistoryForm isPay={true} handleAccountHistory={handleAccountHistory} />
+            <AccountHistoryForm defaultAmount={expense.amount} isPay={true} handleAccountHistory={handleAccountHistory} />
           </div>
         }
       </CustomModal>

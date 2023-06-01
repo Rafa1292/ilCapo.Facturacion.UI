@@ -14,4 +14,6 @@ export interface BillFunctions {
   getClient: (phone: string) => void
   getBill: () => void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
+  fastPayAction: (accountHistory: AccountHistory) => void
+  closeBill: () => void
 }

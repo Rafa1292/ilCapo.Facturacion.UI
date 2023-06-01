@@ -7,9 +7,10 @@ interface Props {
   value: number | string
   showLabel?: boolean
   isRequired?: boolean
+  setDefaultValue?: () => void
 }
 
-const CustomInputNumber = ({ customInputNumber, value, showLabel = true, isRequired = true }: Props) => {
+const CustomInputNumber = ({ customInputNumber, value, showLabel = true, isRequired = true, setDefaultValue }: Props) => {
   return (
     <>
       <Form.Group className='my-2' as={Col} md="12">
@@ -20,6 +21,7 @@ const CustomInputNumber = ({ customInputNumber, value, showLabel = true, isRequi
         <InputGroup hasValidation>
           <Form.Control
             type="string"
+            onDoubleClick={setDefaultValue}
             placeholder={customInputNumber.label}
             name={customInputNumber.name}
             value={value === 0 ? '' : value}

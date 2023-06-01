@@ -4,6 +4,7 @@ import { PayMethod } from '../types/payMethod'
 import CustomInputNumber from './generics/CustomInputNumber'
 import CustomInputSelect from './generics/CustomInputSelect'
 import { useGetList } from '../hooks/useAPI'
+import { parseCurrency } from '../utils/currencyParser'
 
 const initialAccountHistory: AccountHistory = {
   amount: 0,
@@ -22,11 +23,14 @@ interface Props {
   selectedPayMethodsId?: number[]
   handleAccountHistory: (accountHistory: AccountHistory) => boolean
   isPay: boolean
+  defaultAmount: number
+  fastPayAction?: (accountHistory: AccountHistory) => void
 }
 
-const AccountHistoryForm = ({ handleAccountHistory, isPay, selectedPayMethodsId }: Props) => {
+const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, selectedPayMethodsId, defaultAmount }: Props) => {
   const [accountHistory, setAccountHistory] = useState<AccountHistory>(initialAccountHistory)
   const [payMethods, setPayMethods] = useState<PayMethod[]>([])
+  const [payWith, setPayWith] = useState<number>(0)
 
   const handleChange = (event: any) => {
     const { name, value } = event.target
@@ -42,9 +46,27 @@ const AccountHistoryForm = ({ handleAccountHistory, isPay, selectedPayMethodsId 
   }
 
   const action = () => {
-    const saved = handleAccountHistory({...accountHistory, pay: isPay})
+    const saved = handleAccountHistory({ ...accountHistory, pay: isPay })
     if (saved)
       setAccountHistory(initialAccountHistory)
+  }
+
+  const handleChangeDiference = (event: any) => {
+    setPayWith(event.target.value)
+  }
+
+  const getFastPayAccountHistory = (): AccountHistory => {
+    const payMethod = payMethods.find(paymethod => paymethod.name.toLowerCase() === 'efectivo')
+    if (payMethod) {
+      return {
+        ...initialAccountHistory,
+        payMethodId: payMethod.id,
+        payMethod,
+        amount: defaultAmount,
+        pay: isPay
+      }
+    }
+    return initialAccountHistory
   }
 
   useEffect(() => {
@@ -58,31 +80,57 @@ const AccountHistoryForm = ({ handleAccountHistory, isPay, selectedPayMethodsId 
   }, [])
 
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center p-3 pb-5 rounded border' style={{ height: 'fit-content' }}>
-      <h4 className='col-12'>Formas de pago</h4>
-      <div className="col-12 d-flex flex-wrap justify-content-center ">
-        <CustomInputNumber isRequired={false} showLabel={false} value={accountHistory.amount} customInputNumber={
-          {
-            label: 'Monto', name: 'amount',
-            handleChange: handleChange, pattern: '', validationMessage: 'Ingrese un monto válido'
-          }
-        } />
-      </div>
-      <div className="col-12 d-flex flex-wrap justify-content-center ">
-        <CustomInputSelect showLabel={false} value={accountHistory.payMethodId}
-          customInputSelect={
+    <>
+      <div className="col-12 border rounded p-3 my-2" style={{ height: 'fit-content' }}>
+        <h5 className='col-12'>Pago rapido en efectivo</h5>
+        <div className="col-12 d-flex flex-wrap justify-content-center ">
+          <CustomInputNumber setDefaultValue={() => setPayWith(defaultAmount ? defaultAmount : 0)} isRequired={false} showLabel={false} value={payWith} customInputNumber={
             {
-              label: 'Proveedores', name: 'measureId',
-              handleChange: handlePaymethod, pattern: '', validationMessage: 'Seleccione un metodo de pago'
-            }}
-          data={payMethods.filter(x => !selectedPayMethodsId?.includes(x.id) ).map(paymethod => { return { value: paymethod.id, label: paymethod.name } })}
-          defaultLegend={'Metodo de pago'}
-        />
+              label: 'Monto', name: 'amount',
+              handleChange: handleChangeDiference, pattern: '', validationMessage: 'Ingrese un monto válido'
+            }
+          } />
+        </div>
+        {
+          payWith > 0 && defaultAmount && fastPayAction &&
+          <>
+            <h5 className='col-12 text-center mt-4'>Su vuelto es:</h5>
+            <h5 className='col-12 text-center text-danger'> {parseCurrency((payWith - defaultAmount).toString())}</h5>
+            <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
+              {
+                payWith >= defaultAmount &&
+                <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Pagar</button>
+              }
+            </div>
+          </>
+        }
       </div>
-      <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
-        <button className='col-12 btn btn-outline-success ' onClick={action}>Agregar forma de pago</button>
+      <div className='col-12 d-flex flex-wrap justify-content-center p-3 pb-5 rounded border' style={{ height: 'fit-content' }}>
+        <h5 className='col-12'>Formas de pago</h5>
+        <div className="col-12 d-flex flex-wrap justify-content-center ">
+          <CustomInputNumber setDefaultValue={() => setAccountHistory({ ...accountHistory, amount: defaultAmount ? defaultAmount : 0 })} isRequired={false} showLabel={false} value={accountHistory.amount} customInputNumber={
+            {
+              label: 'Monto', name: 'amount',
+              handleChange: handleChange, pattern: '', validationMessage: 'Ingrese un monto válido'
+            }
+          } />
+        </div>
+        <div className="col-12 d-flex flex-wrap justify-content-center ">
+          <CustomInputSelect showLabel={false} value={accountHistory.payMethodId}
+            customInputSelect={
+              {
+                label: 'Proveedores', name: 'measureId',
+                handleChange: handlePaymethod, pattern: '', validationMessage: 'Seleccione un metodo de pago'
+              }}
+            data={payMethods.filter(x => !selectedPayMethodsId?.includes(x.id)).map(paymethod => { return { value: paymethod.id, label: paymethod.name } })}
+            defaultLegend={'Metodo de pago'}
+          />
+        </div>
+        <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
+          <button className='col-12 btn btn-outline-success ' onClick={action}>Agregar forma de pago</button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

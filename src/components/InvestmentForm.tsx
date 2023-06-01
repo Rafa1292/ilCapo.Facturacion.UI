@@ -138,7 +138,6 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
   const handleInvestmentDetail = (investmentDetail: InvestmentDetail): boolean => {
     const investmentDetails = [...investment.investmentDetails, { ...investmentDetail, id: investment.investmentDetails.length + 1 }]
     const investmentAmount = Number(investment.amount) + getDetailTotal(investmentDetail)
-    console.log(investmentAmount, investment.amount)
     setInvestment({ ...investment, investmentDetails, amount: Number(investment.amount) + getDetailTotal(investmentDetail) })
     return true
   }
@@ -327,7 +326,7 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
         {
           !investment.pendingPay &&
           <div className="col-3 d-flex flex-wrap align-items-center">
-            <AccountHistoryForm selectedPayMethodsId={investment?.investmentAccountHistories?.map(x => x?.accountHistory?.payMethodId)} isPay={true} handleAccountHistory={handleAccountHistory} />
+            <AccountHistoryForm defaultAmount={investment.investmentDetails.reduce((acc, investmentDetail) => acc + getTotal(investmentDetail), 0)} selectedPayMethodsId={investment?.investmentAccountHistories?.map(x => x?.accountHistory?.payMethodId)} isPay={true} handleAccountHistory={handleAccountHistory} />
             <div className="col-12 d-flex flex-wrap justify-content-center mt-4">
               {
                 investment.investmentAccountHistories.map((expenseAccountHistory, index) => {

@@ -63,7 +63,7 @@ const EntryForm = () => {
             } />
         </div>
         <div className="col-12 d-flex flex-wrap align-items-center">
-          <AccountHistoryForm isPay={false} handleAccountHistory={handleAccountHistory} />
+          <AccountHistoryForm defaultAmount={0} isPay={false} handleAccountHistory={handleAccountHistory} />
         </div>
       </CustomModal>
     </div>

@@ -5,7 +5,7 @@ import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
-import { useGet, useGetList } from './useAPI'
+import { useGet, useGetList, usePost } from './useAPI'
 import { Client } from '../types/client'
 import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
@@ -40,6 +40,7 @@ const initialBill: Bill = {
   tableNumber: 0,
   workDayUserId: 0,
   items: [],
+  isCommanded: true,
   billAccountHistories: [],
   delete: false,
   createdBy: 0,
@@ -75,6 +76,7 @@ const useBill = (tableNumber: number): BillFunctions => {
   const removeBillItem = (billItem: BillItem) => {
     setBill({
       ...bill,
+      isCommanded: false,
       items: bill.items.filter(item => item.saleItemId !== billItem.saleItemId)
     })
   }
@@ -87,9 +89,15 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const removeAccountHistory = (accountHistory: AccountHistory) => {
+    const tmpBillItems: BillAccountHistory[] = bill.billAccountHistories
+    for (const billAccountHistory of bill.billAccountHistories) {
+      if (billAccountHistory.accountHistory.amount === accountHistory.amount && billAccountHistory.accountHistory.payMethodId === accountHistory.payMethodId) {
+        tmpBillItems.splice(tmpBillItems.indexOf(billAccountHistory), 1)
+      }
+    }
     setBill({
       ...bill,
-      billAccountHistories: bill.billAccountHistories.filter(bilItemAccountHistory => bilItemAccountHistory.accountHistoryId !== accountHistory.id)
+      billAccountHistories: tmpBillItems
     })
   }
 
@@ -104,6 +112,7 @@ const useBill = (tableNumber: number): BillFunctions => {
         else {
           setBill({
             ...bill,
+            isCommanded: false,
             items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
           })
         }
@@ -143,7 +152,7 @@ const useBill = (tableNumber: number): BillFunctions => {
         if (billItem.billProducts.length === 0) {
           removeBillItem(billItem)
         }
-        else {      
+        else {
           setBill({
             ...bill,
             items: bill.items.map(item => item.saleItemId === saleItemId ? { ...billItem, quantity: billItem.quantity - 1 } : item)
@@ -168,7 +177,6 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const getBill = async () => {
-    console.log('cargando factura...')
     const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
     if (!response.error && response.data !== null) {
       const bill = response.data
@@ -194,8 +202,25 @@ const useBill = (tableNumber: number): BillFunctions => {
           }
         }
       }
-      setBill(bill)
+      const accountHistories = bill.billAccountHistories?.length > 0 ? bill.billAccountHistories : []
+      setBill({ ...bill, isCommanded: true, billAccountHistories: accountHistories })
     }
+  }
+
+  const fastPayAction = async (accountHistory: AccountHistory) => {
+    // const response = await usePost<Bill>('bills/close', { ...bill, billAccountHistories: [{...initialBillAccounthistory, accountHistory: accountHistory}] }, true)
+    // if (!response.error) {
+    //   setBill(initialBill)
+    // }
+    console.log('fastPayAction')
+  }
+
+  const closeBill = async () => {
+    // const response = await usePost<Bill>('bills/close', bill, true)
+    // if (!response.error) {
+    //   setBill(initialBill)
+    // }
+    console.log('closeBill')
   }
 
   const printBill = () => {
@@ -213,7 +238,9 @@ const useBill = (tableNumber: number): BillFunctions => {
     editLinkedProduct,
     getClient,
     getBill,
-    removeCombinedLinkedProduct
+    removeCombinedLinkedProduct,
+    fastPayAction,
+    closeBill
   }
 }
 

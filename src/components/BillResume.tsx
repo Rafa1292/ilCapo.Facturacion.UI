@@ -22,9 +22,10 @@ interface Props {
   commandBill(): void
   getClient(phone: string): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
+  showPayMethods():void
 }
 
-const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, showPayMethods, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -227,7 +228,7 @@ const BillResume = ({ bill, removeLinkedProduct, handleEditLinkedProduct, comman
                 <div className='command_icon'></div>
               </div>
               <div className='cash_btn'>
-                <div className='cash_icon'></div>
+                <div className='cash_icon' onClick={showPayMethods}></div>
               </div>
             </div>
             <div className="col-5 d-flex flex-wrap">

@@ -12,6 +12,7 @@ import { BillItem } from '../../types/billItem'
 import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
 import { BillFunctions } from '../../types/billFunctions'
+import BillPayMethod from '../../components/BillPayMethod'
 
 interface Props {
   billFunctions: BillFunctions
@@ -53,7 +54,8 @@ const BillMaker = ({ billFunctions }: Props) => {
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user } = useContext(AppContext)
-  const { bill, addBillItem, printBill, removeLinkedProduct, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct } = billFunctions
+  const { bill, fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory, removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct } = billFunctions
+  const [showPayMethods, setShowPayMethods] = useState(false)
 
   const handleChange = (event: any) => {
     const { value } = event.target
@@ -121,6 +123,7 @@ const BillMaker = ({ billFunctions }: Props) => {
     const response = await usePost('bills', bill, true)
     if (!response.error) {
       console.log('commandBill')
+      getBill()
     }
   }
 
@@ -129,11 +132,14 @@ const BillMaker = ({ billFunctions }: Props) => {
     const response = await usePatch('bills', bill, true)
     if (!response.error) {
       console.log('updateBill')
+      getBill()
     }
   }
 
 
   const validateBill = (): boolean => {
+    if ((!bill.isCommanded))
+      return true
     let valid = false
     for (const billItem of bill.items) {
       for (const billItemLinkedProduct of billItem.billProducts) {
@@ -184,39 +190,47 @@ const BillMaker = ({ billFunctions }: Props) => {
   return (
     <div className='col-12 d-flex flex-wrap'>
       <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
-      <div className="col-8 bill-maker" >
-        <div className="col-12 d-flex flex-wrap justify-content-end p-2">
-          <div className="col-6">
-            <CustomInputSelect showLabel={false} value={editBillItem?.saleItemId}
-              customInputSelect={
-                {
-                  label: 'Productos', name: 'id',
-                  handleChange: handleChange, pattern: '', validationMessage: ''
-                }}
-              data={searchProducts.map(searchProduct => { return { value: searchProduct.saleItemId, label: searchProduct.name } })}
-              defaultLegend={'Productos'}
-            />
-          </div>
+      {
+        showPayMethods
+        &&
+        <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{maxHeight: '100vh', overflowY: 'scroll'}}>
+          <BillPayMethod closeBill={closeBill} fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} bill={bill} addAccountHistory={addAccountHistory}/>
         </div>
-        <div className="col-8 d-flex flex-wrap justify-content-around position-absolute bg-dark p-2 shadow"
-          style={{ borderBottom: '1px solid rgba(255,193,7,0.8)', top: '0' }}>
+        ||
+        <div className="col-8 bill-maker" >
+          <div className="col-12 d-flex flex-wrap justify-content-end p-2">
+            <div className="col-6">
+              <CustomInputSelect showLabel={false} value={editBillItem?.saleItemId}
+                customInputSelect={
+                  {
+                    label: 'Productos', name: 'id',
+                    handleChange: handleChange, pattern: '', validationMessage: ''
+                  }}
+                data={searchProducts.map(searchProduct => { return { value: searchProduct.saleItemId, label: searchProduct.name } })}
+                defaultLegend={'Productos'}
+              />
+            </div>
+          </div>
+          <div className="col-8 d-flex flex-wrap justify-content-around position-absolute bg-dark p-2 shadow"
+            style={{ borderBottom: '1px solid rgba(255,193,7,0.8)', top: '0' }}>
+            {
+              saleItemCategories.map((tmpSaleItemCategory, index) => {
+                return (
+                  <div key={index} onClick={() => setCategory(tmpSaleItemCategory)} className="px-3 py-1 rounded pointer item-category" >
+                    <h6 className='m-0'>{tmpSaleItemCategory.name}</h6>
+                  </div>
+                )
+              })
+            }
+          </div>
           {
-            saleItemCategories.map((tmpSaleItemCategory, index) => {
-              return (
-                <div key={index} onClick={() => setCategory(tmpSaleItemCategory)} className="px-3 py-1 rounded pointer item-category" >
-                  <h6 className='m-0'>{tmpSaleItemCategory.name}</h6>
-                </div>
-              )
-            })
+            saleItemCategory &&
+            <BillMakerItems editBilItem={editBillItem ? editBillItem : { saleItemId: 0 } as BillItem} addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
           }
         </div>
-        {
-          saleItemCategory &&
-          <BillMakerItems editBilItem={editBillItem ? editBillItem : { saleItemId: 0 } as BillItem} addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
-        }
-      </div>
+      }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||
