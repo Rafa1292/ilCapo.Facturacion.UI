@@ -102,7 +102,7 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, close, move
     console.log(billHistories)
     const response = await nextBillFunctions.closeApartBill(bill, billHistories)
     if (response) {
-      close()
+      nextBillFunctions.restartBill()
     }
   }
 

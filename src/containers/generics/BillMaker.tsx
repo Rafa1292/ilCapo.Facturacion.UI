@@ -167,18 +167,23 @@ const BillMaker = ({ billFunctions, close }: Props) => {
   }
 
   const moveBillItem = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
-    for (const billItem of bill.items) {
-      if (billItem.saleItemId === saleItemId) {
-        const tmpBillProducts: BillItemLinkedProduct[] = []
-        for (const billProduct of billItem.billProducts) {
-          if (billProduct.itemNumber === itemNumber) {
-            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+    if (bill.items.length > 1 || bill.items[0].quantity > 1) {
+      for (const billItem of bill.items) {
+        if (billItem.saleItemId === saleItemId) {
+          const tmpBillProducts: BillItemLinkedProduct[] = []
+          for (const billProduct of billItem.billProducts) {
+            if (billProduct.itemNumber === itemNumber) {
+              tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+            }
           }
+          const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
+          nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem)
+          removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
         }
-        const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
-        nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem)
-        removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
       }
+    }
+    else {
+      Swal.fire('Error', 'Debe haber almenos 1 item en la factura original', 'error')
     }
   }
 

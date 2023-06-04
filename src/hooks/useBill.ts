@@ -229,6 +229,10 @@ const useBill = (tableNumber: number): BillFunctions => {
     return false
   }
 
+  const restartBill = () => {
+    setBill({ ...initialBill, tableNumber: tableNumber, workDayUserId: user.workDayUser.id })
+  }
+
   const closeApartBill = async (originalBill: Bill, billHistories: BillAccountHistory[]): Promise<boolean> => {
     const response = await usePatch<any>('bills/closeApart', { bill: { ...bill, billAccountHistories: billHistories, workDayUserId: user.workDayUser.id } as Bill, originalBill: originalBill }, true)
     if (!response.error) {
@@ -257,7 +261,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     removeCombinedLinkedProduct,
     fastPayAction,
     closeBill,
-    closeApartBill
+    closeApartBill,
+    restartBill
   }
 }
 

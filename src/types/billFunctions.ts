@@ -18,4 +18,5 @@ export interface BillFunctions {
   fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
   closeBill: (billHistories?: BillAccountHistory[]) => Promise<boolean>
   closeApartBill: (originalBill: Bill, billHistories: BillAccountHistory[]) => Promise<boolean>
+  restartBill: () => void
 }
