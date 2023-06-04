@@ -46,9 +46,11 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
   }
 
   const action = () => {
-    const saved = handleAccountHistory({ ...accountHistory, pay: isPay })
-    if (saved)
-      setAccountHistory(initialAccountHistory)
+    if (accountHistory.amount > 0) {
+      const saved = handleAccountHistory({ ...accountHistory, pay: isPay })
+      if (saved)
+        setAccountHistory(initialAccountHistory)
+    }
   }
 
   const handleChangeDiference = (event: any) => {
@@ -99,7 +101,7 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
             <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
               {
                 payWith >= defaultAmount &&
-                <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Pagar</button>
+                <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Agregar</button>
               }
             </div>
           </>

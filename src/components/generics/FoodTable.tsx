@@ -13,32 +13,43 @@ interface Props {
 
 const FoodTable = ({ top, left, tableNumber }: Props) => {
   const billFunctions = useBill(tableNumber)
+  const [close, setClose] = useState(true)
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainer${tableNumber}`)
     container?.classList.remove('bill-makerContainer_show')
+    setClose(true)
   }
 
   const openTable = () => {
     const container = document.getElementById(`billMakerContainer${tableNumber}`)
     container?.classList.add('bill-makerContainer_show')
+    setClose(false)
   }
 
   return (
     <>
-      <div className='bill-makerContainer' id={`billMakerContainer${tableNumber}`}>
-        <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '30vw', top: '1vw', background: 'white', borderRadius: '50px'}}>
-          <CustomBtn height='40px' buttonType={buttonTypes.cancel}/>
-        </span>
-        <BillMaker billFunctions={billFunctions} />
-      </div>
-      <div className="table_container d-flex flex-wrap p-2" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
-        <strong># {tableNumber}</strong>
-        <div className='table'></div>
-        <div className="table_background"></div>
-        <div className="table_background-color"></div>
-        <ProgressBar styleClass='progress_bar-table' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />
-      </div>
+      {
+        tableNumber > 0 &&
+        <>
+          <div className='bill-makerContainer' id={`billMakerContainer${tableNumber}`}>
+            <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '30vw', top: '1vw', background: 'white', borderRadius: '50px' }}>
+              <CustomBtn height='40px' buttonType={buttonTypes.cancel} />
+            </span>
+            {
+              !close &&
+              <BillMaker close={closeTable} billFunctions={billFunctions} />
+            }
+          </div>
+          <div className="table_container d-flex flex-wrap p-2" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
+            <strong># {tableNumber}</strong>
+            <div className='table'></div>
+            <div className="table_background"></div>
+            <div className="table_background-color"></div>
+            <ProgressBar styleClass='progress_bar-table' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />
+          </div>
+        </>
+      }
     </>
   )
 }

@@ -36,10 +36,13 @@ interface billAccountHistoriesContainer {
 
 interface Props {
   getBillTotal: () => number
-  closeBill: () => void
+  closeBill: (billHistories: BillAccountHistory[]) => void
+  close: () => void
+  size?: string
+  initialParts?: number
 }
 
-const BillPayMethodSplit = ({ getBillTotal, closeBill }: Props) => {
+const BillPayMethodSplit = ({ getBillTotal, closeBill, close, size = 'col-4', initialParts = 2 }: Props) => {
   const [parts, setParts] = useState<number>(0)
   const [billAccountHistoriesContainerList, setBillAccountHistoriesContainerList] = useState<billAccountHistoriesContainer[]>([])
 
@@ -74,7 +77,8 @@ const BillPayMethodSplit = ({ getBillTotal, closeBill }: Props) => {
         }
         billAccountHistoriesContainer.billAccountHistories.push(billAccountHistory)
       }
-    }    setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
+    }
+    setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
   }
 
   const removeAccountHistory = (accountHistory: AccountHistory, billItemListId: number) => {
@@ -86,27 +90,63 @@ const BillPayMethodSplit = ({ getBillTotal, closeBill }: Props) => {
         tmpBillAccountHistories.splice(index, 1)
         billAccountHistoriesContainer.billAccountHistories = tmpBillAccountHistories
       }
-    }    
+    }
+    setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
+  }
+
+  const fastPayAction = (accountHistory: AccountHistory, billItemListId: number) => {
+    const tmpBillAccountHistoriesContainerList = [...billAccountHistoriesContainerList]
+    for (const billAccountHistoriesContainer of tmpBillAccountHistoriesContainerList) {
+      if (billAccountHistoriesContainer.id === billItemListId) {
+        const billAccountHistory: BillAccountHistory = {
+          id: 0,
+          accountHistoryId: 0,
+          delete: false,
+          accountHistory: accountHistory,
+          billId: 0,
+          createdBy: 0,
+          updatedBy: 0
+        }
+        billAccountHistoriesContainer.billAccountHistories = []
+        billAccountHistoriesContainer.billAccountHistories.push(billAccountHistory)
+      }
+    }
     setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
   }
 
   const wouldBePay = (): boolean => {
-    let wouldBePay = false
-    const tmpBillAccountHistories: BillAccountHistory[] = billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat()
-    const totalHistories = tmpBillAccountHistories.reduce((total, billAccountHistory) => total + billAccountHistory.accountHistory.amount, 0)
-    if (totalHistories === getBillTotal()) {
-      wouldBePay = true
+    try {
+      let wouldBePay = false
+      const tmpBillAccountHistories: BillAccountHistory[] = billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat()
+      const totalHistories = tmpBillAccountHistories.reduce((total, billAccountHistory) => total + billAccountHistory.accountHistory.amount, 0)
+      const diference = getBillTotal() - totalHistories
+      if (diference === 0) {
+        wouldBePay = true
+      }
+      if (diference < 20) {
+        tmpBillAccountHistories[tmpBillAccountHistories.length - 1].accountHistory.amount += diference
+        wouldBePay = true
+      }
+      return wouldBePay
+    } catch (error) {
+      return false
     }
-    return wouldBePay
   }
-      
+
+  const handleCloseBill = () => {
+    if (wouldBePay()) {
+      closeBill(billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat())
+    }
+  }
+
 
   useEffect(() => {
-    handleChange({ target: { value: 2 } })
+    console.log(billAccountHistoriesContainerList)
+    handleChange({ target: { value: initialParts } })
   }, [])
 
   return (
-    <>
+    <div className='col-12 d-flex flex-wrap justify-content-center position-relative align-content-start' style={{ height: 'calc(100vh - 45px)' }}>
       <div className="col-4 d-flex flex-wrap justify-content-center ">
         <CustomInputNumber isRequired={false} showLabel={false} value={parts} customInputNumber={
           {
@@ -119,14 +159,20 @@ const BillPayMethodSplit = ({ getBillTotal, closeBill }: Props) => {
         {
           billAccountHistoriesContainerList?.length > 0 &&
           billAccountHistoriesContainerList?.map((billAccountHistoriesContainer, index) => (
-            <div className='col-4 d-flex flex-wrap justify-content-center p-2' key={index}>
-              <BillPayMethodSplitForm closeBill={closeBill} fastPayAction={setBillAccountHistory} removeAccountHistory={removeAccountHistory} billAccountHistories={billAccountHistoriesContainer.billAccountHistories} billItemListId={billAccountHistoriesContainer.id} getBillPartialTotal={getBillPartialTotal}
-                setBillAccountHistory={setBillAccountHistory} wouldBePay={wouldBePay}/>
+            <div className={`d-flex flex-wrap justify-content-center p-2 ${size}`} key={index}>
+              <BillPayMethodSplitForm showAction={parts > 1 ? true : false} close={close} closeBill={handleCloseBill} fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} billAccountHistories={billAccountHistoriesContainer.billAccountHistories} billItemListId={billAccountHistoriesContainer.id} getBillPartialTotal={getBillPartialTotal}
+                setBillAccountHistory={setBillAccountHistory} wouldBePay={wouldBePay} />
             </div>
           ))
         }
       </div>
-    </>
+      {
+        wouldBePay() &&
+        <div className="col-12 d-flex flex-wrap justify-content-center" style={{ position: 'absolute', bottom: '10px' }}>
+          <button type="button" className="btn btn-success col-10 p-4" onClick={handleCloseBill}>Cerrar cuenta</button>
+        </div>
+      }
+    </div>
   )
 }
 

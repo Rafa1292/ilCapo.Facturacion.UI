@@ -13,9 +13,11 @@ import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
 import { BillFunctions } from '../../types/billFunctions'
 import BillPayMethod from '../../components/BillPayMethod'
+import { LinkedProduct } from '../../types/linkedProduct'
 
 interface Props {
   billFunctions: BillFunctions
+  close: () => void
 }
 
 interface SearchProduct {
@@ -48,7 +50,7 @@ const initialBillItem: BillItem = {
   updatedBy: 0
 }
 
-const BillMaker = ({ billFunctions }: Props) => {
+const BillMaker = ({ billFunctions, close }: Props) => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
@@ -56,6 +58,8 @@ const BillMaker = ({ billFunctions }: Props) => {
   const { user } = useContext(AppContext)
   const { bill, fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory, removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
+  const [pullApartBill, setPullApartBill] = useState<boolean>(false)
+  const nextBillFunctions = useBill(0)
 
   const handleChange = (event: any) => {
     const { value } = event.target
@@ -162,6 +166,37 @@ const BillMaker = ({ billFunctions }: Props) => {
     return valid
   }
 
+  const moveBillItem = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
+    for (const billItem of bill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillProducts: BillItemLinkedProduct[] = []
+        for (const billProduct of billItem.billProducts) {
+          if (billProduct.itemNumber === itemNumber) {
+            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+          }
+        }
+        const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
+        nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem)
+        removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
+      }
+    }
+  }
+
+  const moveBillItemBack = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
+    for (const billItem of nextBillFunctions.bill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillProducts: BillItemLinkedProduct[] = []
+        for (const billProduct of billItem.billProducts) {
+          if (billProduct.itemNumber === itemNumber) {
+            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+          }
+        }
+        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem)
+        nextBillFunctions.removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
+      }
+    }
+  }
+
   useEffect(() => {
     const getSaleItemCategories = async () => {
       const response = await useGetList<SaleItemCategory[]>('saleItemCategories', false)
@@ -189,12 +224,15 @@ const BillMaker = ({ billFunctions }: Props) => {
 
   return (
     <div className='col-12 d-flex flex-wrap'>
-      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimer</button>
+      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => nextBillFunctions.printBill()}>Imprimir</button>
+      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '6vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimir orig</button>
       {
         showPayMethods
         &&
-        <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{maxHeight: '100vh', overflowY: 'scroll'}}>
-          <BillPayMethod closeBill={closeBill} fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} bill={bill} addAccountHistory={addAccountHistory}/>
+        <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{ maxHeight: '100vh', alignContent: 'baseline', overflowY: 'scroll' }}>
+          <BillPayMethod close={close} moveBillItemBack={moveBillItemBack} nextBillFunctions={nextBillFunctions}
+            setPullApartBill={setPullApartBill} pullApartBill={pullApartBill} closeBill={closeBill}
+            fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} bill={bill} addAccountHistory={addAccountHistory} />
         </div>
         ||
         <div className="col-8 bill-maker" >
@@ -230,7 +268,7 @@ const BillMaker = ({ billFunctions }: Props) => {
         </div>
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||

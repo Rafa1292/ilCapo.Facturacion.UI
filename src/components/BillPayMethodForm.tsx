@@ -15,22 +15,27 @@ interface Props {
   removeAccountHistory: (accountHistory: AccountHistory) => void
   action: () => void
   fastPayAction: (accountHistory: AccountHistory) => void
+  showAction?: boolean
 }
 
 
-const BillPayMethodForm = ({ setAccountHistory, removeAccountHistory, fastPayAction, action, actionLabel, billAccountHistories, getBillTotal }: Props) => {
+const BillPayMethodForm = ({ setAccountHistory, removeAccountHistory, fastPayAction, showAction= true, action, actionLabel, billAccountHistories, getBillTotal }: Props) => {
   const isEnoughMoney = (): boolean => {
     const billTotal = getBillTotal()
     const historiesTotal = billAccountHistories.reduce((total, billAccountHistory) => {
       return total + billAccountHistory.accountHistory.amount
     }, 0)
-    return historiesTotal === billTotal
+    return historiesTotal >= billTotal
   }
 
-
+  const handleAction = async () => {
+    if (isEnoughMoney()) {
+      await action()
+    }
+  }
 
   return (
-    <div className="col-12 justify-content-center d-flex flex-wrap">
+    <div className="col-12 justify-content-center d-flex flex-wrap shadow-sm px-2">
       <div className="col-12">
         <AccountHistoryForm fastPayAction={fastPayAction} defaultAmount={getBillTotal()} handleAccountHistory={setAccountHistory} isPay={false} />
         <h4 className='col-12 text-center text-danger mt-4'>Total a pagar:</h4>
@@ -58,8 +63,8 @@ const BillPayMethodForm = ({ setAccountHistory, removeAccountHistory, fastPayAct
         }
       </div>
       {
-        billAccountHistories?.length > 0 &&
-        <button onClick={action} className={`col-12 btn ${isEnoughMoney() ? 'btn-success' : 'btn-success disabled'} my-4 p-4`}>{actionLabel}</button>
+        billAccountHistories?.length > 0 && showAction &&
+        <button onClick={handleAction} className={`col-12 btn ${isEnoughMoney() ? 'btn-success' : 'btn-success disabled'} my-4 p-4`}>{actionLabel}</button>
       }
     </div>
   )

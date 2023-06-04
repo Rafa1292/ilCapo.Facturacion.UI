@@ -12,9 +12,11 @@ interface Props {
   getBillPartialTotal: () => number
   removeAccountHistory: (accountHistory: AccountHistory, billItemListId: number) => void
   fastPayAction: (accountHistory: AccountHistory, billItemListId: number) => void
+  close: () => void
+  showAction?: boolean
 }
 
-const BillPayMethodSplitForm = ({ billItemListId, closeBill, wouldBePay, fastPayAction, removeAccountHistory, getBillPartialTotal, billAccountHistories, setBillAccountHistory }: Props) => {
+const BillPayMethodSplitForm = ({ billItemListId, showAction, closeBill, close, wouldBePay, fastPayAction, removeAccountHistory, getBillPartialTotal, billAccountHistories, setBillAccountHistory }: Props) => {
   const setAccountHistory = (accountHistory: AccountHistory): boolean => {
     setBillAccountHistory(accountHistory, billItemListId)
     return true
@@ -28,19 +30,15 @@ const BillPayMethodSplitForm = ({ billItemListId, closeBill, wouldBePay, fastPay
     fastPayAction(accountHistory, billItemListId)
   }
 
-  const handleCloseBill = () => {
-    closeBill()
-  }
-
   const printPayment = () => {
     console.log('printPayment')
   }
 
   return (
     <>
-      <BillPayMethodForm fastPayAction={handleFastPayAction} removeAccountHistory={handleRemoveAccountHistory}
-        action={wouldBePay() ? handleCloseBill : printPayment}
-        actionLabel={wouldBePay() ? 'Pagar' : `Imprimir comprobante ${billItemListId}`} 
+      <BillPayMethodForm  showAction={showAction} fastPayAction={handleFastPayAction} removeAccountHistory={handleRemoveAccountHistory}
+        action={printPayment}
+        actionLabel={`Imprimir comprobante ${billItemListId}`}
         billAccountHistories={billAccountHistories}
         setAccountHistory={setAccountHistory}
         getBillTotal={getBillPartialTotal} />

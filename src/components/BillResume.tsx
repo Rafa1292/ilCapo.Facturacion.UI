@@ -17,15 +17,17 @@ import { usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
 interface Props {
   bill: Bill
+  getClient(phone: string): void
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
-  getClient(phone: string): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   showPayMethods():void
+  pullApartBill: boolean
+  moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
 }
 
-const BillResume = ({ bill, showPayMethods, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, showPayMethods, moveBillItem, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -215,7 +217,7 @@ const BillResume = ({ bill, showPayMethods, removeLinkedProduct, handleEditLinke
           {
             bill.items.map((billItem, index) => {
               return (
-                <BillResumeItem removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
+                <BillResumeItem moveBillItem={moveBillItem} pullApartBill={pullApartBill} removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
               )
             })
           }

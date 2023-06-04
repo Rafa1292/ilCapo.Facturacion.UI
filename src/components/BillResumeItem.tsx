@@ -10,9 +10,11 @@ interface Props {
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
+  pullApartBill: boolean
+  moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
 }
 
-const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
 
   const getBillItemTotal = (billItem: BillItem): number => {
@@ -77,12 +79,23 @@ const BillResumeItem = ({ billItem, removeLinkedProduct, handleEditLinkedProduct
                   return (
                     index < 1 &&
                     <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
-                      <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billProduct.id)} />
-                      </div>
-                      <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
-                        <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billProduct.itemNumber)} />
-                      </div>
+                      {
+                        pullApartBill &&
+                        <>
+                          <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() => moveBillItem(billProduct.id, billItem.saleItemId, billProduct.itemNumber)}>
+                            Mover
+                          </button>
+                        </>
+                        ||
+                        <>
+                          <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
+                            <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billProduct.id)} />
+                          </div>
+                          <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
+                            <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billProduct.itemNumber)} />
+                          </div>
+                        </>
+                      }
                       <div className="col-7 d-flex flex-wrap p-2 ">
                         {product.name}
                         {

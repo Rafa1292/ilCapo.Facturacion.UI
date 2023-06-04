@@ -5,20 +5,27 @@ import { BillItem } from '../types/billItem'
 import Swal from 'sweetalert2'
 import BillPayMethodForm from './BillPayMethodForm'
 import BillPayMethodSplit from './BillPayMethodSplit'
+import BillPayMethodPullApart from './BillPayMethodPullApart'
+import { BillFunctions } from '../types/billFunctions'
+import { BillAccountHistory } from '../types/billAccountHistory'
 
 
 interface Props {
+  nextBillFunctions: BillFunctions
   bill: Bill
   addAccountHistory: (accountHistory: AccountHistory) => void
   removeAccountHistory: (accountHistory: AccountHistory) => void
-  fastPayAction: (accountHistory: AccountHistory) => void
-  closeBill: () => void
+  fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
+  closeBill: () => Promise<boolean>
+  close: () => void
+  pullApartBill: boolean
+  setPullApartBill: (pullApartBill: boolean) => void
+  moveBillItemBack: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
 }
 
 
-const BillPayMethod = ({ bill, addAccountHistory, closeBill, fastPayAction, removeAccountHistory }: Props) => {
+const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, close, moveBillItemBack, setPullApartBill, closeBill, fastPayAction, removeAccountHistory }: Props) => {
   const [option, setOption] = useState<number>(1)
-  const [payWith, setPayWith] = useState<number>(0)
 
   const getAccountHistoriesTotal = (): number => {
     let accountHistoriesTotal = 0
@@ -68,35 +75,65 @@ const BillPayMethod = ({ bill, addAccountHistory, closeBill, fastPayAction, remo
     return false
   }
 
-  const payMethodAction = () => {
-    closeBill()
+  const handleFastPayAction = async (accountHistory: AccountHistory) => {
+    const response = await fastPayAction(accountHistory)
+    if (response) {
+      close()
+    }
   }
 
+  const changeOption = (option: number) => {
+    setOption(option)
+    if (option === 3) {
+      setPullApartBill(true)
+    } else {
+      setPullApartBill(false)
+    }
+  }
+
+  const handleCloseBill = async () => {
+    const response = await closeBill()
+    if (response) {
+      close()
+    }
+  }
+
+  const handleCloseApartBill = async (billHistories: BillAccountHistory[]) => {
+    console.log(billHistories)
+    const response = await nextBillFunctions.closeApartBill(bill, billHistories)
+    if (response) {
+      close()
+    }
+  }
 
   return (
     <>
       <div className="col-12 d-flex flex-wrap justify-content-center p-2 bg-dark" style={{ height: 'fit-content' }}>
-        <div onClick={() => setOption(1)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 1 ? 'item-category_selected' : ''}`} >
+        <div onClick={() => changeOption(1)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 1 ? 'item-category_selected' : ''}`} >
           <h6 className='m-0'>Factura completa</h6>
         </div>
-        <div onClick={() => setOption(2)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 2 ? 'item-category_selected' : ''}`} >
+        <div onClick={() => changeOption(2)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 2 ? 'item-category_selected' : ''}`} >
           <h6 className='m-0'>Dividir factura</h6>
         </div>
-        <div onClick={() => setOption(3)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 3 ? 'item-category_selected' : ''}`} >
+        <div onClick={() => changeOption(3)} className={`px-3 mx-2 py-1 rounded pointer item-category ${option === 3 ? 'item-category_selected' : ''}`} >
           <h6 className='m-0'>Separar factura</h6>
         </div>
       </div>
       {
         option === 1 &&
         <div className="col-4 justify-content-center p-2 d-flex flex-wrap">
-          <BillPayMethodForm fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} action={payMethodAction} actionLabel='Pagar factura' billAccountHistories={bill.billAccountHistories} setAccountHistory={setAccountHistory} getBillTotal={getBillTotal}
+          <BillPayMethodForm fastPayAction={handleFastPayAction} removeAccountHistory={removeAccountHistory} action={handleCloseBill} actionLabel='Pagar factura' billAccountHistories={bill.billAccountHistories} setAccountHistory={setAccountHistory} getBillTotal={getBillTotal}
           />
         </div>
       }
       {
         option === 2 &&
-        <BillPayMethodSplit closeBill={closeBill} getBillTotal={getBillTotal}
+        <BillPayMethodSplit close={close} closeBill={closeBill} getBillTotal={getBillTotal}
         />
+      }
+      {
+        option === 3 &&
+        <BillPayMethodPullApart close={close} closeBill={handleCloseApartBill} moveBillItemBack={moveBillItemBack} bill={nextBillFunctions.bill} getClient={nextBillFunctions.getClient} />
       }
     </>
   )

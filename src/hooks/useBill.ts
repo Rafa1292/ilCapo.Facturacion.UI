@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Bill } from '../types/bill'
 import { BillFunctions } from '../types/billFunctions'
 import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
-import { useGet, useGetList, usePost } from './useAPI'
+import { useGet, useGetList, usePatch, usePost } from './useAPI'
 import { Client } from '../types/client'
 import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
+import AppContext from '../context/AppContext'
 
 const initialBillAccounthistory: BillAccountHistory = {
   id: 0,
@@ -50,6 +51,7 @@ const initialBill: Bill = {
 
 const useBill = (tableNumber: number): BillFunctions => {
   const [bill, setBill] = useState<Bill>({ ...initialBill, tableNumber: tableNumber })
+  const { user } = useContext(AppContext)
 
   const addBillItem = (billItem: BillItem) => {
     if (bill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
@@ -177,7 +179,9 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const getBill = async () => {
+    console.log('getBill', tableNumber)
     const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
+
     if (!response.error && response.data !== null) {
       const bill = response.data
       for (const billItem of bill.items) {
@@ -207,20 +211,32 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
-  const fastPayAction = async (accountHistory: AccountHistory) => {
-    // const response = await usePost<Bill>('bills/close', { ...bill, billAccountHistories: [{...initialBillAccounthistory, accountHistory: accountHistory}] }, true)
-    // if (!response.error) {
-    //   setBill(initialBill)
-    // }
-    console.log('fastPayAction')
+  const fastPayAction = async (accountHistory: AccountHistory): Promise<boolean> => {
+    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
+    if (!response.error) {
+      setBill({ ...initialBill, tableNumber: tableNumber })
+      return true
+    }
+    return false
   }
 
-  const closeBill = async () => {
-    // const response = await usePost<Bill>('bills/close', bill, true)
-    // if (!response.error) {
-    //   setBill(initialBill)
-    // }
-    console.log('closeBill')
+  const closeBill = async (billHistories?: BillAccountHistory[]): Promise<boolean> => {
+    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
+    if (!response.error) {
+      setBill({ ...initialBill, tableNumber: tableNumber })
+      return true
+    }
+    return false
+  }
+
+  const closeApartBill = async (originalBill: Bill, billHistories: BillAccountHistory[]): Promise<boolean> => {
+    const response = await usePatch<any>('bills/closeApart', { bill: { ...bill, billAccountHistories: billHistories, workDayUserId: user.workDayUser.id } as Bill, originalBill: originalBill }, true)
+    if (!response.error) {
+      setBill(initialBill)
+      return true
+    }
+    console.log('closeApartBill')
+    return false
   }
 
   const printBill = () => {
@@ -240,7 +256,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     getBill,
     removeCombinedLinkedProduct,
     fastPayAction,
-    closeBill
+    closeBill,
+    closeApartBill
   }
 }
 

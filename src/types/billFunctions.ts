@@ -1,5 +1,6 @@
 import { AccountHistory } from './accountHistory'
 import { Bill } from './bill'
+import { BillAccountHistory } from './billAccountHistory'
 import { BillItem } from './billItem'
 
 export interface BillFunctions {
@@ -14,6 +15,7 @@ export interface BillFunctions {
   getClient: (phone: string) => void
   getBill: () => void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
-  fastPayAction: (accountHistory: AccountHistory) => void
-  closeBill: () => void
+  fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
+  closeBill: (billHistories?: BillAccountHistory[]) => Promise<boolean>
+  closeApartBill: (originalBill: Bill, billHistories: BillAccountHistory[]) => Promise<boolean>
 }
