@@ -15,6 +15,7 @@ import cancel from '../assets/icons/close-circle-outline.png'
 import add from '../assets/icons/add.png'
 import { usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
+import BillResumeDiscount from './BillResumeDiscount'
 interface Props {
   bill: Bill
   getClient(phone: string): void
@@ -25,9 +26,11 @@ interface Props {
   showPayMethods():void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
+  setBillAddress(addressId: number): void
+  setDiscount(discount: number): void
 }
 
-const BillResume = ({ bill, showPayMethods, moveBillItem, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -90,6 +93,7 @@ const BillResume = ({ bill, showPayMethods, moveBillItem, pullApartBill, removeL
 
   const handleChangeAddress = (event: any) => {
     const { value } = event.target
+    setBillAddress(value)
     setAddressId(value)
   }
 
@@ -125,11 +129,13 @@ const BillResume = ({ bill, showPayMethods, moveBillItem, pullApartBill, removeL
       getClient(response.data.phone)
     }
   }
+  
 
   useEffect(() => {
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
+      setAddressId(bill.addressId)
     }
   }, [bill.client, newAddressState])
 
@@ -225,20 +231,21 @@ const BillResume = ({ bill, showPayMethods, moveBillItem, pullApartBill, removeL
 
         <div className="col-12 d-flex flex-wrap position-absolute" style={{ height: '16vh', background: 'white', bottom: '15px' }}>
           <div className="col-12 d-flex flex-wrap py-4">
-            <div className="col-7 d-flex flex-wrap justify-content-around">
+            <div className="col-8 d-flex flex-wrap justify-content-around">
               <div className='command_btn' onClick={commandBill}>
                 <div className='command_icon'></div>
               </div>
-              <div className='cash_btn'>
-                <div className='cash_icon' onClick={showPayMethods}></div>
+              <div className='cash_btn' onClick={showPayMethods}>
+                <div className='cash_icon'></div>
               </div>
+              <BillResumeDiscount setBillDiscount={setDiscount} total={getBillTotal()} />
             </div>
-            <div className="col-5 d-flex flex-wrap">
+            <div className="col-4 d-flex flex-wrap">
               <strong className="col-7 px-2 text-end">Subtotal:</strong>
               <strong className="col-5 text-start">{parseCurrency(getBillSubtotal().toString())}</strong>
               <strong className="col-7 px-2 text-end">Impuesto:</strong>
               <strong className="col-5 text-start">{parseCurrency(getBillTax().toString())}</strong>
-              <strong className="col-7 px-2 text-end">Descuento:</strong>
+              <strong className="col-7 px-2 text-end">Desc:</strong>
               <strong className="col-5 text-start">{parseCurrency(getBillDiscount().toString())}</strong>
               <strong className="col-7 px-2 text-end">Total:</strong>
               <strong className="col-5 text-start">{parseCurrency(getBillTotal().toString())}</strong>

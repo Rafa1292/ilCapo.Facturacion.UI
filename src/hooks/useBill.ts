@@ -212,7 +212,7 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const fastPayAction = async (accountHistory: AccountHistory): Promise<boolean> => {
-    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
+    const response = await usePatch<Bill>('bills/close', { ...bill, workDayUserId: user.workDayUser.id, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
     if (!response.error) {
       setBill({ ...initialBill, tableNumber: tableNumber })
       return true
@@ -221,7 +221,7 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const closeBill = async (billHistories?: BillAccountHistory[]): Promise<boolean> => {
-    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
+    const response = await usePatch<Bill>('bills/close', { ...bill, workDayUserId: user.workDayUser.id, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
     if (!response.error) {
       setBill({ ...initialBill, tableNumber: tableNumber })
       return true
@@ -239,12 +239,24 @@ const useBill = (tableNumber: number): BillFunctions => {
       setBill(initialBill)
       return true
     }
-    console.log('closeApartBill')
     return false
   }
 
   const printBill = () => {
     console.log(bill)
+  }
+
+  const setBillAddress = (addressId: number) => {
+    setBill({ ...bill, addressId: addressId, isCommanded: false })
+  }
+
+  const setDiscount = (discount: number) => {
+    const itemdiscount = discount / bill.items.length
+    const tmpBillItems = bill.items
+    for (const billItem of tmpBillItems) {
+      billItem.discount = itemdiscount
+    }
+    setBill({ ...bill, items: tmpBillItems, isCommanded: false })
   }
 
   return {
@@ -262,7 +274,9 @@ const useBill = (tableNumber: number): BillFunctions => {
     fastPayAction,
     closeBill,
     closeApartBill,
-    restartBill
+    restartBill,
+    setBillAddress,
+    setDiscount
   }
 }
 

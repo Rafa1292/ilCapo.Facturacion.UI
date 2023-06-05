@@ -19,4 +19,6 @@ export interface BillFunctions {
   closeBill: (billHistories?: BillAccountHistory[]) => Promise<boolean>
   closeApartBill: (originalBill: Bill, billHistories: BillAccountHistory[]) => Promise<boolean>
   restartBill: () => void
+  setBillAddress: (addressId: number) => void
+  setDiscount : (discount: number) => void  
 }

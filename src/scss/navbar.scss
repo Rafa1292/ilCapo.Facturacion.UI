@@ -82,6 +82,18 @@
   width: 50px;
 }
 
+.bill_icon {
+  background-image: url('../assets/icons/bill.png');
+  cursor: pointer;
+  background-size: contain;
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  height: 15px;
+  width: 50px;
+}
+
 .nav_option{
    font-size: 16px;
    transition: all 0.3s ease;
@@ -111,5 +123,8 @@
   }
   .entry_icon {
     background-image: url('../assets/icons/entryYL.png');
+  }
+  .bill_icon {
+    background-image: url('../assets/icons/billYL.png');
   }
 }

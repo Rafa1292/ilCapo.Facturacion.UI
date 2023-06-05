@@ -35,6 +35,12 @@ const Header = () => {
         </div>
         Ingresos
       </Link>
+      <Link to={'/bills'} className='nav_option px-2' style={{ width: '8vw' }}>
+        <div className='col-12 d-flex justify-content-center'>
+          <div className='bill_icon'></div>
+        </div>
+        Facturas
+      </Link>
     </div>
   )
 }

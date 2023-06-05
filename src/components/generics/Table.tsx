@@ -5,7 +5,7 @@ interface Props {
   headers: string[]
 }
 const Table = ({ headers, children }: Props) => {
-  const [darkMode, setDarkMode] = React.useState<boolean>(false)
+  const [darkMode, setDarkMode] = React.useState<boolean>(true)
 
   return (
     <>

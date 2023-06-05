@@ -9,6 +9,7 @@ import ExpensePage from './pages/ExpensePage'
 import Layout from './containers/generics/Layout'
 import EntryPage from './pages/EntryPage'
 import InvestmentPage from './pages/InvestmentPage'
+import BillsPage from './pages/BillsPage'
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/expenses" element={<ExpensePage />} />
             <Route path="/entries" element={<EntryPage />} />
             <Route path="/investments" element={<InvestmentPage />} />
+            <Route path="/bills" element={<BillsPage />} />
           </Routes>
         </Layout>
       </BrowserRouter>

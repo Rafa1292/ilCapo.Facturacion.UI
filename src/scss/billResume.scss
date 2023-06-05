@@ -69,8 +69,8 @@
   transition: all 0.3s ease;
   background: black;
   display: flex;
-  height: 100px;
-  width: 100px;
+  height: 80px;
+  width: 80px;
   padding: 10px;
   box-shadow: 0px 0px 15px -5px rgba(0,0,0,.6);
   flex-wrap: wrap;
@@ -82,8 +82,8 @@
 
 .command_icon {
   background-image: url('../assets/icons/white-bell.png');
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -103,8 +103,8 @@
   transition: all 0.3s ease;
   background: black;
   display: flex;
-  height: 100px;
-  width: 100px;
+  height: 80px;
+  width: 80px;
   padding: 10px;
   box-shadow: 0px 0px 15px -5px rgba(0,0,0,.6);
   flex-wrap: wrap;
@@ -116,8 +116,8 @@
 
 .cash_icon {
   background-image: url('../assets/icons/white-cash.png');
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -129,5 +129,39 @@
   box-shadow: 0px 0px 20px -5px rgba(0,0,0,.7);
   .cash_icon {
     background-image: url('../assets/icons/black-cash.png');
+  }
+}
+
+.discount_btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: black;
+  display: flex;
+  height: 80px;
+  width: 80px;
+  padding: 10px;
+  box-shadow: 0px 0px 15px -5px rgba(0,0,0,.6);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid white;
+}
+
+.discount_icon {
+  background-image: url('../assets/icons/white-discount.png');
+  height: 35px;
+  width: 35px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.discount_btn:hover {
+  background: white;
+  border: 2px solid black;
+  box-shadow: 0px 0px 20px -5px rgba(0,0,0,.7);
+  .discount_icon {
+    background-image: url('../assets/icons/black-discount.png');
   }
 }
