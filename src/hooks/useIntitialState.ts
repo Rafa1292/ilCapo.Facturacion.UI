@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { appState, systemState, userState } from '../types/appState'
 import { WorkDayUser } from '../types/workDayUser'
 import { User } from '../types/user'
-import { useGet } from './useAPI'
+import { useGet, usePost, usePostWithResponse } from './useAPI'
+import { UserInfo } from '../types/userInfo'
 
 
 const initialUser: userState = {
-  loggedIn: true,
-  user: { id: 1 } as User,
+  loggedIn: false,
+  userInfo: { id: 0 } as UserInfo,
   workDayUser: { id: 0 } as WorkDayUser
 }
 
@@ -19,22 +20,23 @@ const useInitialState = (): appState => {
   const [user, setUser] = useState(initialUser)
   const [system, setSystem] = useState(initialSystem)
 
-  const login = () => {
-    setUser({
-      ...user,
-      user: {
-        ...user.user,
-        id: 1
-      },
-      loggedIn: true
-    })
+  const login = async (tmpUser: User) => {
+    const response = await usePostWithResponse('users/login', tmpUser, true)
+    if (!response.error) {
+      localStorage.setItem('credentials', JSON.stringify(response.data))
+      setUser({
+        userInfo: response.data.userInfo,
+        loggedIn: true,
+        workDayUser: { ...user.workDayUser }
+      })
+    }
   }
 
   const logout = () => {
     setUser({
       ...user,
-      user: {
-        ...user.user,
+      userInfo: {
+        ...user.userInfo,
         id: 0
       },
       loggedIn: false
@@ -42,7 +44,7 @@ const useInitialState = (): appState => {
   }
 
   const setWorkDayUser = async () => {
-    const response = await useGet<WorkDayUser>(`workDayUsers/${user.user?.id}`, true)
+    const response = await useGet<WorkDayUser>(`workDayUsers/${user.userInfo?.userId}`, true)
     if (!response.error && response.data !== null) {
       setUser({
         ...user,
@@ -50,6 +52,18 @@ const useInitialState = (): appState => {
       })
     }
   }
+
+  useEffect(() => {
+    const credentials = localStorage.getItem('credentials')
+    if (credentials) {
+      const tmpUser = JSON.parse(credentials)
+      setUser({
+        userInfo: tmpUser.userInfo,
+        loggedIn: true,
+        workDayUser: { ...user.workDayUser }
+      })
+    }
+  }, [])
 
   return {
     user,

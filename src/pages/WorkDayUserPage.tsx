@@ -75,6 +75,7 @@ const WorkDayUserPage = () => {
   }
 
   useEffect(() => {
+    setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
   }, [user])
 

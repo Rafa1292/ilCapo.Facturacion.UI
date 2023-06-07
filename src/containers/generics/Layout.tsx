@@ -12,9 +12,6 @@ interface Props {
 const Layout = ({ children }: Props) => {
   const { setWorkDayUser, user } = useContext(AppContext)
 
-  useEffect(() => {
-    setWorkDayUser()
-  }, [])
 
   return (
     <>
