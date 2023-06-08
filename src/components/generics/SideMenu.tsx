@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../../scss/sideMenu.scss'
 import { Link } from 'react-router-dom'
 import logo from '../../assets/icons/logoNebulosa.png'
@@ -6,8 +6,11 @@ import time from '../../assets/icons/time.png'
 import shop from '../../assets/icons/shop.png'
 import moto from '../../assets/icons/moto.png'
 import carry from '../../assets/icons/carry.png'
+import AppContext from '../../context/AppContext'
 
 const Navbar = () => {
+  const { user } = useContext(AppContext)
+
   return (
     <>
       <nav
@@ -20,7 +23,7 @@ const Navbar = () => {
           </Link>
           <div className="col-12 d-flex flex-wrap  p-2 my-2 user_info">
             <div className="col-12 text-end rounded p-1 user_name">
-              Hola! Mariela Gonzales Rojas
+              Hola! {user.userInfo?.name}
             </div>
             <small className="col-12 text-end rounded p-1 text-white">
               Inicio de jornada: 10:00 am
