@@ -75,6 +75,14 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
+  const setDeliveryMethod = (deliveryMethod: number) => {
+    setBill({
+      ...bill,
+      deliveryMethod: deliveryMethod,
+      isCommanded: false
+    })
+  }
+
   const removeBillItem = (billItem: BillItem) => {
     setBill({
       ...bill,
@@ -179,7 +187,6 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const getBill = async () => {
-    console.log('getBill', tableNumber)
     const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
 
     if (!response.error && response.data !== null) {
@@ -276,7 +283,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     closeApartBill,
     restartBill,
     setBillAddress,
-    setDiscount
+    setDiscount,
+    setDeliveryMethod
   }
 }
 

@@ -6,8 +6,6 @@ import BillMakerModifierGroups from './BillMakerModifierGroups'
 import { BillItem } from '../../types/billItem'
 import { ModifierElement } from '../../types/modifierElement'
 import { LinkedProduct } from '../../types/linkedProduct'
-import { parseCurrency } from '../../utils/currencyParser'
-import { SaleItemCategory } from '../../types/saleItemCategory'
 
 interface Props {
   saleItem: SaleItem

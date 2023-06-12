@@ -9,7 +9,7 @@ import carry from '../../assets/icons/carry.png'
 import AppContext from '../../context/AppContext'
 
 const Navbar = () => {
-  const { user } = useContext(AppContext)
+  const { user, logout } = useContext(AppContext)
 
   return (
     <>
@@ -27,6 +27,9 @@ const Navbar = () => {
             </div>
             <small className="col-12 text-end rounded p-1 text-white">
               Inicio de jornada: 10:00 am
+            </small>
+            <small onClick={logout} className="col-12 text-end rounded p-1 text-white">
+              Cerrar sesión
             </small>
           </div>
           <div className="col-12 flex-wrap d-flex p-1 orders-togo_header">

@@ -13,6 +13,9 @@ import CustomBtn from './generics/CustomBtn'
 import { buttonTypes } from '../enums/buttonTypes'
 import cancel from '../assets/icons/close-circle-outline.png'
 import add from '../assets/icons/add.png'
+import dish from '../assets/icons/dish.png'
+import moto from '../assets/icons/moto.png'
+import carry from '../assets/icons/carry.png'
 import { usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
 import BillResumeDiscount from './BillResumeDiscount'
@@ -28,9 +31,10 @@ interface Props {
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
   setBillAddress(addressId: number): void
   setDiscount(discount: number): void
+  setDeliveryMethod(deliveryMethod: number): void
 }
 
-const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -142,6 +146,17 @@ const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, setBillAd
   return (
     <>
       <div className="col-12 d-flex flex-wrap p-0">
+        <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{top: '2vh'}}>
+          <span onClick={()=> setDeliveryMethod(1)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success': 'bg-dark'}`}>
+            <img src={carry} height={25}/>
+          </span>
+          <span onClick={()=> setDeliveryMethod(2)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success': 'bg-dark'}`}>
+            <img src={moto} height={25}/>
+          </span>
+          <span onClick={()=> setDeliveryMethod(0)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success': 'bg-dark'}`}>
+            <img src={dish} height={25}/>
+          </span>
+        </div>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ marginTop: '6vh' }}>
           {
             phone.length > 0 &&

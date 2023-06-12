@@ -13,7 +13,8 @@ const initialUser: userState = {
 }
 
 const initialSystem: systemState = {
-  loader: false
+  loader: false,
+  roomEdit: false
 }
 
 const useInitialState = (): appState => {
@@ -33,14 +34,8 @@ const useInitialState = (): appState => {
   }
 
   const logout = () => {
-    setUser({
-      ...user,
-      userInfo: {
-        ...user.userInfo,
-        id: 0
-      },
-      loggedIn: false
-    })
+    setUser(initialUser)
+    localStorage.removeItem('credentials')
   }
 
   const setWorkDayUser = async () => {
@@ -52,6 +47,14 @@ const useInitialState = (): appState => {
       })
     }
   }
+
+  const setRoomEdit = (value: boolean) => {
+    setSystem({
+      ...system,
+      roomEdit: value
+    })
+  }
+
 
   useEffect(() => {
     const credentials = localStorage.getItem('credentials')
@@ -70,7 +73,8 @@ const useInitialState = (): appState => {
     system,
     login,
     setWorkDayUser,
-    logout
+    logout,
+    setRoomEdit
   }
 }
 

@@ -21,4 +21,5 @@ export interface BillFunctions {
   restartBill: () => void
   setBillAddress: (addressId: number) => void
   setDiscount : (discount: number) => void  
+  setDeliveryMethod: (deliveryMethod: number) => void
 }

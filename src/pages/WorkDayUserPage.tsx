@@ -24,12 +24,10 @@ const initialWordayUser: WorkDayUser = {
   createdBy: 0,
   updatedBy: 0
 }
-
 interface currencyCount {
   value: number
   count: number
 }
-
 const initialCurrencies: currencyCount[] = [
   { value: 50000, count: 0 },
   { value: 20000, count: 0 },
@@ -77,7 +75,7 @@ const WorkDayUserPage = () => {
   useEffect(() => {
     setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
-  }, [user])
+  }, [])
 
 
   return (

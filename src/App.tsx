@@ -1,6 +1,6 @@
 import React from 'react'
 import AppContext from './context/AppContext'
-import  useInitialState from './hooks/useIntitialState'
+import useInitialState from './hooks/useIntitialState'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './scss/app.scss'
 import Home from './pages/Home'
@@ -10,6 +10,7 @@ import Layout from './containers/generics/Layout'
 import EntryPage from './pages/EntryPage'
 import InvestmentPage from './pages/InvestmentPage'
 import BillsPage from './pages/BillsPage'
+import RoomMakerPage from './pages/RoomMakerPage'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/entries" element={<EntryPage />} />
             <Route path="/investments" element={<InvestmentPage />} />
             <Route path="/bills" element={<BillsPage />} />
+            <Route path="/roomMaker" element={<RoomMakerPage />} />
           </Routes>
         </Layout>
       </BrowserRouter>

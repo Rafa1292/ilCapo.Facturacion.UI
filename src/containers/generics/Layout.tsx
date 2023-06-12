@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import Navbar from '../../components/generics/Navbar'
 import SideMenu from '../../components/generics/SideMenu'
 import AppContext from '../../context/AppContext'
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Layout = ({ children }: Props) => {
-  const { setWorkDayUser, user } = useContext(AppContext)
+  const { user, system } = useContext(AppContext)
 
 
   return (
@@ -25,10 +25,14 @@ const Layout = ({ children }: Props) => {
         ||
         <>
           <Navbar />
+
           <div className="container-fluid">
             <div className="row">
-              <SideMenu />
-              <main className="col-md-9 ms-sm-auto col-lg-10 d-flex flex-wrap p-2 justify-content-center">
+              {
+                !system.roomEdit &&
+                <SideMenu />
+              }
+              <main className="col-md-9 ms-sm-auto col-lg-11 d-flex flex-wrap p-2 justify-content-center">
                 {
                   user.workDayUser.close &&
                   <div className="flex flex-col items-center justify-center h-full">

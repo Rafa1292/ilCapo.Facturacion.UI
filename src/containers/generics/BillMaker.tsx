@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { useGetList, useGet, usePost, usePatch } from '../../hooks/useAPI'
-import { ProductModifier } from '../../types/productModifier'
+import { usePost, usePatch } from '../../hooks/useAPI'
 import BillMakerItems from '../../components/billMaker/BillMakerItems'
 import useBill from '../../hooks/useBill'
 import BillResume from '../../components/BillResume'
@@ -13,11 +12,11 @@ import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
 import { BillFunctions } from '../../types/billFunctions'
 import BillPayMethod from '../../components/BillPayMethod'
-import { LinkedProduct } from '../../types/linkedProduct'
 
 interface Props {
   billFunctions: BillFunctions
   close: () => void
+  saleItemCategories: SaleItemCategory[]
 }
 
 interface SearchProduct {
@@ -25,13 +24,6 @@ interface SearchProduct {
   categoryId: number
   saleItemId: number
   name: string
-}
-
-const initialSearchProduct: SearchProduct = {
-  id: 0,
-  categoryId: 0,
-  saleItemId: 0,
-  name: ''
 }
 
 const initialBillItem: BillItem = {
@@ -50,13 +42,13 @@ const initialBillItem: BillItem = {
   updatedBy: 0
 }
 
-const BillMaker = ({ billFunctions, close }: Props) => {
-  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
+const BillMaker = ({ billFunctions, close, saleItemCategories }: Props) => {
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user } = useContext(AppContext)
-  const { bill, fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory, removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct } = billFunctions
+  const { bill, fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory, 
+    removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
   const nextBillFunctions = useBill(0)
@@ -76,7 +68,7 @@ const BillMaker = ({ billFunctions, close }: Props) => {
     }
   }
 
-  const setCategory = (saleItemCategory: SaleItemCategory) => {
+  const handleChangeSaleItemCategory = (saleItemCategory: SaleItemCategory) => {
     setEditBillItem({ saleItemId: 0 } as BillItem)
     setSaleItemCategory(saleItemCategory)
   }
@@ -126,23 +118,19 @@ const BillMaker = ({ billFunctions, close }: Props) => {
   const newBill = async () => {
     const response = await usePost('bills', bill, true)
     if (!response.error) {
-      console.log('commandBill')
       getBill()
     }
   }
 
   const updateBill = async () => {
-    console.log(bill)
     const response = await usePatch('bills', bill, true)
     if (!response.error) {
-      console.log('updateBill')
       getBill()
     }
   }
 
-
   const validateBill = (): boolean => {
-    if ((!bill.isCommanded))
+    if (!bill.isCommanded)
       return true
     let valid = false
     for (const billItem of bill.items) {
@@ -203,34 +191,13 @@ const BillMaker = ({ billFunctions, close }: Props) => {
   }
 
   useEffect(() => {
-    const getSaleItemCategories = async () => {
-      const response = await useGetList<SaleItemCategory[]>('saleItemCategories', false)
-      if (!response.error) {
-        const tmpSaleItemCategories = response.data
-        initializeSearchProducts(saleItemCategories)
-        for (const saleItemCategory of tmpSaleItemCategories) {
-          for (const saleItem of saleItemCategory.saleItems) {
-            for (const saleItemProduct of saleItem.saleItemProducts) {
-              const productModifiersResponse = await useGet<ProductModifier[]>(`productModifiers/byProductId/${saleItemProduct.productId}`, false)
-              if (!productModifiersResponse.error) {
-                const productModifiers = productModifiersResponse.data
-                saleItemProduct.product.productModifiers = productModifiers
-              }
-            }
-          }
-        }
-        setSaleItemCategories(tmpSaleItemCategories)
-      }
-    }
-    getSaleItemCategories()
+    initializeSearchProducts(saleItemCategories)
     getBill()
   }, [])
 
 
   return (
     <div className='col-12 d-flex flex-wrap'>
-      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '0vw', zIndex: '1000' }} onClick={() => nextBillFunctions.printBill()}>Imprimir</button>
-      <button className="btn btn-warning position-absolute" style={{ top: '0', right: '6vw', zIndex: '1000' }} onClick={() => printBill()}>Imprimir orig</button>
       {
         showPayMethods
         &&
@@ -259,7 +226,7 @@ const BillMaker = ({ billFunctions, close }: Props) => {
             {
               saleItemCategories.map((tmpSaleItemCategory, index) => {
                 return (
-                  <div key={index} onClick={() => setCategory(tmpSaleItemCategory)} className="px-3 py-1 rounded pointer item-category" >
+                  <div key={index} onClick={() => handleChangeSaleItemCategory(tmpSaleItemCategory)} className="px-3 py-1 rounded pointer item-category" >
                     <h6 className='m-0'>{tmpSaleItemCategory.name}</h6>
                   </div>
                 )
@@ -273,7 +240,7 @@ const BillMaker = ({ billFunctions, close }: Props) => {
         </div>
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||

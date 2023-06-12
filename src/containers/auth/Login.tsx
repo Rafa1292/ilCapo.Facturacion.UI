@@ -14,7 +14,6 @@ const initialUser: User = {
 }
 
 const Login = () => {
-  // use state from context for change state.loggedIn to true
   const { login } = useContext(AppContext)
   const [user, setUser] = React.useState<User>(initialUser)
 

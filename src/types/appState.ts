@@ -8,6 +8,7 @@ export interface appState {
   login: (tmpUser: User) => void;
   setWorkDayUser: () => void;
   logout: () => void;
+  setRoomEdit: (value: boolean) => void;
 }
 
 export interface userState {
@@ -18,4 +19,5 @@ export interface userState {
 
 export interface systemState {
   loader: boolean;
+  roomEdit: boolean;
 }

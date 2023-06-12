@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import ProgressBar from './ProgressBar'
 import BillMaker from '../../containers/generics/BillMaker'
-import '../../scss/foodTable.scss'
 import CustomBtn from './CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
 import useBill from '../../hooks/useBill'
+import '../../scss/foodTable.scss'
+import { SaleItemCategory } from '../../types/saleItemCategory'
+
 interface Props {
   top: number
   left: number
   tableNumber: number
+  saleItemCategories: SaleItemCategory[]
 }
 
-const FoodTable = ({ top, left, tableNumber }: Props) => {
+const FoodTable = ({ top, left, tableNumber, saleItemCategories }: Props) => {
   const billFunctions = useBill(tableNumber)
   const [close, setClose] = useState(true)
 
@@ -38,7 +41,7 @@ const FoodTable = ({ top, left, tableNumber }: Props) => {
             </span>
             {
               !close &&
-              <BillMaker close={closeTable} billFunctions={billFunctions} />
+              <BillMaker saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
             }
           </div>
           <div className="table_container d-flex flex-wrap p-2" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
