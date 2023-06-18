@@ -22,4 +22,6 @@ export interface BillFunctions {
   setBillAddress: (addressId: number) => void
   setDiscount : (discount: number) => void  
   setDeliveryMethod: (deliveryMethod: number) => void
+  serve : () => void
+  setCurrentBill: (currentBill: Bill) => void
 }

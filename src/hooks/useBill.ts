@@ -40,10 +40,13 @@ const initialBill: Bill = {
   deliveryMethod: 0,
   tableNumber: 0,
   workDayUserId: 0,
+  isServed: false,
   items: [],
-  isCommanded: true,
+  isCommanded: false,
   billAccountHistories: [],
   delete: false,
+  createdAt: new Date(Date.now()),
+  updatedAt: new Date(Date.now()),
   createdBy: 0,
   updatedBy: 0
 }
@@ -52,6 +55,10 @@ const initialBill: Bill = {
 const useBill = (tableNumber: number): BillFunctions => {
   const [bill, setBill] = useState<Bill>({ ...initialBill, tableNumber: tableNumber })
   const { user } = useContext(AppContext)
+
+  const setCurrentBill = (currentBill: Bill) => {
+    setBill(currentBill)
+  }
 
   const addBillItem = (billItem: BillItem) => {
     if (bill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
@@ -188,7 +195,6 @@ const useBill = (tableNumber: number): BillFunctions => {
 
   const getBill = async () => {
     const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
-
     if (!response.error && response.data !== null) {
       const bill = response.data
       for (const billItem of bill.items) {
@@ -266,6 +272,10 @@ const useBill = (tableNumber: number): BillFunctions => {
     setBill({ ...bill, items: tmpBillItems, isCommanded: false })
   }
 
+  const serve = ()=> {
+    setBill({...bill, isServed: true})
+  }
+
   return {
     bill,
     addBillItem,
@@ -284,7 +294,9 @@ const useBill = (tableNumber: number): BillFunctions => {
     restartBill,
     setBillAddress,
     setDiscount,
-    setDeliveryMethod
+    setDeliveryMethod, 
+    serve,
+    setCurrentBill
   }
 }
 

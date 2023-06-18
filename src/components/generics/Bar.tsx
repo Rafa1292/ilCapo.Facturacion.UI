@@ -6,15 +6,19 @@ import CustomBtn from './CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import useBill from '../../hooks/useBill'
+import { Bill } from '../../types/bill'
 
 interface Props {
   top: number
   left: number
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
+  bill: Bill
+  updateBill: (id: number) => void
+  removeBill: (id: number) => void
 }
 
-const Bar = ({ top, left, tableNumber, saleItemCategories }: Props) => {
+const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, updateBill }: Props) => {
   const billFunctions = useBill(tableNumber)
   const [close, setClose] = useState(true)
 
@@ -37,15 +41,15 @@ const Bar = ({ top, left, tableNumber, saleItemCategories }: Props) => {
         </span>
         {
           !close &&
-          <BillMaker saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
+          <BillMaker removeBill={removeBill} refreshBill={updateBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
         }
       </div>
-      <div className="bar_container d-flex flex-wrap" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
+      <div className="bar_container d-flex flex-wrap position-absolute" onClick={() => openTable()} style={{ top: `${top}px`, left: `${left}px` }}>
         <strong>#{tableNumber}</strong>
         <div className='bar'></div>
         <div className="bar_background"></div>
         <div className="bar_background-color"></div>
-        <ProgressBar styleClass='progress_bar-bar' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />
+        <ProgressBar isServe={billFunctions.bill.isServed} styleClass='progress_bar-bar' initialTime={new Date()} finalTime={new Date()} isCommanded={false} tableNumber={tableNumber} />
       </div>
     </>
   )

@@ -17,7 +17,7 @@ const Bar = ({ top, left, tableNumber }: Props) => {
       <div className='leftViewBar'></div>
       <div className="leftViewBar_background"></div>
       <div className="leftViewBar_background-color"></div>
-      <ProgressBar styleClass='progress_bar-leftViewBar' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />
+      {/* <ProgressBar styleClass='progress_bar-leftViewBar' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} /> */}
     </div>
   )
 }

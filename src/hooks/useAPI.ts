@@ -13,7 +13,7 @@ class CustomResponse<T> {
     this.message = ['']
   }
 
-  public badResponse(errors:string[]): CustomResponse<T> {
+  public badResponse(errors: string[]): CustomResponse<T> {
     const response = new CustomResponse<T>()
     response.error = true
     response.message = errors
@@ -40,7 +40,7 @@ const usePost = async<T>(route: string, data: T, api: boolean): Promise<CustomRe
   return await useCustom<T>(route, 'post', data, api)
 }
 
-const usePostWithResponse = async(route: string, data: any, api: boolean): Promise<CustomResponse<any>> => {
+const usePostWithResponse = async (route: string, data: any, api: boolean): Promise<CustomResponse<any>> => {
   return await useCustom<any>(route, 'post', data, api)
 }
 
@@ -79,15 +79,19 @@ const useCustom = async<T>(route: string, method: string, data: T, api: boolean)
     })
 
     if (response?.data?.error) {
-      Swal.fire('Error', response.data.message.toString(), 'error')
-      return customResponse.badResponse(response.data.message)
+      if (response.data.message.toString().includes('Token expired')) {
+        localStorage.removeItem('credentials')
+        window.location.href = '/login'
+      } else {
+        Swal.fire('Error', response.data.message.toString(), 'error')
+        return customResponse.badResponse(response.data.message)
+      }
     }
 
     return customResponse.setResponse(response.data.content, false, [''])
 
   } catch (error) {
     return customResponse.badResponse(['Bad response'])
-
   }
 
 }

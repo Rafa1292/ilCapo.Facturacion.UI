@@ -12,13 +12,47 @@ import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
 import { BillFunctions } from '../../types/billFunctions'
 import BillPayMethod from '../../components/BillPayMethod'
+import { Bill } from '../../types/bill'
+import { Client } from '../../types/client'
 
 interface Props {
   billFunctions: BillFunctions
   close: () => void
   saleItemCategories: SaleItemCategory[]
+  bill: Bill
+  refreshBill: (id: number) => void
+  removeBill: (id: number) => void
 }
 
+const initialClient: Client = {
+  id: 0,
+  name: '',
+  phone: '',
+  addressess: [],
+  delete: false,
+  createdBy: 0,
+  updatedBy: 0
+}
+
+const initialBill: Bill = {
+  id: 0,
+  addressId: 0,
+  client: initialClient,
+  clientId: 0,
+  close: false,
+  deliveryMethod: 0,
+  tableNumber: 0,
+  workDayUserId: 0,
+  items: [],
+  isCommanded: false,
+  isServed: false,
+  billAccountHistories: [],
+  delete: false,
+  createdAt: new Date(Date.now()),
+  updatedAt: new Date(Date.now()),
+  createdBy: 0,
+  updatedBy: 0
+}
 interface SearchProduct {
   id: number
   categoryId: number
@@ -42,12 +76,13 @@ const initialBillItem: BillItem = {
   updatedBy: 0
 }
 
-const BillMaker = ({ billFunctions, close, saleItemCategories }: Props) => {
+
+const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill, refreshBill }: Props) => {
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user } = useContext(AppContext)
-  const { bill, fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory, 
+  const { fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory,
     removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
@@ -106,7 +141,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories }: Props) => {
   const commandBill = async () => {
     bill.workDayUserId = user.workDayUser.id
     if (validateBill()) {
-      if (bill.id === 0) {
+      if (bill?.id === 0) {
         await newBill()
       }
       else {
@@ -116,21 +151,22 @@ const BillMaker = ({ billFunctions, close, saleItemCategories }: Props) => {
   }
 
   const newBill = async () => {
-    const response = await usePost('bills', bill, true)
+    const response = await usePost<Bill>('bills', bill, true)
     if (!response.error) {
-      getBill()
+      const { id } = response.data
+      refreshBill(id)
     }
   }
 
   const updateBill = async () => {
     const response = await usePatch('bills', bill, true)
     if (!response.error) {
-      getBill()
+      refreshBill(bill.id)
     }
   }
 
   const validateBill = (): boolean => {
-    if (!bill.isCommanded)
+    if (!bill?.isCommanded)
       return true
     let valid = false
     for (const billItem of bill.items) {
@@ -202,7 +238,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories }: Props) => {
         showPayMethods
         &&
         <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{ maxHeight: '100vh', alignContent: 'baseline', overflowY: 'scroll' }}>
-          <BillPayMethod close={close} moveBillItemBack={moveBillItemBack} nextBillFunctions={nextBillFunctions}
+          <BillPayMethod removeBill={removeBill} close={close} moveBillItemBack={moveBillItemBack} nextBillFunctions={nextBillFunctions}
             setPullApartBill={setPullApartBill} pullApartBill={pullApartBill} closeBill={closeBill}
             fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} bill={bill} addAccountHistory={addAccountHistory} />
         </div>

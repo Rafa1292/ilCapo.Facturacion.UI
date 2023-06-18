@@ -4,6 +4,7 @@ import { WorkDayUser } from '../types/workDayUser'
 import { User } from '../types/user'
 import { useGet, usePost, usePostWithResponse } from './useAPI'
 import { UserInfo } from '../types/userInfo'
+import { BussinessConfig } from '../types/bussinessConfig'
 
 
 const initialUser: userState = {
@@ -14,7 +15,8 @@ const initialUser: userState = {
 
 const initialSystem: systemState = {
   loader: false,
-  roomEdit: false
+  roomEdit: false,
+  bussinessConfig: { id: 0, menuWaitTime: 0, serveWaitTime: 0, tables: [] } as BussinessConfig
 }
 
 const useInitialState = (): appState => {
@@ -55,6 +57,33 @@ const useInitialState = (): appState => {
     })
   }
 
+  const setMenuDeliveryTime = (tableNumber: number, date: Date | null) => {
+    setSystem({
+      ...system,
+      bussinessConfig: {
+        ...system.bussinessConfig,
+        tables: system.bussinessConfig.tables.map(table => {
+          if (table.number === tableNumber) {
+            return {
+              ...table,
+              menuDeliveryTime: date
+            }
+          }
+          return table
+        })
+      }
+    })
+  }
+
+  const getBussinessConfig = async () => {
+    const response = await useGet<BussinessConfig>('bussinessConfig', true)
+    if (!response.error && response.data !== null) {
+      setSystem({
+        ...system,
+        bussinessConfig: response.data
+      })
+    }
+  }
 
   useEffect(() => {
     const credentials = localStorage.getItem('credentials')
@@ -66,6 +95,7 @@ const useInitialState = (): appState => {
         workDayUser: { ...user.workDayUser }
       })
     }
+    getBussinessConfig()
   }, [])
 
   return {
@@ -74,7 +104,9 @@ const useInitialState = (): appState => {
     login,
     setWorkDayUser,
     logout,
-    setRoomEdit
+    setRoomEdit,
+    setMenuDeliveryTime,
+    getBussinessConfig
   }
 }
 

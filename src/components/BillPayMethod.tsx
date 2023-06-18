@@ -18,13 +18,14 @@ interface Props {
   fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
   closeBill: () => Promise<boolean>
   close: () => void
+  removeBill: (id: number) => void
   pullApartBill: boolean
   setPullApartBill: (pullApartBill: boolean) => void
   moveBillItemBack: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
 }
 
 
-const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, close, moveBillItemBack, setPullApartBill, closeBill, fastPayAction, removeAccountHistory }: Props) => {
+const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill, close, moveBillItemBack, setPullApartBill, closeBill, fastPayAction, removeAccountHistory }: Props) => {
   const [option, setOption] = useState<number>(1)
 
   const getAccountHistoriesTotal = (): number => {
@@ -79,6 +80,7 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, close, move
     const response = await fastPayAction(accountHistory)
     if (response) {
       close()
+      removeBill(bill.id)
     }
   }
 
@@ -95,11 +97,11 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, close, move
     const response = await closeBill()
     if (response) {
       close()
+      removeBill(bill.id)
     }
   }
 
   const handleCloseApartBill = async (billHistories: BillAccountHistory[]) => {
-    console.log(billHistories)
     const response = await nextBillFunctions.closeApartBill(bill, billHistories)
     if (response) {
       nextBillFunctions.restartBill()

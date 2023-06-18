@@ -1,4 +1,4 @@
-import React, {  useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProgressBar from './ProgressBar'
 import BillMaker from '../../containers/generics/BillMaker'
 import CustomBtn from './CustomBtn'
@@ -6,16 +6,23 @@ import { buttonTypes } from '../../enums/buttonTypes'
 import useBill from '../../hooks/useBill'
 import '../../scss/foodTable.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
+import { BillFunctions } from '../../types/billFunctions'
+import { Bill } from '../../types/bill'
 
 interface Props {
   top: number
   left: number
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
+  initialTime: Date | null
+  finalTime: Date | null
+  setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
+  billFunctions: BillFunctions
+  updateBill: (id: number) => void
+  removeBill: (id: number) => void
 }
 
-const FoodTable = ({ top, left, tableNumber, saleItemCategories }: Props) => {
-  const billFunctions = useBill(tableNumber)
+const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCategories, initialTime, finalTime, billFunctions, setMenuDeliveryTime }: Props) => {
   const [close, setClose] = useState(true)
 
   const closeTable = () => {
@@ -30,6 +37,7 @@ const FoodTable = ({ top, left, tableNumber, saleItemCategories }: Props) => {
     setClose(false)
   }
 
+
   return (
     <>
       {
@@ -41,15 +49,29 @@ const FoodTable = ({ top, left, tableNumber, saleItemCategories }: Props) => {
             </span>
             {
               !close &&
-              <BillMaker saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
+              <BillMaker removeBill={removeBill} refreshBill={updateBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
             }
           </div>
-          <div className="table_container d-flex flex-wrap p-2" onClick={() => openTable()} style={{ top: `${top}vh`, left: `${left}vw` }}>
-            <strong># {tableNumber}</strong>
-            <div className='table_room'></div>
-            <div className="table_background"></div>
-            <div className="table_background-color"></div>
-            <ProgressBar styleClass='progress_bar-table' waitingTime={0.5} isCommanded={false} tableNumber={tableNumber} />
+          <div className="table_container d-flex flex-wrap p-2 position-absolute" style={{ top: `${top}px`, left: `${left}px` }}>
+            <div className="d-flex flex-wrap justify-content-center" onClick={() => openTable()} style={{ width: '100%', height: '100%' }}>
+              <strong># {tableNumber}</strong>
+              <div className='table_room'></div>
+              <div className="table_background"></div>
+              <div className="table_background-color"></div>
+              <ProgressBar isServe={billFunctions.bill.isServed} styleClass='progress_bar-table' initialTime={initialTime} finalTime={finalTime} isCommanded={billFunctions.bill.isCommanded} tableNumber={tableNumber} />
+            </div>
+            {
+              !billFunctions.bill.isCommanded && initialTime === null &&
+              <strong onClick={() => setMenuDeliveryTime(tableNumber, new Date(Date.now()))} style={{ position: 'absolute', bottom: '-20px' }}>Menu</strong>
+            }
+            {
+              !billFunctions.bill.isCommanded && initialTime !== null &&
+              <strong onClick={() => setMenuDeliveryTime(tableNumber, null)} style={{ position: 'absolute', bottom: '-20px' }}>Cancelar</strong>
+            }
+            {
+              billFunctions.bill.isCommanded && !billFunctions.bill.isServed &&
+              <strong onClick={() => billFunctions.serve()} style={{ position: 'absolute', bottom: '-20px' }}>Servir</strong>
+            }
           </div>
         </>
       }

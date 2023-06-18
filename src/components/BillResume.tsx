@@ -16,9 +16,10 @@ import add from '../assets/icons/add.png'
 import dish from '../assets/icons/dish.png'
 import moto from '../assets/icons/moto.png'
 import carry from '../assets/icons/carry.png'
-import { usePost } from '../hooks/useAPI'
+import { useGet, usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
 import BillResumeDiscount from './BillResumeDiscount'
+import { get } from 'http'
 interface Props {
   bill: Bill
   getClient(phone: string): void
@@ -41,6 +42,8 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
   const [addressId, setAddressId] = React.useState<number>(0)
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
+  const [availableTables, setAvailableTables] = React.useState<number[]>([])
+  const [currentTableNumber, setCurrentTableNumber] = React.useState<number>(0)
 
   const getBillTax = () => {
     let billTax = 0
@@ -133,13 +136,29 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
       getClient(response.data.phone)
     }
   }
-  
+
+  const getTableNumbersWithBillOpen = async () => {
+    const tableNumbers: number[] = []
+    const response = await useGet<number[]>('bills/tableNumbersAvailable', true)
+    if (!response.error) {
+      for (const tableNumber of response.data) {
+        tableNumbers.push(tableNumber)
+      }
+    }
+    setAvailableTables(tableNumbers)
+  }  
+
+  const handleChangeTable = async () => {
+    await getTableNumbersWithBillOpen()
+    setDeliveryMethod(0)
+  }
 
   useEffect(() => {
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
       setAddressId(bill.addressId)
+      setCurrentTableNumber(bill.tableNumber)
     }
   }, [bill.client, newAddressState])
 
@@ -153,9 +172,10 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
           <span onClick={()=> setDeliveryMethod(2)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success': 'bg-dark'}`}>
             <img src={moto} height={25}/>
           </span>
-          <span onClick={()=> setDeliveryMethod(0)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success': 'bg-dark'}`}>
+          <span onClick={()=> handleChangeTable()} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success': 'bg-dark'}`}>
             <img src={dish} height={25}/>
           </span>
+
         </div>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ marginTop: '6vh' }}>
           {

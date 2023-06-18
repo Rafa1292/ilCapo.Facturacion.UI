@@ -1,3 +1,4 @@
+import { BussinessConfig } from './bussinessConfig'
 import { User } from './user'
 import { UserInfo } from './userInfo'
 import { WorkDayUser } from './workDayUser'
@@ -9,6 +10,8 @@ export interface appState {
   setWorkDayUser: () => void;
   logout: () => void;
   setRoomEdit: (value: boolean) => void;
+  setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void;
+  getBussinessConfig: () => void;
 }
 
 export interface userState {
@@ -20,4 +23,5 @@ export interface userState {
 export interface systemState {
   loader: boolean;
   roomEdit: boolean;
+  bussinessConfig: BussinessConfig;
 }
