@@ -41,6 +41,7 @@ const initialBillItemLinkedProduct: BillItemLinkedProduct = {
   itemNumber: 0,
   saleItemProductId: 0,
   combined: false,
+  description: '',
   products: [],
   createdBy: 0,
   updatedBy: 0

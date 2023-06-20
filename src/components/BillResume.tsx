@@ -33,9 +33,10 @@ interface Props {
   setBillAddress(addressId: number): void
   setDiscount(discount: number): void
   setDeliveryMethod(deliveryMethod: number): void
+  addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -154,6 +155,7 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
   }
 
   useEffect(() => {
+    console.log(bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
@@ -258,7 +260,7 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
           {
             bill.items.map((billItem, index) => {
               return (
-                <BillResumeItem moveBillItem={moveBillItem} pullApartBill={pullApartBill} removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
+                <BillResumeItem addDescriptionToBillProduct={addDescriptionToBillProduct} moveBillItem={moveBillItem} pullApartBill={pullApartBill} removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
               )
             })
           }

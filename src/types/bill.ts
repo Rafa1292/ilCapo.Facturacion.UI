@@ -14,6 +14,7 @@ export interface Bill {
   items: BillItem[]
   isCommanded: boolean
   isServed: boolean
+  isNull: boolean
   billAccountHistories: BillAccountHistory[]
   delete: boolean
   createdBy?: number

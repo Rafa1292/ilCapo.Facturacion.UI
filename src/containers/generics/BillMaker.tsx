@@ -46,6 +46,7 @@ const initialBill: Bill = {
   items: [],
   isCommanded: false,
   isServed: false,
+  isNull: false,
   billAccountHistories: [],
   delete: false,
   createdAt: new Date(Date.now()),
@@ -276,7 +277,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
         </div>
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct} setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||

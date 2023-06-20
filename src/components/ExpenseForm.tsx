@@ -86,6 +86,22 @@ const ExpenseForm = () => {
     return false
   }
 
+  const fastPayAction = async (accountHistory: AccountHistory) => {
+    if (expense.providerId <= 0) {
+      validator.validateNumber(0, 'providerId', /^[0-9]*$/, false)
+      setErrors(['Debe seleccionar un proveedor'])
+    } else {
+      setErrors([])
+      const expenseAccountHistory: ExpenseAccountHistory = { ...initialExpenseAccountHistory, accountHistory, id: expense.expenseAccountHistories.length + 1 }
+      const response = await usePost('expenses', {...expense, expenseAccountHistories: [expenseAccountHistory], workDayUserId: user.workDayUser.id }, true)
+      if (!response.error) {
+        setExpense(initialExpense)
+        setWorkDayUser()
+        setShow(false)
+      }
+    }
+  }
+
   const handleDeleteAccountHistory = (id: number) => {
     const expenseAccountHistories = expense.expenseAccountHistories.filter(expenseAccountHistory => expenseAccountHistory.id !== id)
     setExpense({ ...expense, expenseAccountHistories })
@@ -193,7 +209,7 @@ const ExpenseForm = () => {
         {
           !expense.pendingPay &&
           <div className="col-6 d-flex flex-wrap align-items-center">
-            <AccountHistoryForm defaultAmount={expense.amount} isPay={true} handleAccountHistory={handleAccountHistory} />
+            <AccountHistoryForm defaultAmount={expense.amount} fastPayAction={fastPayAction} isPay={true} handleAccountHistory={handleAccountHistory} />
           </div>
         }
       </CustomModal>

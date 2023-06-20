@@ -84,7 +84,7 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
   return (
     <>
       {
-        payWith > 0 && defaultAmount && fastPayAction &&
+        defaultAmount && fastPayAction &&
         <div className="col-12 border rounded p-3 my-2" style={{ height: 'fit-content' }}>
           <h5 className='col-12'>Pago rapido en efectivo</h5>
           <div className="col-12 d-flex flex-wrap justify-content-center ">
@@ -95,14 +95,16 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
               }
             } />
           </div>
-          <h5 className='col-12 text-center mt-4'>Su vuelto es:</h5>
-          <h5 className='col-12 text-center text-danger'> {parseCurrency((payWith - defaultAmount).toString())}</h5>
-          <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
-            {
-              payWith >= defaultAmount &&
-              <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Agregar</button>
-            }
-          </div>
+          {
+            payWith >= defaultAmount &&
+            <>
+              <h5 className='col-12 text-center mt-4'>Su vuelto es:</h5>
+              <h5 className='col-12 text-center text-danger'> {parseCurrency((payWith - defaultAmount).toString())}</h5>
+              <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
+                <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Agregar</button>
+              </div>
+            </>
+          }
         </div>
       }
       <div className='col-12 d-flex flex-wrap justify-content-center p-3 pb-5 rounded border' style={{ height: 'fit-content' }}>

@@ -33,6 +33,7 @@ const initialBill: Bill = {
   items: [],
   isCommanded: false,
   isServed: false,
+  isNull: false,
   updatedAt: new Date(Date.now()),
   billAccountHistories: [],
   delete: false,

@@ -378,6 +378,8 @@ label {
   background: linear-gradient(0deg, rgba(77, 160, 189, 0.2) 0%, rgba(255, 193, 7, 0) 100%);
 }
 
+
+
 .table_waiting-food {
   background: linear-gradient(0deg, rgba(50, 200, 50, 0.2) 0%, rgba(255, 193, 7, 0) 100%);
 }
@@ -392,6 +394,10 @@ label {
 
 .danger_time-progress {
   border: 2px solid rgba(228, 41, 11, 0.9);
+}
+
+.cross-out {
+  text-decoration: line-through;
 }
 
 .waitingFood_time-progress {

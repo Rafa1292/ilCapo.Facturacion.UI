@@ -4,6 +4,8 @@ import { parseCurrency } from '../utils/currencyParser'
 import CustomBtn from './generics/CustomBtn'
 import { buttonTypes } from '../enums/buttonTypes'
 import '../scss/billResume.scss'
+import CustomInputText from './generics/CustomInputText'
+import { regexOptions } from '../enums/regexOptions'
 
 interface Props {
   billItem: BillItem
@@ -12,9 +14,10 @@ interface Props {
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
+  addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }
 
-const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, moveBillItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
 
   const getBillItemTotal = (billItem: BillItem): number => {
@@ -28,6 +31,10 @@ const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, removeLinkedPro
       dottedLine += '...'
     }
     return dottedLine
+  }
+
+  const handleDescription = (event: React.ChangeEvent<HTMLInputElement>, itemNumber: number, saleItemProductId: number) => {
+    addDescriptionToBillProduct(billItem.saleItemId, itemNumber, saleItemProductId, event.target.value)
   }
 
   const getBillItemModifiersPrice = (billItem: BillItem): number => {
@@ -147,6 +154,16 @@ const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, removeLinkedPro
                             </strong>
                           </div>
                         }
+                      </div>
+                      <div className="col-12 d-flex flex-wrap">
+                        <CustomInputText value={billProduct.description}
+                          customInputText={
+                            {
+                              label: 'Descripcion', name: 'description',
+                              handleChange: (ev)=>handleDescription(ev, billProduct.itemNumber, billProduct.saleItemProductId), pattern: regexOptions.text,
+                              validationMessage: 'Ingrese una descripcion valida'
+                            }
+                          } />
                       </div>
                     </div>
                   )

@@ -41,6 +41,7 @@ const initialBill: Bill = {
   tableNumber: 0,
   workDayUserId: 0,
   isServed: false,
+  isNull: false,
   items: [],
   isCommanded: false,
   billAccountHistories: [],
@@ -181,6 +182,24 @@ const useBill = (tableNumber: number): BillFunctions => {
     return undefined
   }
 
+  const addDescriptionToBillProduct = (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => {
+    for (const billItem of bill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        for (const billItemLinkedProduct of billItem.billProducts) {
+          if (billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.saleItemProductId === saleItemProductId) {
+            billItemLinkedProduct.description = description
+          }
+        }
+      }
+    }
+    setBill({
+      ...bill,                                                                                     
+      isCommanded: false
+    })
+  }
+
+
+
   const getClient = async (phone: string) => {
     const response = await useGet<Client>(`clients/phone/${phone}`, true)
     if (!response.error && response.data !== null) {
@@ -299,7 +318,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     setDiscount,
     setDeliveryMethod,
     serve,
-    setCurrentBill
+    setCurrentBill,
+    addDescriptionToBillProduct
   }
 }
 

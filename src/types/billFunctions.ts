@@ -24,4 +24,5 @@ export interface BillFunctions {
   setDeliveryMethod: (deliveryMethod: number) => void
   serve : () => void
   setCurrentBill: (currentBill: Bill) => void
+  addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }

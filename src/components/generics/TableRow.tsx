@@ -3,17 +3,23 @@ import React from 'react'
 interface Props {
   tableData: string[]
   children?: React.ReactNode
+  classElement?: string
+  crossOut?: boolean
 }
 
-const TableRow = ({ tableData, children }: Props) => {
+const TableRow = ({ tableData, children, classElement, crossOut }: Props) => {
   return (
-    <tr>
+    <tr className={`${classElement}`}>
       {
-        tableData.map((data, index) => <td className='' key={index}><div className='custom-center'>{data}</div></td>)
+        tableData.map((data, index) => <td key={index}>
+          <div className={`custom-center ${crossOut ? 'cross-out text-danger' : ''}`}>
+            {data}
+          </div>
+        </td>)
       }
       {
         children &&
-        <td className=''>
+        <td className={crossOut ? 'cross-out text-danger' : 'cross-out'}>
           <div className='col-12 d-flex p-0 m-0 justify-content-end'>
             {children}
           </div>
