@@ -58,6 +58,7 @@ const useInitialState = (): appState => {
   }
 
   const setMenuDeliveryTime = (tableNumber: number, date: Date | null) => {
+    console.log(tableNumber, date)
     setSystem({
       ...system,
       bussinessConfig: {

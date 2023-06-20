@@ -83,30 +83,28 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
 
   return (
     <>
-      <div className="col-12 border rounded p-3 my-2" style={{ height: 'fit-content' }}>
-        <h5 className='col-12'>Pago rapido en efectivo</h5>
-        <div className="col-12 d-flex flex-wrap justify-content-center ">
-          <CustomInputNumber setDefaultValue={() => setPayWith(defaultAmount ? defaultAmount : 0)} isRequired={false} showLabel={false} value={payWith} customInputNumber={
-            {
-              label: 'Monto', name: 'amount',
-              handleChange: handleChangeDiference, pattern: '', validationMessage: 'Ingrese un monto válido'
-            }
-          } />
-        </div>
-        {
-          payWith > 0 && defaultAmount && fastPayAction &&
-          <>
-            <h5 className='col-12 text-center mt-4'>Su vuelto es:</h5>
-            <h5 className='col-12 text-center text-danger'> {parseCurrency((payWith - defaultAmount).toString())}</h5>
-            <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
+      {
+        payWith > 0 && defaultAmount && fastPayAction &&
+        <div className="col-12 border rounded p-3 my-2" style={{ height: 'fit-content' }}>
+          <h5 className='col-12'>Pago rapido en efectivo</h5>
+          <div className="col-12 d-flex flex-wrap justify-content-center ">
+            <CustomInputNumber setDefaultValue={() => setPayWith(defaultAmount ? defaultAmount : 0)} isRequired={false} showLabel={false} value={payWith} customInputNumber={
               {
-                payWith >= defaultAmount &&
-                <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Agregar</button>
+                label: 'Monto', name: 'amount',
+                handleChange: handleChangeDiference, pattern: '', validationMessage: 'Ingrese un monto válido'
               }
-            </div>
-          </>
-        }
-      </div>
+            } />
+          </div>
+          <h5 className='col-12 text-center mt-4'>Su vuelto es:</h5>
+          <h5 className='col-12 text-center text-danger'> {parseCurrency((payWith - defaultAmount).toString())}</h5>
+          <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
+            {
+              payWith >= defaultAmount &&
+              <button className='col-12 btn btn-success ' onClick={() => fastPayAction(getFastPayAccountHistory())}>Agregar</button>
+            }
+          </div>
+        </div>
+      }
       <div className='col-12 d-flex flex-wrap justify-content-center p-3 pb-5 rounded border' style={{ height: 'fit-content' }}>
         <h5 className='col-12'>Formas de pago</h5>
         <div className="col-12 d-flex flex-wrap justify-content-center ">

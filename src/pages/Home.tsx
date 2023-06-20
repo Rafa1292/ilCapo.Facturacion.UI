@@ -1,18 +1,15 @@
 import React, { useContext, useEffect } from 'react'
 import { useState } from 'react'
 import Content from '../components/generics/Content'
-import FoodTable from '../components/generics/FoodTable'
-import Bar from '../components/generics/Bar'
 import AppContext from '../context/AppContext'
-import { useGet, useGetList } from '../hooks/useAPI'
-import { SaleItemCategory } from '../types/saleItemCategory'
-import { ProductModifier } from '../types/productModifier'
-import FoodTableContainer from '../containers/generics/FoodTableContainer'
+import RoomContainer from '../containers/generics/RoomContainer'
 import { Bill } from '../types/bill'
-import { get } from 'http'
+import { useGet, useGetList } from '../hooks/useAPI'
+import { ProductModifier } from '../types/productModifier'
 import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
 import { Client } from '../types/client'
+import { SaleItemCategory } from '../types/saleItemCategory'
 
 const initialClient: Client = {
   id: 0,
@@ -47,33 +44,8 @@ const initialBill: Bill = {
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true)
   const { setWorkDayUser, setRoomEdit, system, setMenuDeliveryTime } = useContext(AppContext)
-  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [bills, setBills] = useState<Bill[]>([])
-
-  const getBill = async (id: number): Promise<Bill> => {
-    const response = await useGet<Bill>(`bills/${id}`, true)
-    if (!response.error && response.data !== null) {
-      const bill = await completeBill(response.data)
-      return bill
-    }
-    return initialBill
-  }
-
-  const updateBill = async (id: number) => {
-    const bill = await getBill(id)
-    const billsTmp = bills.filter(bill => bill.id !== id)
-    billsTmp.push(bill)
-    setBills(billsTmp)
-  }
-
-  const removeBill = (id: number) => {
-    const billToRemove = bills.find(bill => bill.id === id)
-    const billsTmp = bills.filter(bill => bill.id !== id)
-    console.log(billToRemove)
-    if (billToRemove !== undefined)
-      setMenuDeliveryTime(billToRemove.tableNumber, null)
-    setBills(billsTmp)
-  }
+  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
 
   const completeBill = async (bill: Bill) => {
     for (const billItem of bill.items) {
@@ -101,13 +73,33 @@ const Home = () => {
     return { ...bill, isCommanded: bill.id > 0 ? true : false }
   }
 
-  const getBillFromTableNumber = (tableNumber: number): Bill => {
-    const bill = bills.find(bill => bill.tableNumber === tableNumber)
-    return bill ? bill : initialBill
+  const getBill = async (id: number): Promise<Bill> => {
+    const response = await useGet<Bill>(`bills/${id}`, true)
+    if (!response.error && response.data !== null) {
+      const bill = await completeBill(response.data)
+      return bill
+    }
+    return initialBill
+  }
+
+  const updateBill = async (id: number) => {
+    const bill = await getBill(id)
+    const billsTmp = bills.filter(bill => bill.id !== id)
+    billsTmp.push(bill)
+    setBills(billsTmp)
+  }
+
+  const removeBill = (id: number) => {
+    const billToRemove = bills.find(bill => bill.id === id)
+    const billsTmp = bills.filter(bill => bill.id !== id)
+    if (billToRemove !== undefined)
+      setMenuDeliveryTime(billToRemove.tableNumber, null)
+    setBills(billsTmp)
   }
 
   useEffect(() => {
     setRoomEdit(false)
+    setWorkDayUser()
     const getSaleItemCategories = async () => {
       const response = await useGetList<SaleItemCategory[]>('saleItemCategories', false)
       if (!response.error) {
@@ -138,33 +130,20 @@ const Home = () => {
       }
       setIsLoading(false)
     }
-    getOpenBills()
     getSaleItemCategories()
-    setWorkDayUser()
-  }, [system.bussinessConfig.tables])
+    getOpenBills()
+  }, [])
 
   return (
     <Content isLoading={isLoading}>
       <>
         {
-          system.bussinessConfig && system.bussinessConfig.tables.map(table => {
-            if (table.type === 'table_container') {
-              return <FoodTableContainer
-                removeBill={removeBill}
-                updateBill={updateBill}
-                bills={bills}
-                menuDeliveryTime={table.menuDeliveryTime}
-                setMenuDeliveryTime={setMenuDeliveryTime}
-                key={table.number}
-                saleItemCategories={saleItemCategories}
-                tableNumber={table.number}
-                top={table.y}
-                left={table.x} />
-            } else if (table.type === 'bar_container') {
-              return <Bar removeBill={removeBill} updateBill={updateBill} bill={getBillFromTableNumber(table.number)} key={table.number} saleItemCategories={saleItemCategories} tableNumber={table.number} top={table.y} left={table.x} />
-            }
-          }
-          )
+          <RoomContainer
+            saleItemCategories={saleItemCategories}
+            bills={bills}
+            updateBill={updateBill}
+            removeBill={removeBill}
+            tables={system.bussinessConfig.tables} />
         }
       </>
     </Content>

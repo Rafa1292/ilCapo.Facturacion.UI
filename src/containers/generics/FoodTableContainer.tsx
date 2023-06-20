@@ -79,7 +79,7 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, updateBill, sa
     const currentBill = getBillFromTableNumber(tableNumber)
     billFunctions.setCurrentBill({ ...currentBill, tableNumber })
     calcRemainingMinutes(currentBill)
-  }, [bills])
+  }, [bills, menuDeliveryTime])
 
   return (
     <>

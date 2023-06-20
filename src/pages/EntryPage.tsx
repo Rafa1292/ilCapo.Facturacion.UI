@@ -16,7 +16,6 @@ const EntryPage = () => {
   }
 
   useEffect(() => {
-    console.log(user)
     const getPayMethods = async () => {
       const response = await useGetList<PayMethod[]>('paymethods', true)
       if (!response.error) {

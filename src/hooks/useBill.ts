@@ -272,8 +272,11 @@ const useBill = (tableNumber: number): BillFunctions => {
     setBill({ ...bill, items: tmpBillItems, isCommanded: false })
   }
 
-  const serve = ()=> {
-    setBill({...bill, isServed: true})
+  const serve = async () => {
+    const response = await useGet<Bill>(`bills/serve/${bill.id}`, true)
+    if (!response.error) {
+      setBill({ ...bill, isServed: true })
+    }
   }
 
   return {
@@ -294,7 +297,7 @@ const useBill = (tableNumber: number): BillFunctions => {
     restartBill,
     setBillAddress,
     setDiscount,
-    setDeliveryMethod, 
+    setDeliveryMethod,
     serve,
     setCurrentBill
   }
