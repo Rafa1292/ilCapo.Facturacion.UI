@@ -14,7 +14,7 @@ const initialUser: userState = {
 }
 
 const initialSystem: systemState = {
-  loader: false,
+  loader: true,
   roomEdit: false,
   bussinessConfig: { id: 0, menuWaitTime: 0, serveWaitTime: 0, tables: [] } as BussinessConfig
 }
@@ -58,7 +58,7 @@ const useInitialState = (): appState => {
   }
 
   const setMenuDeliveryTime = (tableNumber: number, date: Date | null) => {
-    console.log(tableNumber, date)
+    
     setSystem({
       ...system,
       bussinessConfig: {
@@ -81,7 +81,8 @@ const useInitialState = (): appState => {
     if (!response.error && response.data !== null) {
       setSystem({
         ...system,
-        bussinessConfig: response.data
+        bussinessConfig: response.data,
+        loader: false
       })
     }
   }

@@ -27,16 +27,17 @@ interface Props {
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
-  showPayMethods():void
+  showPayMethods(): void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
   setBillAddress(addressId: number): void
   setDiscount(discount: number): void
   setDeliveryMethod(deliveryMethod: number): void
+  changeTableNumber(tableNumber: number): void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -44,7 +45,6 @@ const BillResume = ({ bill, setDeliveryMethod, addDescriptionToBillProduct, show
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
   const [availableTables, setAvailableTables] = React.useState<number[]>([])
-  const [currentTableNumber, setCurrentTableNumber] = React.useState<number>(0)
 
   const getBillTax = () => {
     let billTax = 0
@@ -146,8 +146,12 @@ const BillResume = ({ bill, setDeliveryMethod, addDescriptionToBillProduct, show
         tableNumbers.push(tableNumber)
       }
     }
-    setAvailableTables(tableNumbers)
-  }  
+    if(!tableNumbers.includes(bill.tableNumber))
+    {
+      tableNumbers.push(bill.tableNumber)
+    }
+    setAvailableTables([...tableNumbers])
+  }
 
   const handleChangeTable = async () => {
     await getTableNumbersWithBillOpen()
@@ -155,28 +159,42 @@ const BillResume = ({ bill, setDeliveryMethod, addDescriptionToBillProduct, show
   }
 
   useEffect(() => {
-    console.log(bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
       setAddressId(bill.addressId)
-      setCurrentTableNumber(bill.tableNumber)
     }
+    getTableNumbersWithBillOpen()
+
   }, [bill.client, newAddressState])
 
   return (
     <>
       <div className="col-12 d-flex flex-wrap p-0">
-        <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{top: '2vh'}}>
-          <span onClick={()=> setDeliveryMethod(1)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success': 'bg-dark'}`}>
-            <img src={carry} height={25}/>
+        <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{ top: '1vh'}}>
+          <span onClick={() => setDeliveryMethod(1)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success' : 'bg-dark'}`}>
+            <img src={carry} height={25} />
           </span>
-          <span onClick={()=> setDeliveryMethod(2)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success': 'bg-dark'}`}>
-            <img src={moto} height={25}/>
+          <span onClick={() => setDeliveryMethod(2)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success' : 'bg-dark'}`}>
+            <img src={moto} height={25} />
           </span>
-          <span onClick={()=> handleChangeTable()} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success': 'bg-dark'}`}>
-            <img src={dish} height={25}/>
+          <span onClick={() => handleChangeTable()} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success' : 'bg-dark'}`}>
+            <img src={dish} height={25} />
           </span>
+          {
+            bill.deliveryMethod === 0 &&
+            <div className="col-2 d-flex flex-wrap p-0 align-content-center position-absolute" style={{ height: '25px !important', right: '12%' }}>
+              <CustomInputSelect showLabel={false} value={bill.tableNumber}
+                customInputSelect={
+                  {
+                    label: '', name: 'tableNumber',
+                    handleChange: (ev) => changeTableNumber(ev.target.value), pattern: '', validationMessage: ''
+                  }}
+                data={availableTables.length > 0 ? availableTables.map(table => { return { value: table, label: table.toString() } }) : []}
+                defaultLegend={'0'}
+              />
+            </div>
+          }
 
         </div>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ marginTop: '6vh' }}>

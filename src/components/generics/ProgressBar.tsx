@@ -9,9 +9,10 @@ interface Props {
   isServe: boolean
   tableNumber: number
   styleClass: string
+  timeMargin?: boolean
 }
 
-const ProgressBar = ({ initialTime, finalTime, isCommanded, styleClass, tableNumber, isServe }: Props) => {
+const ProgressBar = ({ initialTime, timeMargin, finalTime, isCommanded, styleClass, tableNumber, isServe }: Props) => {
   const [waitingMinutes, setWaitingMinutes] = useState(0)
   const [waitingSeconds, setWaitingSeconds] = useState(0)
   const [waitingHours, setWaitingHours] = useState(0)
@@ -90,7 +91,7 @@ const ProgressBar = ({ initialTime, finalTime, isCommanded, styleClass, tableNum
         waitingTime !== 0 &&
         <div className='d-flex flex-wrap'>
           <div className={`mt-1 col-12 ${styleClass}`} style={{ background: setProgressBarClass() }}></div>
-          <small className="col-12 text-center mt-2" style={{ width: '40px' }}>{waitingHours > 0 ? `${waitingHours}:` : ''}{waitingMinutes < 10 ? `0${waitingMinutes}` : waitingMinutes}:{waitingSeconds}</small>
+          <small className={`col-12 text-center d-flex align-items-center justify-content-center ${timeMargin ? 'mt-2': ''}`} style={{ width: '40px', textShadow: !timeMargin ? '1px 1px 2px rgba(0,0,0,.8)' : 'none' }}>{waitingHours > 0 ? `${waitingHours}:` : ''}{waitingMinutes < 10 ? `0${waitingMinutes}` : waitingMinutes}:{waitingSeconds}</small>
         </div>
       }
     </>

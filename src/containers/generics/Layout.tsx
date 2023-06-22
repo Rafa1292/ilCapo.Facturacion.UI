@@ -28,11 +28,7 @@ const Layout = ({ children }: Props) => {
 
           <div className="container-fluid">
             <div className="row">
-              {
-                !system.roomEdit &&
-                <SideMenu />
-              }
-              <main className="col-md-9 ms-sm-auto col-lg-11 d-flex flex-wrap p-2 justify-content-center">
+              <main className="col-12 d-flex flex-wrap p-2 justify-content-center">
                 {
                   user.workDayUser.close &&
                   <div className="flex flex-col items-center justify-center h-full">

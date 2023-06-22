@@ -1,18 +1,98 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/sideMenu.scss'
 import { Link } from 'react-router-dom'
 import logo from '../../assets/icons/logoNebulosa.png'
 import time from '../../assets/icons/time.png'
 import shop from '../../assets/icons/shop.png'
-import moto from '../../assets/icons/moto.png'
-import carry from '../../assets/icons/carry.png'
 import AppContext from '../../context/AppContext'
+import { Bill } from '../../types/bill'
+import SideMenuItem from './SideMenuItem'
+import { BillFunctions } from '../../types/billFunctions'
+import { SaleItemCategory } from '../../types/saleItemCategory'
+import useBill from '../../hooks/useBill'
+import BillMaker from '../../containers/generics/BillMaker'
+import { buttonTypes } from '../../enums/buttonTypes'
+import CustomBtn from './CustomBtn'
+import { Client } from '../../types/client'
 
-const Navbar = () => {
+const initialClient: Client = {
+  id: 0,
+  name: '',
+  phone: '',
+  addressess: [],
+  delete: false,
+  createdBy: 0,
+  updatedBy: 0
+}
+
+const initialBill: Bill = {
+  id: 0,
+  addressId: 0,
+  client: initialClient,
+  clientId: 0,
+  close: false,
+  deliveryMethod: 0,
+  tableNumber: 0,
+  workDayUserId: 0,
+  isServed: false,
+  isNull: false,
+  items: [],
+  isCommanded: false,
+  billAccountHistories: [],
+  delete: false,
+  createdAt: new Date(Date.now()),
+  updatedAt: new Date(Date.now()),
+  createdBy: 0,
+  updatedBy: 0
+}
+
+interface Props {
+  bills: Bill[]
+  updateBill: (id: number) => void
+  removeBill: (id: number) => void
+  saleItemCategories: SaleItemCategory[]
+}
+
+const Navbar = ({ bills, updateBill, removeBill, saleItemCategories }: Props) => {
   const { user, logout } = useContext(AppContext)
+  const [close, setClose] = useState(true)
+  const billFunctions = useBill(0)
+
+  const closeTable = () => {
+    billFunctions.setCurrentBill(initialBill)
+    const container = document.getElementById(`billMakerContainerToGo${0}`)
+    container?.classList.remove('bill-makerContainer_show')
+    setClose(true)
+  }
+
+  const openTable = () => {
+    billFunctions.setCurrentBill(initialBill)
+    const container = document.getElementById(`billMakerContainerToGo${0}`)
+    container?.classList.add('bill-makerContainer_show')
+    setClose(false)
+  }
+
+  useEffect(() => {
+    setClose(true)
+  }, [bills])
+
 
   return (
     <>
+      <div className='bill-makerContainer position-fixed' id={`billMakerContainerToGo${0}`} style={{zIndex: '1000'}}>
+        <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '30vw', top: '1vw', background: 'white', borderRadius: '50px' }}>
+          <CustomBtn height='40px' buttonType={buttonTypes.cancel} />
+        </span>
+        {
+          !close &&
+          <BillMaker removeBill={removeBill}
+            refreshBill={updateBill}
+            bill={billFunctions.bill}
+            saleItemCategories={saleItemCategories}
+            close={closeTable}
+            billFunctions={billFunctions} />
+        }
+      </div>
       <nav
         id="sidebarMenu"
         className="sidebar"
@@ -28,9 +108,12 @@ const Navbar = () => {
             <small className="col-12 text-end rounded p-1 text-white">
               Inicio de jornada: 10:00 am
             </small>
-            <small onClick={logout} className="col-12 text-end rounded p-1 text-white">
+            <small onClick={logout} className="col-12 text-end rounded pointer p-1 text-white">
               Cerrar sesión
             </small>
+          </div>
+          <div className="col-12 d-flex flex-wrap justify-content-center">
+            <button className='btn btn-outline-warning my-3' onClick={openTable}>Agregar</button>
           </div>
           <div className="col-12 flex-wrap d-flex p-1 orders-togo_header">
             <div className="col-3 d-flex justify-content-center">
@@ -50,42 +133,19 @@ const Navbar = () => {
             </div>
           </div>
           <ul className="nav flex-column">
-            <li className='nav-item'>
-              <div className="col-12 flex-wrap d-flex py-3 orders-togo">
-                <div className="col-3 d-flex justify-content-start">
-                  Rafa villalobos
-                </div>
-                <div className="col-3 d-flex justify-content-center text-center">
-                  85002818
-                </div>
-                <div className="col-2 d-flex justify-content-center text-center">
-                  ¢ 9.500
-                </div>
-                <div className="col-2 d-flex justify-content-center">
-                  <img className='' height={18} src={moto} />
-                </div>
-                <div className="col-2 d-flex justify-content-center">
-                  90 mins
-                </div>
-              </div>
-              <div className="col-12 flex-wrap d-flex py-3 orders-togo">
-                <div className="col-3 d-flex justify-content-start">
-                  Mariela Gonzales 
-                </div>
-                <div className="col-3 d-flex justify-content-center text-center">
-                  70519920
-                </div>
-                <div className="col-2 d-flex justify-content-center text-center">
-                  ¢ 20.500
-                </div>
-                <div className="col-2 d-flex justify-content-center">
-                  <img className='' height={18} src={carry} />
-                </div>
-                <div className="col-2 d-flex justify-content-center">
-                  5 mins
-                </div>
-              </div>
-            </li>
+            {
+              bills.map((bill, index) => {
+                return (
+                  <li className='nav-item' key={index}>
+                    <SideMenuItem
+                      bill={bill}
+                      removeBill={removeBill}
+                      updateBill={updateBill}
+                      saleItemCategories={saleItemCategories} />
+                  </li>
+                )
+              })
+            }
           </ul>
         </div>
         <div className="bg-dark d-flex d-md-none justify-content-center align-items-center text-white d-flex col-12"

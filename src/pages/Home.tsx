@@ -10,6 +10,7 @@ import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
 import { Client } from '../types/client'
 import { SaleItemCategory } from '../types/saleItemCategory'
+import SideMenu from '../components/generics/SideMenu'
 
 const initialClient: Client = {
   id: 0,
@@ -133,11 +134,16 @@ const Home = () => {
     }
     getSaleItemCategories()
     getOpenBills()
-  }, [])
+  }, [system.loader])
 
   return (
-    <Content isLoading={isLoading}>
+    <Content isLoading={system.loader && isLoading ? true : false}>
       <>
+        <SideMenu
+          updateBill={updateBill}
+          removeBill={removeBill}
+          saleItemCategories={saleItemCategories}
+          bills={bills.filter(x => x.tableNumber === 0)} />
         {
           <RoomContainer
             saleItemCategories={saleItemCategories}

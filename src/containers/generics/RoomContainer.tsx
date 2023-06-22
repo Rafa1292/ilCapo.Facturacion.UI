@@ -22,7 +22,6 @@ const RoomContainer = ({ tables, bills, saleItemCategories, removeBill, updateBi
   const { setMenuDeliveryTime } = useContext(AppContext)
 
   useEffect(() => {
-    console.log('tables', tables)
     setIsLoading(false)
   }, [tables])
 

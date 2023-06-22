@@ -232,7 +232,14 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
         </div>
         {
           saleItem &&
-          <BillMakerProducts setSaleItem={setSaleItem} newCombinedLinkedProduct={newCombinedLinkedProduct} setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={newLinkedProductModifierElement} addBillItem={addBillItem} billItem={billItem} saleItem={saleItem} />
+          <BillMakerProducts
+            setSaleItem={setSaleItem}
+            newCombinedLinkedProduct={newCombinedLinkedProduct}
+            setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} 
+            addLinkedProductModifierElement={newLinkedProductModifierElement} 
+            addBillItem={addBillItem} 
+            billItem={billItem} 
+            saleItem={saleItem} />
         }
       </div>
     </>

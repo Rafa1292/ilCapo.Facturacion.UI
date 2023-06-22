@@ -54,7 +54,7 @@ const initialBill: Bill = {
 
 
 const useBill = (tableNumber: number): BillFunctions => {
-  const [bill, setBill] = useState<Bill>({ ...initialBill, tableNumber: tableNumber })
+  const [bill, setBill] = useState<Bill>({ ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 })
   const { user } = useContext(AppContext)
 
   const setCurrentBill = (currentBill: Bill) => {
@@ -84,10 +84,12 @@ const useBill = (tableNumber: number): BillFunctions => {
   }
 
   const setDeliveryMethod = (deliveryMethod: number) => {
+    const tableNumber = deliveryMethod !== 0 ? 0 : bill.tableNumber
     setBill({
       ...bill,
       deliveryMethod: deliveryMethod,
-      isCommanded: false
+      isCommanded: false,
+      tableNumber
     })
   }
 
@@ -193,12 +195,18 @@ const useBill = (tableNumber: number): BillFunctions => {
       }
     }
     setBill({
-      ...bill,                                                                                     
+      ...bill,
       isCommanded: false
     })
   }
 
-
+  const changeTableNumber = (tableNumber: number) => {
+    setBill({
+      ...bill,
+      tableNumber: tableNumber,
+      isCommanded: false
+    })
+  }
 
   const getClient = async (phone: string) => {
     const response = await useGet<Client>(`clients/phone/${phone}`, true)
@@ -212,34 +220,39 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
-  const getBill = async () => {
-    const response = await useGet<Bill>(`bills/table/${tableNumber}`, true)
-    if (!response.error && response.data !== null) {
-      const bill = response.data
-      for (const billItem of bill.items) {
-        for (const billItemLinkedProduct of billItem.billProducts) {
-          const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
-          if (!response.error && response.data !== null) {
-            billItemLinkedProduct.products = response.data
-            for (const linkedProduct of billItemLinkedProduct.products) {
-              for (const productModifier of linkedProduct.modifiers) {
-                const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
-                if (!response.error && response.data !== null) {
-                  productModifier.elements = response.data
-                }
-                else {
-                  productModifier.elements = []
+  const getBill = async (tmpTableNumber: number, tmpId: number) => {
+    if (tmpTableNumber === 0 && tmpId === 0) {
+      setBill({ ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 })
+    } else {
+      const url = tmpId > 0 ? `bills/${tmpId}` : `bills/table/${tmpTableNumber}`
+      const response = await useGet<Bill>(url, true)
+      if (!response.error && response.data !== null) {
+        const bill = response.data
+        for (const billItem of bill.items) {
+          for (const billItemLinkedProduct of billItem.billProducts) {
+            const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
+            if (!response.error && response.data !== null) {
+              billItemLinkedProduct.products = response.data
+              for (const linkedProduct of billItemLinkedProduct.products) {
+                for (const productModifier of linkedProduct.modifiers) {
+                  const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
+                  if (!response.error && response.data !== null) {
+                    productModifier.elements = response.data
+                  }
+                  else {
+                    productModifier.elements = []
+                  }
                 }
               }
             }
-          }
-          else {
-            billItemLinkedProduct.products = []
+            else {
+              billItemLinkedProduct.products = []
+            }
           }
         }
+        const accountHistories = bill.billAccountHistories?.length > 0 ? bill.billAccountHistories : []
+        setBill({ ...bill, isCommanded: true, billAccountHistories: accountHistories })
       }
-      const accountHistories = bill.billAccountHistories?.length > 0 ? bill.billAccountHistories : []
-      setBill({ ...bill, isCommanded: true, billAccountHistories: accountHistories })
     }
   }
 
@@ -319,7 +332,8 @@ const useBill = (tableNumber: number): BillFunctions => {
     setDeliveryMethod,
     serve,
     setCurrentBill,
-    addDescriptionToBillProduct
+    addDescriptionToBillProduct,
+    changeTableNumber
   }
 }
 

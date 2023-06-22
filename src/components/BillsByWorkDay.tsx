@@ -11,6 +11,8 @@ import Swal from 'sweetalert2'
 const BillsByWorkDay = () => {
   const [bills, setBills] = useState<Bill[]>([])
   const { user } = useContext(AppContext)
+  const [showState, setShowState] = useState<number>(1)
+  const [tmpBills, setTmpBills] = useState<Bill[]>([])
 
   const getBillTotal = (bill: Bill) => {
     let billTotal = 0
@@ -53,11 +55,28 @@ const BillsByWorkDay = () => {
     }
   }
 
+  const handleShowBills = (showClose: boolean, showAll: boolean) => {
+    if (showAll) {
+      setShowState(3)
+      setTmpBills(bills)
+    } else {
+      if (showClose) {
+        setShowState(2)
+        setTmpBills(bills.filter(bill => bill.close))
+      } else {
+        setShowState(1)
+        setTmpBills(bills.filter(bill => !bill.close))
+      }
+    }
+  }
+
+
   useEffect(() => {
     const getBillsByWorkDay = async () => {
       const response = await useGetList<Bill[]>(`bills/billsByWorkDayUser/${user.workDayUser.id}`, true)
       if (!response.error) {
         setBills(response.data)
+        setTmpBills(response.data.filter(bill => bill.close === false))
       }
     }
     getBillsByWorkDay()
@@ -65,13 +84,29 @@ const BillsByWorkDay = () => {
 
   return (
     <div className='col-10 d-flex flex-wrap'>
+      <div className="col-12 d-flex flex-wrap justify-content-center">
+        <ul className="nav nav-tabs">
+          <li className="nav-item pointer">
+            <span className={`nav-link ${showState === 1 ? 'active' : ''}`} onClick={() => handleShowBills(false, false)}>Pendientes</span>
+          </li>
+          <li className="nav-item pointer">
+            <span className={`nav-link ${showState === 2  ? 'active' : ''}`} onClick={() => handleShowBills(true, false)}>Cerradas</span>
+          </li>
+          <li className="nav-item pointer">
+            <span className={`nav-link ${showState === 3 ? 'active' : ''}`} onClick={() => handleShowBills(true, true)}>Todas</span>
+          </li>
+        </ul>
+      </div>
       <Table headers={['#', 'Nombre', 'Total', '']}>
         {
-          bills.sort((a,b)=> b.id - a.id).map((bill: Bill, index) => (
-            <TableRow crossOut={bill.isNull} classElement={bill.isNull ? 'cross-out text-danger': ''} key={index} tableData={[bill.id.toString(), bill.client?.name, getBillTotal(bill).toString()]}>
-              <BillReview bill={bill}/>
+          tmpBills.sort((a, b) => b.id - a.id).map((bill: Bill, index) => (
+            <TableRow crossOut={bill.isNull} classElement={bill.isNull ? 'cross-out text-danger' : ''} key={index} tableData={[bill.id.toString(), bill.client?.name, getBillTotal(bill).toString()]}>
+              <BillReview bill={bill} />
               <button disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
-              <button disabled={bill.isNull} className="btn btn-outline-danger mx-2" onClick={()=> cancelBill(bill.id)}>Anular</button>
+              {
+                showState === 1 &&
+                <button disabled={bill.isNull} className="btn btn-outline-danger mx-2" onClick={() => cancelBill(bill.id)}>Anular</button>
+              }
             </TableRow>
           ))
         }

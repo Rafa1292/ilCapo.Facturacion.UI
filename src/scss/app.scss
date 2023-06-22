@@ -396,6 +396,10 @@ label {
   border: 2px solid rgba(228, 41, 11, 0.9);
 }
 
+.not-blur {
+  filter: blur(0px) !important;
+}
+
 .cross-out {
   text-decoration: line-through;
 }
@@ -445,3 +449,12 @@ label {
   user-select: none;
 }
 
+.nav-tabs .nav-link {
+  color: black;
+  background: rgba(0,0,0,.05);
+}
+
+.nav-tabs .nav-link.active {
+  background: rgba(21, 25, 29, .5);
+  color: white;
+}

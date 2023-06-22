@@ -58,7 +58,14 @@ const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCat
               <div className='table_room'></div>
               <div className="table_background"></div>
               <div className="table_background-color"></div>
-              <ProgressBar isServe={billFunctions.bill.isServed} styleClass='progress_bar-table' initialTime={initialTime} finalTime={finalTime} isCommanded={billFunctions.bill.isCommanded} tableNumber={tableNumber} />
+              <ProgressBar
+                isServe={billFunctions.bill.isServed}
+                styleClass='progress_bar-table'
+                initialTime={initialTime}
+                finalTime={finalTime}
+                isCommanded={billFunctions.bill.isCommanded}
+                tableNumber={tableNumber}
+                timeMargin={true} />
             </div>
             {
               !billFunctions.bill.isCommanded && initialTime === null &&

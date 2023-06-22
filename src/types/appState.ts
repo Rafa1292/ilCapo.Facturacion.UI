@@ -1,3 +1,4 @@
+import { Bill } from './bill'
 import { BussinessConfig } from './bussinessConfig'
 import { User } from './user'
 import { UserInfo } from './userInfo'

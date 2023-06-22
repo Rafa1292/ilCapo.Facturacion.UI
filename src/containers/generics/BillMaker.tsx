@@ -148,6 +148,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
       else {
         await updateBill()
       }
+      close()
     }
   }
 
@@ -229,7 +230,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
 
   useEffect(() => {
     initializeSearchProducts(saleItemCategories)
-    getBill()
+    getBill(bill.tableNumber, bill.id)
   }, [])
 
 
@@ -277,7 +278,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
         </div>
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct} setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume changeTableNumber={billFunctions.changeTableNumber} addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct} setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
       </div>
     </div>
     ||

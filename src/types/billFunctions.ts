@@ -13,7 +13,7 @@ export interface BillFunctions {
   removeLinkedProduct: (saleItemId: number, itemNumber: number, billItemLinkedProductId: number) => void
   editLinkedProduct: (saleItemId: number, itemNumber: number ) => BillItem | undefined
   getClient: (phone: string) => void
-  getBill: () => void
+  getBill: (tmpTableNumber: number, tmpId: number) => void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
   closeBill: (billHistories?: BillAccountHistory[]) => Promise<boolean>
@@ -25,4 +25,5 @@ export interface BillFunctions {
   serve : () => void
   setCurrentBill: (currentBill: Bill) => void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
+  changeTableNumber: (tableNumber: number) =>void
 }

@@ -19,7 +19,7 @@ const TableRow = ({ tableData, children, classElement, crossOut }: Props) => {
       }
       {
         children &&
-        <td className={crossOut ? 'cross-out text-danger' : 'cross-out'}>
+        <td className={crossOut ? 'cross-out text-danger' : ''}>
           <div className='col-12 d-flex p-0 m-0 justify-content-end'>
             {children}
           </div>
