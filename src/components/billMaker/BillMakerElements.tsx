@@ -98,11 +98,11 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
           modifierGroup !== undefined &&
           modifierGroup?.elements?.map((tmpElement, index) => {
             return (
-              <div key={index} className="col-3 pointer " style={{ height: 'fit-content' }}>
+              <div key={index} className="col-3 pointer " style={{ height: '100%' }}>
                 <div className="card element_item" onClick={tmpElement?.quantity === 1 ? () => addElement(tmpElement) : undefined} style={{
                   boxShadow: `inset 0px 0px ${elements.map(x => x.id).includes(tmpElement?.id) ?  '140px 20px': tmpElement?.quantity > 1 ? '140px 20px' : '20px -15px'} rgba(0,0,0,.76)`,
                   color: `${elements.map(x => x.id).includes(tmpElement?.id) ? 'white' : tmpElement?.quantity > 1 ? 'white': 'black'}`,
-                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '20vh' : '12vh' : tmpElement?.quantity > 1 ? '18vh' : '10vh'}`
+                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '22vh' : '12vh' : tmpElement?.quantity > 1 ? '22vh' : '10vh'}`
                 }}>
                   <div className="card-body p-0 d-flex flex-wrap align-items-center">
                     <span className="card-title col-12 flex-wrap justify-content-center text-center align-content-center d-flex m-0" style={{ height: '75px' }} >{tmpElement.name}</span>
