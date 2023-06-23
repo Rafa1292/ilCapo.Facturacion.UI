@@ -12,11 +12,11 @@
   bottom: 0;
   z-index: 100;
   padding: 0px 10px 0 0;
-  justify-content: end !important;
+  justify-content: flex-end !important;
   a {
     padding: 15px 0px;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
   }
 
 }
@@ -25,7 +25,7 @@
   transition: all ease 400ms;
   width: 400px;
   display: flex !important;
-  justify-content: start !important;
+  justify-content: flex-start !important;
 }
 
 .sidebar:hover {

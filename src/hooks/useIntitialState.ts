@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { appState, systemState, userState } from '../types/appState'
 import { WorkDayUser } from '../types/workDayUser'
 import { User } from '../types/user'
-import { useGet, usePost, usePostWithResponse } from './useAPI'
+import { useGet, usePostWithResponse } from './useAPI'
 import { UserInfo } from '../types/userInfo'
 import { BussinessConfig } from '../types/bussinessConfig'
+import useBill from './useBill'
 
 
 const initialUser: userState = {
@@ -22,6 +23,7 @@ const initialSystem: systemState = {
 const useInitialState = (): appState => {
   const [user, setUser] = useState(initialUser)
   const [system, setSystem] = useState(initialSystem)
+  const billFunctions = useBill(0)
 
   const login = async (tmpUser: User) => {
     const response = await usePostWithResponse('users/login', tmpUser, true)

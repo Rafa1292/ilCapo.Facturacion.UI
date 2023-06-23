@@ -1,6 +1,4 @@
-import { table } from 'console'
-import React, { useContext, useEffect, useState } from 'react'
-import AppContext from '../../context/AppContext'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
   initialTime: Date | null
@@ -12,14 +10,13 @@ interface Props {
   timeMargin?: boolean
 }
 
-const ProgressBar = ({ initialTime, timeMargin, finalTime, isCommanded, styleClass, tableNumber, isServe }: Props) => {
+const ProgressBar = ({ initialTime, timeMargin, finalTime, isCommanded, styleClass, isServe }: Props) => {
   const [waitingMinutes, setWaitingMinutes] = useState(0)
   const [waitingSeconds, setWaitingSeconds] = useState(0)
   const [waitingHours, setWaitingHours] = useState(0)
   const [fill, setFill] = useState(0)
   const [widthValueBySecond, setWidthValueBySecond] = useState(0)
   const [waitingTime, setWaitingTime] = useState(0)
-  const [timeElapsed, setTimeElapsed] = useState(0)
 
   const setTime = () => {
     setFill(fill + widthValueBySecond)
@@ -64,7 +61,6 @@ const ProgressBar = ({ initialTime, timeMargin, finalTime, isCommanded, styleCla
       setTimeout(() => setTime(), 1000)
       setWidthValueBySecond(widthValue)
       setWaitingTime(tmpWaitingTime)
-      setTimeElapsed(tmpElapsedTime)
       if (tmpElapsedTime > tmpWaitingTime) {
         setFill(120)
       } else {

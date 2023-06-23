@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import ProgressBar from './ProgressBar'
 import BillMaker from '../../containers/generics/BillMaker'
 import CustomBtn from './CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
-import useBill from '../../hooks/useBill'
 import '../../scss/foodTable.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { BillFunctions } from '../../types/billFunctions'
-import { Bill } from '../../types/bill'
 
 interface Props {
   top: number
