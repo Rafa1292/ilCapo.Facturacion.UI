@@ -10,15 +10,16 @@ import { LinkedProduct } from '../../types/linkedProduct'
 interface Props {
   saleItem: SaleItem
   billItem: BillItem
+  tableNumber: number
   setSaleItem: (saleItem: SaleItem | undefined) => void
-  addBillItem: (billItem: BillItem) => void
+  addBillItem: (billItem: BillItem, tableNumber: number) => void
   addLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
   setNewBillItem: () => void
   newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
-const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
+const BillMakerProducts = ({ saleItem, tableNumber, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
   const [product, setProduct] = useState<Product>()
   const [incompleteProducts, setIncompleteProducts] = useState<number[]>([])
   const [validate, setValidate] = useState<boolean>(false)
@@ -26,7 +27,7 @@ const BillMakerProducts = ({ saleItem, setSaleItem, billItem, newCombinedLinkedP
 
   const addNewBillItem = () => {
     if (validateBillItem()) {
-      addBillItem(billItem)
+      addBillItem(billItem, tableNumber)
       setNewBillItem()
       setSaleItem(undefined)
     }

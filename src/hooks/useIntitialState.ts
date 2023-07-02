@@ -42,14 +42,17 @@ const useInitialState = (): appState => {
     localStorage.removeItem('credentials')
   }
 
-  const setWorkDayUser = async () => {
-    const response = await useGet<WorkDayUser>(`workDayUsers/${user.userInfo?.userId}`, true)
+  const setWorkDayUser = async (currentUserInfo?: UserInfo): Promise<WorkDayUser | undefined> => {
+    const tmpUserInfo = user.userInfo.id > 0 ? user.userInfo : currentUserInfo
+    const response = await useGet<WorkDayUser>(`workDayUsers/${tmpUserInfo?.userId}`, true)
     if (!response.error && response.data !== null) {
       setUser({
         ...user,
         workDayUser: { ...response.data }
       })
+      return response.data
     }
+    return undefined
   }
 
   const setRoomEdit = (value: boolean) => {
@@ -60,7 +63,7 @@ const useInitialState = (): appState => {
   }
 
   const setMenuDeliveryTime = (tableNumber: number, date: Date | null) => {
-    
+
     setSystem({
       ...system,
       bussinessConfig: {
@@ -80,6 +83,7 @@ const useInitialState = (): appState => {
 
   const getBussinessConfig = async () => {
     const response = await useGet<BussinessConfig>('bussinessConfig', true)
+
     if (!response.error && response.data !== null) {
       setSystem({
         ...system,
@@ -90,16 +94,24 @@ const useInitialState = (): appState => {
   }
 
   useEffect(() => {
-    const credentials = localStorage.getItem('credentials')
-    if (credentials) {
-      const tmpUser = JSON.parse(credentials)
-      setUser({
-        userInfo: tmpUser.userInfo,
-        loggedIn: true,
-        workDayUser: { ...user.workDayUser }
-      })
+    const initializeComponent = async () => {
+      const credentials = localStorage.getItem('credentials')
+      if (credentials) {
+        const tmpUser = JSON.parse(credentials)
+        const tmpWorkDayUser = await setWorkDayUser(tmpUser.userInfo)
+        const tmpUserState: userState = {
+          userInfo: tmpUser.userInfo,
+          loggedIn: true,
+          workDayUser: tmpWorkDayUser !== undefined ? tmpWorkDayUser : { ...user.workDayUser }
+        }
+        if (tmpUserState.workDayUser.id > 0)
+          await billFunctions.getBillsByWorkDayUser(tmpUserState.workDayUser.id)
+        setUser({...tmpUserState, workDayUser: tmpUserState.workDayUser})
+        
+      }
+      await getBussinessConfig()
     }
-    getBussinessConfig()
+    initializeComponent()
   }, [])
 
   return {
@@ -110,7 +122,8 @@ const useInitialState = (): appState => {
     logout,
     setRoomEdit,
     setMenuDeliveryTime,
-    getBussinessConfig
+    getBussinessConfig,
+    billFunctions
   }
 }
 

@@ -47,14 +47,12 @@ interface Props {
   bills: Bill[]
   removeBill: (id: number) => void
   setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
-  updateBill: (id: number) => void
 }
 
-const FoodTableContainer = ({ top, left, removeBill, tableNumber, updateBill, saleItemCategories, menuDeliveryTime, bills, setMenuDeliveryTime }: Props) => {
+const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCategories, menuDeliveryTime, bills, setMenuDeliveryTime }: Props) => {
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   const [finalTime, setFinalTime] = useState<Date | null>(null)
-  const { system } = useContext(AppContext)
-  const billFunctions = useBill(tableNumber)
+  const { system, billFunctions } = useContext(AppContext)
 
   const calcRemainingMinutes = (currentBill: Bill) => {
     if (currentBill.isServed) setInitialTime(null)
@@ -77,17 +75,15 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, updateBill, sa
   }
 
   useEffect(() => {
-    const currentBill = getBillFromTableNumber(tableNumber)
-    billFunctions.setCurrentBill({ ...currentBill, tableNumber })
+    // console.log('foodTableContainer useEffect')
+    const currentBill = billFunctions.setBillByTableNumber(tableNumber)
     calcRemainingMinutes(currentBill)
-  }, [bills, menuDeliveryTime])
+  }, [menuDeliveryTime, bills])
 
   return (
     <>
       <FoodTable
         removeBill={removeBill}
-        updateBill={updateBill}
-        billFunctions={billFunctions}
         initialTime={initialTime}
         finalTime={finalTime}
         setMenuDeliveryTime={setMenuDeliveryTime}

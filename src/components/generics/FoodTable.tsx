@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import ProgressBar from './ProgressBar'
+import React, { useContext, useEffect, useState } from 'react'
 import BillMaker from '../../containers/generics/BillMaker'
 import CustomBtn from './CustomBtn'
 import { buttonTypes } from '../../enums/buttonTypes'
 import '../../scss/foodTable.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { BillFunctions } from '../../types/billFunctions'
+import AppContext from '../../context/AppContext'
+import { Bill } from '../../types/bill'
+import ProgressBarContainer from '../../containers/generics/ProgressBarContainer'
 
 interface Props {
   top: number
@@ -15,13 +16,13 @@ interface Props {
   initialTime: Date | null
   finalTime: Date | null
   setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
-  billFunctions: BillFunctions
-  updateBill: (id: number) => void
   removeBill: (id: number) => void
 }
 
-const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCategories, initialTime, finalTime, billFunctions, setMenuDeliveryTime }: Props) => {
+const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, initialTime, finalTime, setMenuDeliveryTime }: Props) => {
   const [close, setClose] = useState(true)
+  const { billFunctions } = useContext(AppContext)
+  const [bill, setBill] = useState({} as Bill)
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainer${tableNumber}`)
@@ -35,6 +36,13 @@ const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCat
     setClose(false)
   }
 
+  useEffect(() => {
+    // console.log('foodTable useEffect')
+    const currentBill = billFunctions.setBillByTableNumber(tableNumber)
+    setBill(currentBill)
+  }, [billFunctions.bills])
+  
+
 
   return (
     <>
@@ -47,7 +55,11 @@ const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCat
             </span>
             {
               !close &&
-              <BillMaker removeBill={removeBill} refreshBill={updateBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
+              <BillMaker
+                removeBill={removeBill}
+                saleItemCategories={saleItemCategories}
+                bill={bill}
+                close={closeTable} />
             }
           </div>
           <div className="table_container d-flex flex-wrap p-2 position-absolute" style={{ top: `${top}px`, left: `${left}px` }}>
@@ -56,25 +68,25 @@ const FoodTable = ({ top, left, tableNumber, removeBill, updateBill, saleItemCat
               <div className='table_room'></div>
               <div className="table_background"></div>
               <div className="table_background-color"></div>
-              <ProgressBar
-                isServe={billFunctions.bill.isServed}
+              <ProgressBarContainer
+                isServe={bill.isServed}
                 styleClass='progress_bar-table'
                 initialTime={initialTime}
                 finalTime={finalTime}
-                isCommanded={billFunctions.bill.isCommanded}
+                isCommanded={bill.isCommanded}
                 tableNumber={tableNumber}
                 timeMargin={true} />
             </div>
             {
-              !billFunctions.bill.isCommanded && initialTime === null &&
+              !bill.isCommanded && initialTime === null &&
               <strong onClick={() => setMenuDeliveryTime(tableNumber, new Date(Date.now()))} style={{ position: 'absolute', bottom: '-20px' }}>Menu</strong>
             }
             {
-              !billFunctions.bill.isCommanded && initialTime !== null &&
+              !bill.isCommanded && initialTime !== null &&
               <strong onClick={() => setMenuDeliveryTime(tableNumber, null)} style={{ position: 'absolute', bottom: '-20px' }}>Cancelar</strong>
             }
             {
-              billFunctions.bill.isCommanded && !billFunctions.bill.isServed &&
+              bill.isCommanded && !bill.isServed &&
               <strong onClick={() => billFunctions.serve()} style={{ position: 'absolute', bottom: '-20px' }}>Servir</strong>
             }
           </div>

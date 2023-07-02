@@ -15,12 +15,11 @@ import useBill from '../../hooks/useBill'
 
 interface Props {
   bill: Bill
-  updateBill: (id: number) => void
   removeBill: (id: number) => void
   saleItemCategories: SaleItemCategory[]
 }
 
-const SideMenuItem = ({ bill, updateBill, removeBill, saleItemCategories }: Props) => {
+const SideMenuItem = ({ bill, removeBill, saleItemCategories }: Props) => {
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system } = useContext(AppContext)
@@ -80,7 +79,7 @@ const SideMenuItem = ({ bill, updateBill, removeBill, saleItemCategories }: Prop
   }
 
   useEffect(() => {
-    billFunctions.getBill(0,bill.id)
+    billFunctions.getBillFromDB(bill.id)
     calcRemainingMinutes()
   }, [bill])
 
@@ -94,11 +93,9 @@ const SideMenuItem = ({ bill, updateBill, removeBill, saleItemCategories }: Prop
         {
           !close &&
           <BillMaker removeBill={removeBill}
-            refreshBill={updateBill}
             bill={billFunctions.bill}
             saleItemCategories={saleItemCategories}
-            close={closeTable}
-            billFunctions={billFunctions} />
+            close={closeTable} />
         }
       </div>
       <div className="col-12 flex-wrap d-flex py-3 orders-togo" onClick={() => openTable()}>
@@ -115,7 +112,7 @@ const SideMenuItem = ({ bill, updateBill, removeBill, saleItemCategories }: Prop
           <img className='' height={18} src={bill.deliveryMethod === 2 ? moto : carry} />
         </div>
         <div className="col-2 d-flex justify-content-center position-relative">
-          <ProgressBar
+          {/* <ProgressBar
             timeMargin={false}
             finalTime={finalTime}
             initialTime={initialTime}
@@ -123,7 +120,7 @@ const SideMenuItem = ({ bill, updateBill, removeBill, saleItemCategories }: Prop
             isServe={billFunctions.bill.isServed}
             styleClass='progress_bar-table not-blur'
             tableNumber={0}
-          />
+          /> */}
         </div>
       </div>
     </>

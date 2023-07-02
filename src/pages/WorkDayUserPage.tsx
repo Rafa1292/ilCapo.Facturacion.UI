@@ -7,6 +7,8 @@ import CustomInputNumber from '../components/generics/CustomInputNumber'
 import { regexOptions } from '../enums/regexOptions'
 import { usePatch } from '../hooks/useAPI'
 import { parseCurrency } from '../utils/currencyParser'
+import { BillItem } from '../types/billItem'
+import { Bill } from '../types/bill'
 
 const initialWordayUser: WorkDayUser = {
   id: 0,
@@ -45,10 +47,10 @@ const initialCurrencies: currencyCount[] = [
 
 const WorkDayUserPage = () => {
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
-  const { user, logout, setWorkDayUser } = useContext(AppContext)
+  const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
   const navigate = useNavigate()
-  
+
   const handleCurrencyChange = (event: any, index: number) => {
     const { value } = event.target
     const newCurrencies = [...currencies]
@@ -63,6 +65,41 @@ const WorkDayUserPage = () => {
     setCurrentWorkDayUser({ ...currentWorkDayUser, finalCash: value })
   }
 
+  const getBillTotal = (bill: Bill) => {
+    let billTotal = 0
+    for (const billItem of bill.items) {
+      billTotal += Number(billItem.unitPrice) * Number(billItem.quantity) + getBillItemModifiersPrice(billItem) + Number(billItem.tax) - Number(billItem.discount)
+    }
+    return billTotal
+  }
+
+  const getBillItemModifiersPrice = (billItem: BillItem): number => {
+    try {
+      let price = 0
+      for (const billProduct of billItem.billProducts) {
+        for (const product of billProduct.products) {
+          price += Number(product.unitPrice)
+          for (const modifier of product.modifiers) {
+            if (typeof modifier.elements === 'undefined') continue
+            for (const element of modifier.elements) {
+              price += Number(element.price)
+            }
+          }
+        }
+      }
+      return price
+    } catch (error) {
+      return 0
+    }
+
+  }
+
+  const getTotalBills = () => {
+    const total = billFunctions.bills.reduce((total, bill) => total + getBillTotal(bill), 0)
+    return total
+  }
+
+
   const closeWorkDayUser = async () => {
     const response = await usePatch<WorkDayUser>('workDayUsers', currentWorkDayUser, true)
     if (!response.error) {
@@ -73,13 +110,14 @@ const WorkDayUserPage = () => {
   }
 
   useEffect(() => {
+    console.log('workDayUserPage')
     setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
-  }, [])
+  }, [billFunctions.bills])
 
 
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center align-items-center' style={{height: '100vh' }}>
+    <div className='col-12 d-flex flex-wrap justify-content-center align-items-center' style={{ height: '100vh' }}>
       {currentWorkDayUser.id === 0 &&
         <WorkDayUserForm />
         ||
@@ -96,13 +134,13 @@ const WorkDayUserPage = () => {
               Dinero inicial:
             </div>
             <div className="col-5 mx-3 text-start">
-              { parseCurrency(currentWorkDayUser.initialCash.toString())}
+              {parseCurrency(currentWorkDayUser.initialCash.toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Gastos:
             </div>
             <div className="col-5 mx-3 text-start">
-              { parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
+              {parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Inversiones:
@@ -114,13 +152,15 @@ const WorkDayUserPage = () => {
               Ingresos:
             </div>
             <div className="col-5 mx-3 text-start">
-              { parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString()) }
+              {parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Ventas:
             </div>
             <div className="col-5 mx-3 text-start">
-              ¢ 20.000
+              {
+                parseCurrency(getTotalBills().toString())
+              }
             </div>
           </div>
           {

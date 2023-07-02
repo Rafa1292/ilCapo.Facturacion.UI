@@ -15,7 +15,8 @@ import { parseCurrency } from '../../utils/currencyParser'
 interface Props {
   saleItemCategory: SaleItemCategory
   editBilItem: BillItem
-  addBillItem: (billItem: BillItem) => void
+  tableNumber: number
+  addBillItem: (billItem: BillItem, tableNumber: number) => void
 }
 
 const initialBillItem: BillItem = {
@@ -72,7 +73,7 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
   updatedBy: 0
 }
 
-const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) => {
+const BillMakerItems = ({ saleItemCategory, tableNumber, addBillItem, editBilItem }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
 
@@ -238,6 +239,7 @@ const BillMakerItems = ({ saleItemCategory, addBillItem, editBilItem }: Props) =
             setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} 
             addLinkedProductModifierElement={newLinkedProductModifierElement} 
             addBillItem={addBillItem} 
+            tableNumber={tableNumber}
             billItem={billItem} 
             saleItem={saleItem} />
         }

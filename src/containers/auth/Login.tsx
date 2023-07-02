@@ -24,6 +24,11 @@ const Login = () => {
     })
   }
 
+  useEffect(() => {
+    console.log('login')
+  }, [])
+  
+
   return (
     <div className='col-12 d-flex flex-wrap justify-content-center align-items-center' style={{ height: '100vh' }}>
       <form className='col-4 d-flex flex-wrap justify-content-center p-4 login'>

@@ -6,8 +6,6 @@ import RoomContainer from '../containers/generics/RoomContainer'
 import { Bill } from '../types/bill'
 import { useGet, useGetList } from '../hooks/useAPI'
 import { ProductModifier } from '../types/productModifier'
-import { LinkedProduct } from '../types/linkedProduct'
-import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
 import { Client } from '../types/client'
 import { SaleItemCategory } from '../types/saleItemCategory'
 import SideMenu from '../components/generics/SideMenu'
@@ -46,62 +44,19 @@ const initialBill: Bill = {
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true)
   const { setWorkDayUser, setRoomEdit, system, setMenuDeliveryTime } = useContext(AppContext)
-  const [bills, setBills] = useState<Bill[]>([])
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
-
-  const completeBill = async (bill: Bill) => {
-    for (const billItem of bill.items) {
-      for (const billItemLinkedProduct of billItem.billProducts) {
-        const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
-        if (!response.error && response.data !== null) {
-          billItemLinkedProduct.products = response.data
-          for (const linkedProduct of billItemLinkedProduct.products) {
-            for (const productModifier of linkedProduct.modifiers) {
-              const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
-              if (!response.error && response.data !== null) {
-                productModifier.elements = response.data
-              }
-              else {
-                productModifier.elements = []
-              }
-            }
-          }
-        }
-        else {
-          billItemLinkedProduct.products = []
-        }
-      }
-    }
-    return { ...bill, isCommanded: bill.id > 0 ? true : false }
-  }
-
-  const getBill = async (id: number): Promise<Bill> => {
-    const response = await useGet<Bill>(`bills/${id}`, true)
-    if (!response.error && response.data !== null) {
-      const bill = await completeBill(response.data)
-      return bill
-    }
-    return initialBill
-  }
-
-  const updateBill = async (id: number) => {
-    const bill = await getBill(id)
-    const billsTmp = bills.filter(bill => bill.id !== id)
-    billsTmp.push(bill)
-    setBills(billsTmp)
-  }
+  const { billFunctions } = useContext(AppContext)
 
   const removeBill = (id: number) => {
-    const billToRemove = bills.find(bill => bill.id === id)
-    const billsTmp = bills.filter(bill => bill.id !== id)
+    const billToRemove = billFunctions.bills.find(bill => bill.id === id)
+    const billsTmp = billFunctions.bills.filter(bill => bill.id !== id)
     if (billToRemove !== undefined)
       setMenuDeliveryTime(billToRemove.tableNumber, null)
-    setBills(billsTmp)
+    // setBills(billsTmp)
   }
 
   useEffect(() => {
     setRoomEdit(false)
-    setWorkDayUser()
     const getSaleItemCategories = async () => {
       const response = await useGetList<SaleItemCategory[]>('saleItemCategories', false)
       if (!response.error) {
@@ -120,35 +75,20 @@ const Home = () => {
         setSaleItemCategories(tmpSaleItemCategories)
       }
     }
-    const getOpenBills = async () => {
-      const response = await useGetList<Bill[]>('bills/openBills', true)
-      if (!response.error) {
-        const tmpBills: Bill[] = []
-        for (const bill of response.data) {
-          const tmpBill = await completeBill(bill)
-          tmpBills.push(tmpBill)
-        }
-        setBills(tmpBills)
-      }
-      setIsLoading(false)
-    }
     getSaleItemCategories()
-    getOpenBills()
   }, [system.loader])
 
   return (
     <Content isLoading={system.loader && isLoading ? true : false}>
       <>
         <SideMenu
-          updateBill={updateBill}
           removeBill={removeBill}
           saleItemCategories={saleItemCategories}
-          bills={bills.filter(x => x.tableNumber === 0)} />
+          bills={billFunctions.bills.filter(x => x.tableNumber === 0 && !x.close)} />
         {
           <RoomContainer
             saleItemCategories={saleItemCategories}
-            bills={bills}
-            updateBill={updateBill}
+            bills={billFunctions.bills.filter(x => !x.close)}
             removeBill={removeBill}
             tables={system.bussinessConfig.tables} />
         }

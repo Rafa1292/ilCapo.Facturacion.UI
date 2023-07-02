@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AccountHistory } from '../types/accountHistory'
 import { Bill } from '../types/bill'
 import { BillItem } from '../types/billItem'
@@ -8,6 +8,7 @@ import BillPayMethodSplit from './BillPayMethodSplit'
 import BillPayMethodPullApart from './BillPayMethodPullApart'
 import { BillFunctions } from '../types/billFunctions'
 import { BillAccountHistory } from '../types/billAccountHistory'
+import AppContext from '../context/AppContext'
 
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
   bill: Bill
   addAccountHistory: (accountHistory: AccountHistory) => void
   removeAccountHistory: (accountHistory: AccountHistory) => void
-  fastPayAction: (accountHistory: AccountHistory) => Promise<boolean>
+  fastPayAction: (accountHistory: AccountHistory, billId: number) => Promise<boolean>
   closeBill: () => Promise<boolean>
   close: () => void
   removeBill: (id: number) => void
@@ -27,7 +28,7 @@ interface Props {
 
 const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill, close, moveBillItemBack, setPullApartBill, closeBill, fastPayAction, removeAccountHistory }: Props) => {
   const [option, setOption] = useState<number>(1)
-
+  const { billFunctions } = useContext(AppContext)
   const getAccountHistoriesTotal = (): number => {
     let accountHistoriesTotal = 0
     for (const billAccountHistory of bill.billAccountHistories) {
@@ -77,7 +78,7 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
   }
 
   const handleFastPayAction = async (accountHistory: AccountHistory) => {
-    const response = await fastPayAction(accountHistory)
+    const response = await billFunctions.fastPayAction(accountHistory, bill.id)
     if (response) {
       close()
       removeBill(bill.id)
@@ -104,7 +105,7 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
   const handleCloseApartBill = async (billHistories: BillAccountHistory[]) => {
     const response = await nextBillFunctions.closeApartBill(bill, billHistories)
     if (response) {
-      nextBillFunctions.restartBill()
+      nextBillFunctions.updateBillFromDB(bill.id)
     }
   }
 
@@ -135,7 +136,12 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
       }
       {
         option === 3 &&
-        <BillPayMethodPullApart close={close} closeBill={handleCloseApartBill} moveBillItemBack={moveBillItemBack} bill={nextBillFunctions.bill} getClient={nextBillFunctions.getClient} />
+        <BillPayMethodPullApart
+          close={close}
+          closeBill={handleCloseApartBill}
+          moveBillItemBack={moveBillItemBack}
+          bill={nextBillFunctions.bill}
+          getClient={nextBillFunctions.getClient} />
       }
     </>
   )

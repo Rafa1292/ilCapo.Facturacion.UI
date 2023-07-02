@@ -54,32 +54,143 @@ const initialBill: Bill = {
 
 
 const useBill = (tableNumber: number): BillFunctions => {
-  const [bill, setBill] = useState<Bill>({ ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 })
-  const { user } = useContext(AppContext)
+  const [bill, setBill] = useState<Bill>(initialBill)
+  const [bills, setBills] = useState<Bill[]>([])
 
+  const getBillsByWorkDayUser = async (workDayUserId: number) => {
+    const response = await useGetList<Bill[]>(`bills/billsByWorkDayUser/${workDayUserId}`, true)
+    if (!response.error) {
+      const tmpBills: Bill[] = []
+      for (const bill of response.data) {
+        const tmpBill = await completeBill(bill)
+        tmpBills.push(tmpBill)
+      }
+      setBills(tmpBills)
+    }
+  }
+
+  const setBillByTableNumber = (tableNumber: number): Bill => {
+    const tmpBill = bills.find(bill => bill.tableNumber === tableNumber && !bill.close)
+    if (tmpBill) {
+      return tmpBill
+    } else {
+      const tmpInitialBill = { ...initialBill, tableNumber: tableNumber, deliveryMethod: 0 }
+      return tmpInitialBill
+    }
+  }
+
+  const getClient = async (phone: string, tableNumber: number) => {
+    const response = await useGet<Client>(`clients/phone/${phone}`, true)
+    if (!response.error && response.data !== null) {
+      const client = response.data
+      const currentBill = setBillByTableNumber(tableNumber)
+      currentBill.clientId = client.id
+      currentBill.client = client
+      const currentBills = bills.filter(bill => bill.tableNumber !== tableNumber)
+      setBills([...currentBills, currentBill])
+    }
+  }
+
+  const getBillFromDB = async (tmpId: number): Promise<Bill> => {
+    if (tmpId === 0) {
+      return { ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 }
+    } else {
+      const url = `bills/${tmpId}`
+      const response = await useGet<Bill>(url, true)
+      if (!response.error && response.data !== null) {
+        const bill = response.data
+        for (const billItem of bill.items) {
+          for (const billItemLinkedProduct of billItem.billProducts) {
+            const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
+            if (!response.error && response.data !== null) {
+              billItemLinkedProduct.products = response.data
+              for (const linkedProduct of billItemLinkedProduct.products) {
+                for (const productModifier of linkedProduct.modifiers) {
+                  const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
+                  if (!response.error && response.data !== null) {
+                    productModifier.elements = response.data
+                  }
+                  else {
+                    productModifier.elements = []
+                  }
+                }
+              }
+            }
+            else {
+              billItemLinkedProduct.products = []
+            }
+          }
+        }
+        const accountHistories = bill.billAccountHistories?.length > 0 ? bill.billAccountHistories : []
+        return { ...bill, isCommanded: true, billAccountHistories: accountHistories }
+      }
+    }
+    return { ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 }
+  }
+
+  const getBill = (billId: number) => {
+    if (billId === 0) {
+      return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
+    } else {
+      const tmpBill = bills.find(bill => bill.id === billId)
+      if (tmpBill) {
+        return tmpBill
+      } else {
+        return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
+      }
+    }
+  }
+
+  const updateBillFromDB = async (id: number) => {
+    const currentBill = await getBillFromDB(id)
+    let currentBills = bills.filter(bill => bill.id !== id)
+    currentBills = currentBills.filter(bill => bill.tableNumber !== currentBill.tableNumber)
+    if (!currentBill.close)
+      currentBills.push(currentBill)
+    console.log(currentBills)
+    setBills([...currentBills])
+  }
+
+  const fastPayAction = async (accountHistory: AccountHistory, billId: number): Promise<boolean> => {
+    const currentBill = getBill(billId)
+    const response = await usePatch<Bill>('bills/close', { ...currentBill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
+    if (!response.error) {
+      updateBillFromDB(billId)
+      return true
+    }
+    return false
+  }
+
+  // Refactorizacion de funciones
   const setCurrentBill = (currentBill: Bill) => {
     setBill(currentBill)
   }
 
-  const addBillItem = (billItem: BillItem) => {
-    if (bill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
-      const tmpBillItems = bill.items.filter(item => item.saleItemId !== billItem.saleItemId)
-      const tmpBillItem = bill.items.find(item => item.saleItemId === billItem.saleItemId)
+  const addBillItem = (billItem: BillItem, tableNumber: number) => {
+    console.log(bills)
+    const currentBill = setBillByTableNumber(tableNumber)
+    if (currentBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
+      const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
+      const tmpBillItem = currentBill.items.find(item => item.saleItemId === billItem.saleItemId)
       if (tmpBillItem) {
         tmpBillItem.quantity = tmpBillItem.quantity + 1
         billItem.billProducts = billItem.billProducts.map(x => { return { ...x, itemNumber: tmpBillItem.quantity } as BillItemLinkedProduct })
         tmpBillItem.billProducts = [...tmpBillItem.billProducts, ...billItem.billProducts]
-        setBill({
-          ...bill,
+        const newBill = {
+          ...currentBill,
           items: [...tmpBillItems, tmpBillItem]
-        })
+        }
+        const currentBills = newBill.tableNumber > 0 ? bills.filter(bill => bill.tableNumber !== tableNumber) : bills.filter(bill => bill.id !== currentBill.id)
+        setBills([...currentBills, newBill])
       }
     }
     else {
-      setBill({
-        ...bill,
-        items: [...bill.items, billItem]
-      })
+      const newBill = {
+        ...currentBill,
+        items: [...currentBill.items, billItem]
+      }
+      const currentBills = newBill.tableNumber > 0 ? bills.filter(bill => bill.tableNumber !== tableNumber) : bills.filter(bill => bill.id !== currentBill.id)
+      setBills([...currentBills, newBill])
     }
   }
 
@@ -208,78 +319,18 @@ const useBill = (tableNumber: number): BillFunctions => {
     })
   }
 
-  const getClient = async (phone: string) => {
-    const response = await useGet<Client>(`clients/phone/${phone}`, true)
-    if (!response.error && response.data !== null) {
-      const client = response.data
-      setBill({
-        ...bill,
-        clientId: client.id,
-        client: client
-      })
-    }
-  }
-
-  const getBill = async (tmpTableNumber: number, tmpId: number) => {
-    if (tmpTableNumber === 0 && tmpId === 0) {
-      setBill({ ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 })
-    } else {
-      const url = tmpId > 0 ? `bills/${tmpId}` : `bills/table/${tmpTableNumber}`
-      const response = await useGet<Bill>(url, true)
-      if (!response.error && response.data !== null) {
-        const bill = response.data
-        for (const billItem of bill.items) {
-          for (const billItemLinkedProduct of billItem.billProducts) {
-            const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
-            if (!response.error && response.data !== null) {
-              billItemLinkedProduct.products = response.data
-              for (const linkedProduct of billItemLinkedProduct.products) {
-                for (const productModifier of linkedProduct.modifiers) {
-                  const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
-                  if (!response.error && response.data !== null) {
-                    productModifier.elements = response.data
-                  }
-                  else {
-                    productModifier.elements = []
-                  }
-                }
-              }
-            }
-            else {
-              billItemLinkedProduct.products = []
-            }
-          }
-        }
-        const accountHistories = bill.billAccountHistories?.length > 0 ? bill.billAccountHistories : []
-        setBill({ ...bill, isCommanded: true, billAccountHistories: accountHistories })
-      }
-    }
-  }
-
-  const fastPayAction = async (accountHistory: AccountHistory): Promise<boolean> => {
-    const response = await usePatch<Bill>('bills/close', { ...bill, workDayUserId: user.workDayUser.id, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
-    if (!response.error) {
-      setBill({ ...initialBill, tableNumber: tableNumber })
-      return true
-    }
-    return false
-  }
 
   const closeBill = async (billHistories?: BillAccountHistory[]): Promise<boolean> => {
-    const response = await usePatch<Bill>('bills/close', { ...bill, workDayUserId: user.workDayUser.id, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
+    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
     if (!response.error) {
       setBill({ ...initialBill, tableNumber: tableNumber })
       return true
     }
     return false
-  }
-
-  const restartBill = () => {
-    setBill({ ...initialBill, tableNumber: tableNumber, workDayUserId: user.workDayUser.id })
   }
 
   const closeApartBill = async (originalBill: Bill, billHistories: BillAccountHistory[]): Promise<boolean> => {
-    const response = await usePatch<any>('bills/closeApart', { bill: { ...bill, billAccountHistories: billHistories, workDayUserId: user.workDayUser.id } as Bill, originalBill: originalBill }, true)
+    const response = await usePatch<any>('bills/closeApart', { bill: { ...bill, billAccountHistories: billHistories } as Bill, originalBill: originalBill }, true)
     if (!response.error) {
       setBill(initialBill)
       return true
@@ -311,8 +362,35 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
+  const completeBill = async (bill: Bill) => {
+    for (const billItem of bill.items) {
+      for (const billItemLinkedProduct of billItem.billProducts) {
+        const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
+        if (!response.error && response.data !== null) {
+          billItemLinkedProduct.products = response.data
+          for (const linkedProduct of billItemLinkedProduct.products) {
+            for (const productModifier of linkedProduct.modifiers) {
+              const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
+              if (!response.error && response.data !== null) {
+                productModifier.elements = response.data
+              }
+              else {
+                productModifier.elements = []
+              }
+            }
+          }
+        }
+        else {
+          billItemLinkedProduct.products = []
+        }
+      }
+    }
+    return { ...bill, isCommanded: bill.id > 0 ? true : false }
+  }
+
   return {
     bill,
+    bills,
     addBillItem,
     removeBillItem,
     addAccountHistory,
@@ -321,19 +399,22 @@ const useBill = (tableNumber: number): BillFunctions => {
     removeLinkedProduct,
     editLinkedProduct,
     getClient,
+    getBillFromDB,
     getBill,
     removeCombinedLinkedProduct,
     fastPayAction,
     closeBill,
     closeApartBill,
-    restartBill,
+    updateBillFromDB,
     setBillAddress,
     setDiscount,
     setDeliveryMethod,
     serve,
     setCurrentBill,
     addDescriptionToBillProduct,
-    changeTableNumber
+    changeTableNumber,
+    getBillsByWorkDayUser,
+    setBillByTableNumber
   }
 }
 

@@ -19,7 +19,7 @@ import { BillAccountHistory } from '../types/billAccountHistory'
 
 interface Props {
   bill: Bill
-  getClient(phone: string): void
+  getClient(phone: string, tableNumber: number): void
   moveBillItemBack(billItemLinkedProductId: number, saleItemId: number, itemNumber: number): void
   closeBill(billHistories: BillAccountHistory[]): void
   close: () => void
@@ -36,7 +36,7 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
   const handleChangePhone = (event: any) => {
     const { value } = event.target
     setPhone(value)
-    getClient(value)
+    getClient(value, bill.tableNumber)
   }
 
   const handleChangeName = (event: any) => {
@@ -67,7 +67,7 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
   const saveNewClient = async () => {
     const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
     if (!response.error) {
-      getClient(response.data.phone)
+      getClient(response.data.phone, bill.tableNumber)
     }
   }
 

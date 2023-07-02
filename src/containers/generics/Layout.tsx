@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Navbar from '../../components/generics/Navbar'
 import SideMenu from '../../components/generics/SideMenu'
 import AppContext from '../../context/AppContext'
@@ -10,8 +10,7 @@ interface Props {
 }
 
 const Layout = ({ children }: Props) => {
-  const { user, system } = useContext(AppContext)
-
+  const { user, billFunctions } = useContext(AppContext)
 
   return (
     <>
@@ -19,7 +18,7 @@ const Layout = ({ children }: Props) => {
         &&
         <Login />
         ||
-        user.workDayUser.id <= 0
+        user.workDayUser.id === 0
         &&
         <WorkDayUserPage />
         ||

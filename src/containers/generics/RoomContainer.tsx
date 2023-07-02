@@ -14,10 +14,9 @@ interface Props {
   bills: Bill[]
   saleItemCategories: SaleItemCategory[]
   removeBill: (id: number) => void
-  updateBill: (id: number) => void
 }
 
-const RoomContainer = ({ tables, bills, saleItemCategories, removeBill, updateBill }: Props) => {
+const RoomContainer = ({ tables, bills, saleItemCategories, removeBill }: Props) => {
   const [isLoading, setIsLoading] = useState(true)
   const { setMenuDeliveryTime } = useContext(AppContext)
 
@@ -34,7 +33,6 @@ const RoomContainer = ({ tables, bills, saleItemCategories, removeBill, updateBi
               if (table.type === 'table_container') {
                 return <FoodTableContainer
                   removeBill={removeBill}
-                  updateBill={updateBill}
                   bills={bills}
                   menuDeliveryTime={table.menuDeliveryTime}
                   setMenuDeliveryTime={setMenuDeliveryTime}

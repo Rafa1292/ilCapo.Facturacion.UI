@@ -22,7 +22,7 @@ import BillResumeDiscount from './BillResumeDiscount'
 import { get } from 'http'
 interface Props {
   bill: Bill
-  getClient(phone: string): void
+  getClient(phone: string, table: number): void
   removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
@@ -86,7 +86,7 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
   const handleChangePhone = (event: any) => {
     const { value } = event.target
     setPhone(value)
-    getClient(value)
+    getClient(value, bill.tableNumber)
   }
 
   const handleChangeName = (event: any) => {
@@ -134,7 +134,7 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
   const saveNewClient = async () => {
     const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
     if (!response.error) {
-      getClient(response.data.phone)
+      getClient(response.data.phone, bill.tableNumber)
     }
   }
 

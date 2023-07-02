@@ -16,44 +16,12 @@ import { Bill } from '../../types/bill'
 import { Client } from '../../types/client'
 
 interface Props {
-  billFunctions: BillFunctions
   close: () => void
   saleItemCategories: SaleItemCategory[]
-  bill: Bill
-  refreshBill: (id: number) => void
   removeBill: (id: number) => void
+  bill: Bill
 }
 
-const initialClient: Client = {
-  id: 0,
-  name: '',
-  phone: '',
-  addressess: [],
-  delete: false,
-  createdBy: 0,
-  updatedBy: 0
-}
-
-const initialBill: Bill = {
-  id: 0,
-  addressId: 0,
-  client: initialClient,
-  clientId: 0,
-  close: false,
-  deliveryMethod: 0,
-  tableNumber: 0,
-  workDayUserId: 0,
-  items: [],
-  isCommanded: false,
-  isServed: false,
-  isNull: false,
-  billAccountHistories: [],
-  delete: false,
-  createdAt: new Date(Date.now()),
-  updatedAt: new Date(Date.now()),
-  createdBy: 0,
-  updatedBy: 0
-}
 interface SearchProduct {
   id: number
   categoryId: number
@@ -78,13 +46,13 @@ const initialBillItem: BillItem = {
 }
 
 
-const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill, refreshBill }: Props) => {
+const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
-  const { user } = useContext(AppContext)
+  const { user, billFunctions } = useContext(AppContext)
   const { fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory,
-    removeAccountHistory, editLinkedProduct, getClient, getBill, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
+    removeAccountHistory, editLinkedProduct, getClient, updateBillFromDB, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
   const nextBillFunctions = useBill(0)
@@ -151,19 +119,19 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
       close()
     }
   }
-
+  
   const newBill = async () => {
     const response = await usePost<Bill>('bills', bill, true)
     if (!response.error) {
       const { id } = response.data
-      refreshBill(id)
+      updateBillFromDB(id)
     }
   }
 
   const updateBill = async () => {
     const response = await usePatch('bills', bill, true)
     if (!response.error) {
-      refreshBill(bill.id)
+      updateBillFromDB(bill.id)
     }
   }
 
@@ -203,7 +171,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
             }
           }
           const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
-          nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem)
+          nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem, 0)
           removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
         }
       }
@@ -222,7 +190,7 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
             tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
           }
         }
-        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem)
+        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, bill.tableNumber)
         nextBillFunctions.removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
       }
     }
@@ -230,8 +198,8 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
 
   useEffect(() => {
     initializeSearchProducts(saleItemCategories)
-    getBill(bill.tableNumber, bill.id)
-  }, [])
+    // getBill(bill.tableNumber, bill.id)
+  }, [bill])
 
 
   return (
@@ -273,12 +241,28 @@ const BillMaker = ({ billFunctions, close, saleItemCategories, bill, removeBill,
           </div>
           {
             saleItemCategory &&
-            <BillMakerItems editBilItem={editBillItem ? editBillItem : { saleItemId: 0 } as BillItem} addBillItem={addBillItem} saleItemCategory={saleItemCategory} />
+            <BillMakerItems
+              tableNumber={bill.tableNumber}
+              editBilItem={editBillItem ? editBillItem : { saleItemId: 0 } as BillItem}
+              addBillItem={addBillItem}
+              saleItemCategory={saleItemCategory} />
           }
         </div>
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
-        <BillResume changeTableNumber={billFunctions.changeTableNumber} addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct} setDeliveryMethod={setDeliveryMethod} setDiscount={billFunctions.setDiscount} setBillAddress={billFunctions.setBillAddress} moveBillItem={moveBillItem} pullApartBill={pullApartBill} showPayMethods={() => setShowPayMethods(!showPayMethods)} removeCombinedLinkedProduct={removeCombinedLinkedProduct} getClient={getClient} commandBill={commandBill} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} bill={bill} />
+        <BillResume
+          changeTableNumber={billFunctions.changeTableNumber}
+          addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct}
+          setDeliveryMethod={setDeliveryMethod}
+          setDiscount={billFunctions.setDiscount}
+          setBillAddress={billFunctions.setBillAddress}
+          moveBillItem={moveBillItem} pullApartBill={pullApartBill}
+          showPayMethods={() => setShowPayMethods(!showPayMethods)}
+          removeCombinedLinkedProduct={removeCombinedLinkedProduct}
+          getClient={getClient} commandBill={commandBill}
+          handleEditLinkedProduct={handleEditLinkedProduct}
+          removeLinkedProduct={removeLinkedProduct}
+          bill={bill} />
       </div>
     </div>
     ||

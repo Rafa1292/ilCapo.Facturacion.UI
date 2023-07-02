@@ -41,7 +41,7 @@ const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, upd
         </span>
         {
           !close &&
-          <BillMaker removeBill={removeBill} refreshBill={updateBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} billFunctions={billFunctions} />
+          <BillMaker removeBill={removeBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} />
         }
       </div>
       <div className="bar_container d-flex flex-wrap position-absolute" onClick={() => openTable()} style={{ top: `${top}px`, left: `${left}px` }}>
@@ -49,7 +49,7 @@ const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, upd
         <div className='bar'></div>
         <div className="bar_background"></div>
         <div className="bar_background-color"></div>
-        <ProgressBar isServe={billFunctions.bill.isServed} styleClass='progress_bar-bar' initialTime={new Date()} finalTime={new Date()} isCommanded={false} tableNumber={tableNumber} />
+        {/* <ProgressBar isServe={billFunctions.bill.isServed} styleClass='progress_bar-bar' initialTime={new Date()} finalTime={new Date()} isCommanded={false} tableNumber={tableNumber} /> */}
       </div>
     </>
   )

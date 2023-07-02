@@ -48,15 +48,13 @@ const initialBill: Bill = {
 
 interface Props {
   bills: Bill[]
-  updateBill: (id: number) => void
   removeBill: (id: number) => void
   saleItemCategories: SaleItemCategory[]
 }
 
-const Navbar = ({ bills, updateBill, removeBill, saleItemCategories }: Props) => {
-  const { user, logout } = useContext(AppContext)
+const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
+  const { user, logout, billFunctions } = useContext(AppContext)
   const [close, setClose] = useState(true)
-  const billFunctions = useBill(0)
 
   const closeTable = () => {
     billFunctions.setCurrentBill(initialBill)
@@ -86,11 +84,9 @@ const Navbar = ({ bills, updateBill, removeBill, saleItemCategories }: Props) =>
         {
           !close &&
           <BillMaker removeBill={removeBill}
-            refreshBill={updateBill}
             bill={billFunctions.bill}
             saleItemCategories={saleItemCategories}
-            close={closeTable}
-            billFunctions={billFunctions} />
+            close={closeTable}/>
         }
       </div>
       <nav
@@ -140,7 +136,6 @@ const Navbar = ({ bills, updateBill, removeBill, saleItemCategories }: Props) =>
                     <SideMenuItem
                       bill={bill}
                       removeBill={removeBill}
-                      updateBill={updateBill}
                       saleItemCategories={saleItemCategories} />
                   </li>
                 )
