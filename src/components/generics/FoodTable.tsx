@@ -7,6 +7,7 @@ import { SaleItemCategory } from '../../types/saleItemCategory'
 import AppContext from '../../context/AppContext'
 import { Bill } from '../../types/bill'
 import ProgressBarContainer from '../../containers/generics/ProgressBarContainer'
+import { table } from 'console'
 
 interface Props {
   top: number
@@ -37,11 +38,10 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
   }
 
   useEffect(() => {
-    // console.log('foodTable useEffect')
-    const currentBill = billFunctions.setBillByTableNumber(tableNumber)
+    const currentBill = billFunctions.getBillByTableNumber(tableNumber)
     setBill(currentBill)
   }, [billFunctions.bills])
-  
+
 
 
   return (
@@ -74,7 +74,6 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
                 initialTime={initialTime}
                 finalTime={finalTime}
                 isCommanded={bill.isCommanded}
-                tableNumber={tableNumber}
                 timeMargin={true} />
             </div>
             {

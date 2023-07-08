@@ -51,32 +51,63 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user, billFunctions } = useContext(AppContext)
-  const { fastPayAction, closeBill, addBillItem, printBill, removeLinkedProduct, addAccountHistory,
-    removeAccountHistory, editLinkedProduct, getClient, updateBillFromDB, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
+  const { fastPayAction, closeBill, addBillItem, removeLinkedProduct, addAccountHistory,
+    removeAccountHistory, getClient, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
   const nextBillFunctions = useBill(0)
 
-  const handleChange = (event: any) => {
-    const { value } = event.target
-    const tmpSearchProduct = searchProducts.find(searchProduct => searchProduct.saleItemId === value)
-    if (tmpSearchProduct) {
-      const tmpSaleItemCategory = saleItemCategories.find(saleItemCategory => saleItemCategory.id === tmpSearchProduct.categoryId)
-      if (tmpSaleItemCategory) {
-        setSaleItemCategory(tmpSaleItemCategory)
-        const tmpSaleItem = tmpSaleItemCategory.saleItems.find(saleItem => saleItem.id === tmpSearchProduct.saleItemId)
+  const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
+    const tmpBillItem = billFunctions.editLinkedProduct(saleItemId, itemNumber, bill.id, bill.tableNumber)
+    if (tmpBillItem) {
+      for (const category of saleItemCategories) {
+        const tmpSaleItem = category.saleItems.find(saleItem => saleItem.id === tmpBillItem.saleItemId)
         if (tmpSaleItem) {
-          setEditBillItem({ ...initialBillItem, saleItemId: tmpSaleItem.id })
+          setSaleItemCategory(category)
+          break
         }
+      }
+      setEditBillItem(tmpBillItem)
+    }
+  }
+
+  const moveBillItem = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
+    if (bill.items.length > 1 || bill.items[0].quantity > 1) {
+      for (const billItem of bill.items) {
+        if (billItem.saleItemId === saleItemId) {
+          const tmpBillProducts: BillItemLinkedProduct[] = []
+          for (const billProduct of billItem.billProducts) {
+            if (billProduct.itemNumber === itemNumber) {
+              tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+            }
+          }
+          const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
+          nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem, 0)
+          removeLinkedProduct(saleItemId, itemNumber, bill.id, bill.tableNumber)
+        }
+      }
+    }
+    else {
+      Swal.fire('Error', 'Debe haber almenos 1 item en la factura original', 'error')
+    }
+  }
+
+  const moveBillItemBack = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
+    for (const billItem of nextBillFunctions.bill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillProducts: BillItemLinkedProduct[] = []
+        for (const billProduct of billItem.billProducts) {
+          if (billProduct.itemNumber === itemNumber) {
+            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+          }
+        }
+        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, bill.tableNumber)
+        nextBillFunctions.removeLinkedProduct(saleItemId, itemNumber, bill.id, bill.tableNumber)
       }
     }
   }
 
-  const handleChangeSaleItemCategory = (saleItemCategory: SaleItemCategory) => {
-    setEditBillItem({ saleItemId: 0 } as BillItem)
-    setSaleItemCategory(saleItemCategory)
-  }
-
+  // Refactorized
   const initializeSearchProducts = (saleItemCategories: SaleItemCategory[]) => {
     const tmpSearchProducts: SearchProduct[] = []
     for (const saleItemCategory of saleItemCategories) {
@@ -93,21 +124,28 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
     setSearchProducts(tmpSearchProducts)
   }
 
-  const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
-    const tmpBillItem = editLinkedProduct(saleItemId, itemNumber)
-    if (tmpBillItem) {
-      for (const category of saleItemCategories) {
-        const tmpSaleItem = category.saleItems.find(saleItem => saleItem.id === tmpBillItem.saleItemId)
+  const handleChangeSaleItemCategory = (saleItemCategory: SaleItemCategory) => {
+    setEditBillItem({ saleItemId: 0 } as BillItem)
+    setSaleItemCategory(saleItemCategory)
+  }
+
+  const handleChange = (event: any) => {
+    const { value } = event.target
+    const tmpSearchProduct = searchProducts.find(searchProduct => searchProduct.saleItemId === value)
+    if (tmpSearchProduct) {
+      const tmpSaleItemCategory = saleItemCategories.find(saleItemCategory => saleItemCategory.id === tmpSearchProduct.categoryId)
+      if (tmpSaleItemCategory) {
+        setSaleItemCategory(tmpSaleItemCategory)
+        const tmpSaleItem = tmpSaleItemCategory.saleItems.find(saleItem => saleItem.id === tmpSearchProduct.saleItemId)
         if (tmpSaleItem) {
-          setSaleItemCategory(category)
-          break
+          setEditBillItem({ ...initialBillItem, saleItemId: tmpSaleItem.id })
         }
       }
-      setEditBillItem(tmpBillItem)
     }
   }
 
   const commandBill = async () => {
+    console.log(bill)
     bill.workDayUserId = user.workDayUser.id
     if (validateBill()) {
       if (bill?.id === 0) {
@@ -119,19 +157,19 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
       close()
     }
   }
-  
+
   const newBill = async () => {
     const response = await usePost<Bill>('bills', bill, true)
     if (!response.error) {
       const { id } = response.data
-      updateBillFromDB(id)
+      billFunctions.updateBillFromDB(id)
     }
   }
 
   const updateBill = async () => {
     const response = await usePatch('bills', bill, true)
     if (!response.error) {
-      updateBillFromDB(bill.id)
+      billFunctions.updateBillFromDB(bill.id)
     }
   }
 
@@ -160,45 +198,8 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
     return valid
   }
 
-  const moveBillItem = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
-    if (bill.items.length > 1 || bill.items[0].quantity > 1) {
-      for (const billItem of bill.items) {
-        if (billItem.saleItemId === saleItemId) {
-          const tmpBillProducts: BillItemLinkedProduct[] = []
-          for (const billProduct of billItem.billProducts) {
-            if (billProduct.itemNumber === itemNumber) {
-              tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
-            }
-          }
-          const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
-          nextBillFunctions.addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId } as BillItem, 0)
-          removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
-        }
-      }
-    }
-    else {
-      Swal.fire('Error', 'Debe haber almenos 1 item en la factura original', 'error')
-    }
-  }
-
-  const moveBillItemBack = (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => {
-    for (const billItem of nextBillFunctions.bill.items) {
-      if (billItem.saleItemId === saleItemId) {
-        const tmpBillProducts: BillItemLinkedProduct[] = []
-        for (const billProduct of billItem.billProducts) {
-          if (billProduct.itemNumber === itemNumber) {
-            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
-          }
-        }
-        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, bill.tableNumber)
-        nextBillFunctions.removeLinkedProduct(saleItemId, itemNumber, billItemLinkedProductId)
-      }
-    }
-  }
-
   useEffect(() => {
     initializeSearchProducts(saleItemCategories)
-    // getBill(bill.tableNumber, bill.id)
   }, [bill])
 
 
@@ -261,7 +262,6 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
           removeCombinedLinkedProduct={removeCombinedLinkedProduct}
           getClient={getClient} commandBill={commandBill}
           handleEditLinkedProduct={handleEditLinkedProduct}
-          removeLinkedProduct={removeLinkedProduct}
           bill={bill} />
       </div>
     </div>

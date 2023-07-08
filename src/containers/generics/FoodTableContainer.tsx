@@ -69,14 +69,9 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCatego
     setInitialTime(tmpInitialTime)
   }
 
-  const getBillFromTableNumber = (tableNumber: number): Bill => {
-    const bill = bills.find(bill => bill.tableNumber === tableNumber)
-    return bill ? bill : initialBill
-  }
-
   useEffect(() => {
     // console.log('foodTableContainer useEffect')
-    const currentBill = billFunctions.setBillByTableNumber(tableNumber)
+    const currentBill = billFunctions.getBillByTableNumber(tableNumber)
     calcRemainingMinutes(currentBill)
   }, [menuDeliveryTime, bills])
 

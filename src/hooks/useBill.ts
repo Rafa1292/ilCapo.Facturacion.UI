@@ -57,6 +57,58 @@ const useBill = (tableNumber: number): BillFunctions => {
   const [bill, setBill] = useState<Bill>(initialBill)
   const [bills, setBills] = useState<Bill[]>([])
 
+  const editLinkedProduct = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number): BillItem | undefined => {
+    const currentBill = getBill(billId, tableNumber)
+    for (const billItem of currentBill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber === itemNumber)
+
+        for (const billProduct of tmpBillProducts) {
+          for (const product of billProduct.products) {
+            product.isCommanded = false
+          }
+        }
+
+        billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => {
+          return {
+            ...x,
+            itemNumber: x.itemNumber > itemNumber ?
+              x.itemNumber - 1 :
+              x.itemNumber
+          } as BillItemLinkedProduct
+        })
+
+        if (billItem.billProducts.length === 0) {
+          removeBillItem(billItem, billId, currentBill.tableNumber)
+        }
+        else {
+          billItem.quantity = billItem.billProducts.length
+        }
+
+        return { ...billItem, billProducts: tmpBillProducts }
+      }
+    }
+    return undefined
+  }
+
+  const fastPayAction = async (accountHistory: AccountHistory, billId: number): Promise<boolean> => {
+    const currentBill = getBillById(billId)
+    const response = await usePatch<Bill>('bills/close', { ...currentBill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
+    if (!response.error) {
+      updateBillFromDB(billId)
+      return true
+    }
+    return false
+  }
+
+  const getBill = (billId: number, tableNumber: number) => {
+    if (billId === 0) {
+      return getBillByTableNumber(tableNumber)
+    } else {
+      return getBillById(billId)
+    }
+  }
+
   const getBillsByWorkDayUser = async (workDayUserId: number) => {
     const response = await useGetList<Bill[]>(`bills/billsByWorkDayUser/${workDayUserId}`, true)
     if (!response.error) {
@@ -69,7 +121,7 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
-  const setBillByTableNumber = (tableNumber: number): Bill => {
+  const getBillByTableNumber = (tableNumber: number): Bill => {
     const tmpBill = bills.find(bill => bill.tableNumber === tableNumber && !bill.close)
     if (tmpBill) {
       return tmpBill
@@ -79,15 +131,16 @@ const useBill = (tableNumber: number): BillFunctions => {
     }
   }
 
-  const getClient = async (phone: string, tableNumber: number) => {
-    const response = await useGet<Client>(`clients/phone/${phone}`, true)
-    if (!response.error && response.data !== null) {
-      const client = response.data
-      const currentBill = setBillByTableNumber(tableNumber)
-      currentBill.clientId = client.id
-      currentBill.client = client
-      const currentBills = bills.filter(bill => bill.tableNumber !== tableNumber)
-      setBills([...currentBills, currentBill])
+  const getBillById = (billId: number) => {
+    if (billId === 0) {
+      return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
+    } else {
+      const tmpBill = bills.find(bill => bill.id === billId)
+      if (tmpBill) {
+        return tmpBill
+      } else {
+        return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
+      }
     }
   }
 
@@ -128,16 +181,31 @@ const useBill = (tableNumber: number): BillFunctions => {
     return { ...initialBill, tableNumber: tableNumber, deliveryMethod: tableNumber !== 0 ? 0 : 1 }
   }
 
-  const getBill = (billId: number) => {
-    if (billId === 0) {
-      return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
+  const getClient = async (phone: string, tableNumber: number) => {
+    const response = await useGet<Client>(`clients/phone/${phone}`, true)
+    if (!response.error && response.data !== null) {
+      const client = response.data
+      const currentBill = getBillByTableNumber(tableNumber)
+      currentBill.clientId = client.id
+      currentBill.client = client
+      const currentBills = bills.filter(bill => bill.tableNumber !== tableNumber)
+      setBills([...currentBills, currentBill])
+    }
+  }
+
+  const removeBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
+    const currentBill: Bill = getBill(billId, tableNumber)
+    const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
+    const newBill = {
+      ...currentBill,
+      items: tmpBillItems
+    }
+    if (billId > 0) {
+      const currentBills = bills.filter(bill => bill.id !== currentBill.id)
+      setBills([...currentBills, newBill])
     } else {
-      const tmpBill = bills.find(bill => bill.id === billId)
-      if (tmpBill) {
-        return tmpBill
-      } else {
-        return { ...initialBill, tableNumber: tableNumber, deliveryMethod: 1 }
-      }
+      const currentBills = bills.filter(bill => bill.tableNumber !== currentBill.tableNumber)
+      setBills([...currentBills, newBill])
     }
   }
 
@@ -147,18 +215,38 @@ const useBill = (tableNumber: number): BillFunctions => {
     currentBills = currentBills.filter(bill => bill.tableNumber !== currentBill.tableNumber)
     if (!currentBill.close)
       currentBills.push(currentBill)
-    console.log(currentBills)
     setBills([...currentBills])
   }
 
-  const fastPayAction = async (accountHistory: AccountHistory, billId: number): Promise<boolean> => {
-    const currentBill = getBill(billId)
-    const response = await usePatch<Bill>('bills/close', { ...currentBill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
-    if (!response.error) {
-      updateBillFromDB(billId)
-      return true
+  const removeLinkedProduct = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    for (const billItem of currentBill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => {
+          const newBillItemLinkedProduct: BillItemLinkedProduct = {
+            ...x,
+            products: x.products.map(product => { return { ...product, isCommanded: false } }),
+            itemNumber: x.itemNumber > itemNumber ?
+              x.itemNumber - 1 :
+              x.itemNumber
+          }
+          return newBillItemLinkedProduct
+        })
+        if (billItem.billProducts.length === 0) {
+          removeBillItem(billItem, billId, 0)
+        }
+        else {
+          billItem.quantity = billItem.billProducts.length
+          const newBill: Bill = {
+            ...currentBill,
+            isCommanded: false,
+            items: currentBill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
+          }
+          const currentBills = bills.filter(bill => bill.id > 0 ? bill.id !== billId : bill.tableNumber !== tableNumber)
+          setBills([...currentBills, newBill])
+        }
+      }
     }
-    return false
   }
 
   // Refactorizacion de funciones
@@ -168,7 +256,7 @@ const useBill = (tableNumber: number): BillFunctions => {
 
   const addBillItem = (billItem: BillItem, tableNumber: number) => {
     console.log(bills)
-    const currentBill = setBillByTableNumber(tableNumber)
+    const currentBill = getBillByTableNumber(tableNumber)
     if (currentBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
       const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
       const tmpBillItem = currentBill.items.find(item => item.saleItemId === billItem.saleItemId)
@@ -204,14 +292,6 @@ const useBill = (tableNumber: number): BillFunctions => {
     })
   }
 
-  const removeBillItem = (billItem: BillItem) => {
-    setBill({
-      ...bill,
-      isCommanded: false,
-      items: bill.items.filter(item => item.saleItemId !== billItem.saleItemId)
-    })
-  }
-
   const addAccountHistory = (accountHistory: AccountHistory) => {
     setBill({
       ...bill,
@@ -232,25 +312,6 @@ const useBill = (tableNumber: number): BillFunctions => {
     })
   }
 
-  const removeLinkedProduct = (saleItemId: number, itemNumber: number, billItemLinkedProductId: number) => {
-    for (const billItem of bill.items) {
-      if (billItem.saleItemId === saleItemId) {
-        billItem.quantity = billItem.quantity - 1
-        billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber - 1 : x.itemNumber } as BillItemLinkedProduct })
-        if (billItem.billProducts.length === 0) {
-          removeBillItem(billItem)
-        }
-        else {
-          setBill({
-            ...bill,
-            isCommanded: false,
-            items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
-          })
-        }
-      }
-    }
-  }
-
   const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number) => {
     const billItem = bill.items.find(item => item.saleItemId === saleItemId)
     console.log(billItem)
@@ -266,33 +327,6 @@ const useBill = (tableNumber: number): BillFunctions => {
       ...bill,
       items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
     })
-  }
-
-  const editLinkedProduct = (saleItemId: number, itemNumber: number): BillItem | undefined => {
-    for (const billItem of bill.items) {
-      if (billItem.saleItemId === saleItemId) {
-        const tmpBillProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber === itemNumber)
-
-        for (const billProduct of tmpBillProducts) {
-          for (const product of billProduct.products) {
-            product.isCommanded = false
-          }
-        }
-
-        billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => { return { ...x, itemNumber: x.itemNumber > itemNumber ? x.itemNumber - 1 : x.itemNumber } as BillItemLinkedProduct })
-        if (billItem.billProducts.length === 0) {
-          removeBillItem(billItem)
-        }
-        else {
-          setBill({
-            ...bill,
-            items: bill.items.map(item => item.saleItemId === saleItemId ? { ...billItem, quantity: billItem.quantity - 1 } : item)
-          })
-        }
-        return { ...billItem, billProducts: tmpBillProducts }
-      }
-    }
-    return undefined
   }
 
   const addDescriptionToBillProduct = (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => {
@@ -400,7 +434,7 @@ const useBill = (tableNumber: number): BillFunctions => {
     editLinkedProduct,
     getClient,
     getBillFromDB,
-    getBill,
+    getBillById: getBillById,
     removeCombinedLinkedProduct,
     fastPayAction,
     closeBill,
@@ -414,7 +448,7 @@ const useBill = (tableNumber: number): BillFunctions => {
     addDescriptionToBillProduct,
     changeTableNumber,
     getBillsByWorkDayUser,
-    setBillByTableNumber
+    getBillByTableNumber
   }
 }
 

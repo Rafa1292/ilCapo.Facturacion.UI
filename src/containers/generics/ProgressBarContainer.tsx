@@ -6,16 +6,14 @@ interface Props {
   finalTime: Date | null
   isCommanded: boolean
   isServe: boolean
-  tableNumber: number
   styleClass: string
   timeMargin?: boolean
 }
 
-const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, tableNumber, isCommanded, styleClass, isServe }: Props) => {
-  const [waitingSeconds, setWaitingSeconds] = useState(tableNumber)
+const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, isCommanded, styleClass, isServe }: Props) => {
+  const [waitingSeconds, setWaitingSeconds] = useState(0)
   const [widthValueBySecond, setWidthValueBySecond] = useState(0)
   const [waitingTime, setWaitingTime] = useState(finalTime && initialTime ? ((finalTime.getTime() - initialTime.getTime()) / 60000) : 0)
-  const [loader, setLoader] = useState(true)
 
   useEffect(() => {
     if (initialTime !== null && finalTime !== null) {
@@ -26,13 +24,12 @@ const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, tableNumber,
       setWidthValueBySecond(widthValue)
       setWaitingTime(tmpWaitingTime)
     }
-    setLoader(false)
-  }, [initialTime, finalTime])
+  }, [initialTime, finalTime, waitingSeconds])
 
   return (
     <>
       {
-        !loader &&
+        initialTime !== null && finalTime !== null &&
         <ProgressBar
           waitingTime={waitingTime}
           initialWaitingSeconds={waitingSeconds}

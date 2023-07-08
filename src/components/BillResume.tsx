@@ -23,7 +23,6 @@ import { get } from 'http'
 interface Props {
   bill: Bill
   getClient(phone: string, table: number): void
-  removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
@@ -37,7 +36,7 @@ interface Props {
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, removeLinkedProduct, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -146,8 +145,7 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
         tableNumbers.push(tableNumber)
       }
     }
-    if(!tableNumbers.includes(bill.tableNumber))
-    {
+    if (!tableNumbers.includes(bill.tableNumber)) {
       tableNumbers.push(bill.tableNumber)
     }
     setAvailableTables([...tableNumbers])
@@ -171,7 +169,7 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
   return (
     <>
       <div className="col-12 d-flex flex-wrap p-0">
-        <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{ top: '1vh'}}>
+        <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{ top: '1vh' }}>
           <span onClick={() => setDeliveryMethod(1)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success' : 'bg-dark'}`}>
             <img src={carry} height={25} />
           </span>
@@ -278,7 +276,15 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
           {
             bill.items.map((billItem, index) => {
               return (
-                <BillResumeItem addDescriptionToBillProduct={addDescriptionToBillProduct} moveBillItem={moveBillItem} pullApartBill={pullApartBill} removeCombinedLinkedProduct={removeCombinedLinkedProduct} handleEditLinkedProduct={handleEditLinkedProduct} removeLinkedProduct={removeLinkedProduct} key={index} billItem={billItem} />
+                <BillResumeItem
+                  billId={bill.id}
+                  tableNumber={bill.tableNumber}
+                  addDescriptionToBillProduct={addDescriptionToBillProduct}
+                  moveBillItem={moveBillItem} pullApartBill={pullApartBill}
+                  removeCombinedLinkedProduct={removeCombinedLinkedProduct}
+                  handleEditLinkedProduct={handleEditLinkedProduct}
+                  key={index}
+                  billItem={billItem} />
               )
             })
           }

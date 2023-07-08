@@ -46,7 +46,7 @@ const ProgressBar = ({ timeMargin, initialWaitingSeconds, isCommanded, styleClas
 
   useEffect(() => {
     setTimeout(() => setTime(), 1000)
-  }, [waitingSeconds])
+  }, [waitingSeconds, initialWaitingSeconds])
 
   return (
     <>

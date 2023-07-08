@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BillItem } from '../types/billItem'
 import { parseCurrency } from '../utils/currencyParser'
 import CustomBtn from './generics/CustomBtn'
@@ -6,19 +6,22 @@ import { buttonTypes } from '../enums/buttonTypes'
 import '../scss/billResume.scss'
 import CustomInputText from './generics/CustomInputText'
 import { regexOptions } from '../enums/regexOptions'
+import AppContext from '../context/AppContext'
 
 interface Props {
   billItem: BillItem
-  removeLinkedProduct(saleItemId: number, itemNumber: number, billItemLinkedProductId: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
+  billId: number
+  tableNumber: number
 }
 
-const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, moveBillItem, removeLinkedProduct, handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, moveBillItem, billId, tableNumber,  handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
+  const { billFunctions } = useContext(AppContext)
 
   const getBillItemTotal = (billItem: BillItem): number => {
     return ((billItem.unitPrice + billItem.tax - billItem.discount) * billItem.quantity) + getBillItemModifiersPrice(billItem)
@@ -96,7 +99,7 @@ const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, 
                         ||
                         <>
                           <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                            <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billProduct.id)} />
+                            <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => billFunctions.removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber )} />
                           </div>
                           <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
                             <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billProduct.itemNumber)} />
@@ -155,7 +158,7 @@ const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, 
                           </div>
                         }
                       </div>
-                      <div className="col-12 d-flex flex-wrap">
+                      <div className="col-12 px-2 d-flex flex-wrap">
                         <CustomInputText value={billProduct.description}
                           customInputText={
                             {
