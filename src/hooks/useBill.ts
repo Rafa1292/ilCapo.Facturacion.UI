@@ -57,6 +57,21 @@ const useBill = (tableNumber: number): BillFunctions => {
   const [bill, setBill] = useState<Bill>(initialBill)
   const [bills, setBills] = useState<Bill[]>([])
 
+  const addDescriptionToBillProduct = async (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number): Promise<void> => {
+    const currentBill = await getBill(billId, tableNumber)
+    for (const billItem of currentBill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        for (const billItemLinkedProduct of billItem.billProducts) {
+          if (billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.saleItemProductId === saleItemProductId) {
+            billItemLinkedProduct.description = description
+          }
+        }
+      }
+    }
+    const currentBills = bills.filter(bill => bill.id > 0 ? bill.id !== billId : bill.tableNumber !== tableNumber)
+    setBills([...currentBills, { ...currentBill, isCommanded: false }])
+  }
+
   const editLinkedProduct = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number): BillItem | undefined => {
     const currentBill = getBill(billId, tableNumber)
     for (const billItem of currentBill.items) {
@@ -326,22 +341,6 @@ const useBill = (tableNumber: number): BillFunctions => {
     setBill({
       ...bill,
       items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
-    })
-  }
-
-  const addDescriptionToBillProduct = (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => {
-    for (const billItem of bill.items) {
-      if (billItem.saleItemId === saleItemId) {
-        for (const billItemLinkedProduct of billItem.billProducts) {
-          if (billItemLinkedProduct.itemNumber === itemNumber && billItemLinkedProduct.saleItemProductId === saleItemProductId) {
-            billItemLinkedProduct.description = description
-          }
-        }
-      }
-    }
-    setBill({
-      ...bill,
-      isCommanded: false
     })
   }
 

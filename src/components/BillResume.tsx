@@ -33,10 +33,9 @@ interface Props {
   setDiscount(discount: number): void
   setDeliveryMethod(deliveryMethod: number): void
   changeTableNumber(tableNumber: number): void
-  addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescriptionToBillProduct, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -279,7 +278,6 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, addDescription
                 <BillResumeItem
                   billId={bill.id}
                   tableNumber={bill.tableNumber}
-                  addDescriptionToBillProduct={addDescriptionToBillProduct}
                   moveBillItem={moveBillItem} pullApartBill={pullApartBill}
                   removeCombinedLinkedProduct={removeCombinedLinkedProduct}
                   handleEditLinkedProduct={handleEditLinkedProduct}

@@ -145,7 +145,6 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   }
 
   const commandBill = async () => {
-    console.log(bill)
     bill.workDayUserId = user.workDayUser.id
     if (validateBill()) {
       if (bill?.id === 0) {
@@ -253,7 +252,6 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
         <BillResume
           changeTableNumber={billFunctions.changeTableNumber}
-          addDescriptionToBillProduct={billFunctions.addDescriptionToBillProduct}
           setDeliveryMethod={setDeliveryMethod}
           setDiscount={billFunctions.setDiscount}
           setBillAddress={billFunctions.setBillAddress}

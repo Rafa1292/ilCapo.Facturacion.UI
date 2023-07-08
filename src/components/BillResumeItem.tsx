@@ -14,12 +14,11 @@ interface Props {
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
-  addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string) => void
   billId: number
   tableNumber: number
 }
 
-const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, moveBillItem, billId, tableNumber,  handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, billId, tableNumber,  handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
   const { billFunctions } = useContext(AppContext)
 
@@ -37,7 +36,7 @@ const BillResumeItem = ({ billItem, pullApartBill, addDescriptionToBillProduct, 
   }
 
   const handleDescription = (event: React.ChangeEvent<HTMLInputElement>, itemNumber: number, saleItemProductId: number) => {
-    addDescriptionToBillProduct(billItem.saleItemId, itemNumber, saleItemProductId, event.target.value)
+    billFunctions.addDescriptionToBillProduct(billItem.saleItemId, itemNumber, saleItemProductId, event.target.value, billId, tableNumber)
   }
 
   const getBillItemModifiersPrice = (billItem: BillItem): number => {
