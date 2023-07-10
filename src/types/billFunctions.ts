@@ -18,10 +18,10 @@ export interface BillFunctions {
   setDeliveryMethod: (deliveryMethod: number) => void
   serve : () => void
   setCurrentBill: (currentBill: Bill) => void
-  changeTableNumber: (tableNumber: number) =>void
   getBillsByWorkDayUser: (workDayUserId: number) => Promise<void>
   
   //Refactor
+  changeTableNumber: (tableNumber: number, newTableNumber: number) =>void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number) => void
   fastPayAction: (accountHistory: AccountHistory, billId: number) => Promise<boolean>
   getBillFromDB: (tmpId: number) => void

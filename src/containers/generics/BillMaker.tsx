@@ -55,7 +55,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
     removeAccountHistory, getClient, removeCombinedLinkedProduct, setDeliveryMethod } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
-  const nextBillFunctions = useBill(0)
+  const nextBillFunctions = useBill()
 
   const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
     const tmpBillItem = billFunctions.editLinkedProduct(saleItemId, itemNumber, bill.id, bill.tableNumber)
@@ -239,6 +239,9 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
               })
             }
           </div>
+          <div className="position-absolute ">
+            <button className='btn btn-success' onClick={() => console.log(billFunctions.bills)}>bills</button>
+          </div>
           {
             saleItemCategory &&
             <BillMakerItems
@@ -251,7 +254,6 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
         <BillResume
-          changeTableNumber={billFunctions.changeTableNumber}
           setDeliveryMethod={setDeliveryMethod}
           setDiscount={billFunctions.setDiscount}
           setBillAddress={billFunctions.setBillAddress}

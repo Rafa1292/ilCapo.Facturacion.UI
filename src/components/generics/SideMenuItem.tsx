@@ -24,7 +24,7 @@ const SideMenuItem = ({ bill, removeBill, saleItemCategories }: Props) => {
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system } = useContext(AppContext)
   const [close, setClose] = useState(true)
-  const billFunctions = useBill(bill.tableNumber)
+  const billFunctions = useBill()
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainerToGo${bill.id}`)

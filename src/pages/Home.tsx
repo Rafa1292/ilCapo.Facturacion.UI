@@ -88,7 +88,6 @@ const Home = () => {
         {
           <RoomContainer
             saleItemCategories={saleItemCategories}
-            bills={billFunctions.bills.filter(x => !x.close)}
             removeBill={removeBill}
             tables={system.bussinessConfig.tables} />
         }

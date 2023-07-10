@@ -44,12 +44,11 @@ interface Props {
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
   menuDeliveryTime: Date | null | undefined
-  bills: Bill[]
   removeBill: (id: number) => void
   setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
 }
 
-const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCategories, menuDeliveryTime, bills, setMenuDeliveryTime }: Props) => {
+const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCategories, menuDeliveryTime, setMenuDeliveryTime }: Props) => {
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system, billFunctions } = useContext(AppContext)
@@ -70,10 +69,9 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCatego
   }
 
   useEffect(() => {
-    // console.log('foodTableContainer useEffect')
     const currentBill = billFunctions.getBillByTableNumber(tableNumber)
     calcRemainingMinutes(currentBill)
-  }, [menuDeliveryTime, bills])
+  }, [menuDeliveryTime, billFunctions.bills])
 
   return (
     <>

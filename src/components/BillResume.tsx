@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Bill } from '../types/bill'
 import { BillItem } from '../types/billItem'
 import { parseCurrency } from '../utils/currencyParser'
@@ -20,6 +20,7 @@ import { useGet, usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
 import BillResumeDiscount from './BillResumeDiscount'
 import { get } from 'http'
+import AppContext from '../context/AppContext'
 interface Props {
   bill: Bill
   getClient(phone: string, table: number): void
@@ -32,10 +33,9 @@ interface Props {
   setBillAddress(addressId: number): void
   setDiscount(discount: number): void
   setDeliveryMethod(deliveryMethod: number): void
-  changeTableNumber(tableNumber: number): void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -43,6 +43,8 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, showPayMethods
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
   const [availableTables, setAvailableTables] = React.useState<number[]>([])
+  const { user, billFunctions } = useContext(AppContext)
+
 
   const getBillTax = () => {
     let billTax = 0
@@ -185,7 +187,7 @@ const BillResume = ({ bill, setDeliveryMethod, changeTableNumber, showPayMethods
                 customInputSelect={
                   {
                     label: '', name: 'tableNumber',
-                    handleChange: (ev) => changeTableNumber(ev.target.value), pattern: '', validationMessage: ''
+                    handleChange: (ev) => billFunctions.changeTableNumber(bill.tableNumber, ev.target.value), pattern: '', validationMessage: ''
                   }}
                 data={availableTables.length > 0 ? availableTables.map(table => { return { value: table, label: table.toString() } }) : []}
                 defaultLegend={'0'}

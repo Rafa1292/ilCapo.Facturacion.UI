@@ -19,7 +19,7 @@ interface Props {
 }
 
 const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, updateBill }: Props) => {
-  const billFunctions = useBill(tableNumber)
+  const billFunctions = useBill()
   const [close, setClose] = useState(true)
 
   const closeTable = () => {

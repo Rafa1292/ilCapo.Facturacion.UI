@@ -23,7 +23,7 @@ const initialSystem: systemState = {
 const useInitialState = (): appState => {
   const [user, setUser] = useState(initialUser)
   const [system, setSystem] = useState(initialSystem)
-  const billFunctions = useBill(0)
+  const billFunctions = useBill()
 
   const login = async (tmpUser: User) => {
     const response = await usePostWithResponse('users/login', tmpUser, true)
