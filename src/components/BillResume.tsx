@@ -193,9 +193,9 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
         </div>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ marginTop: '6vh' }}>
           {
-            phone.length > 0 &&
+            
             <div className="col-3 p-1">
-              <CustomInputText value={name}
+              <CustomInputText value={name} disabled={phone.length === 0}
                 customInputText={
                   {
                     label: 'Cliente', name: 'name',
@@ -213,6 +213,24 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
               }
             } />
           </div>
+          {
+            phone.length === 0 || bill.client?.id === 0 ?
+              <>
+                <div className="col-4 p-1">
+                  <CustomInputText value={''} disabled={true}
+                    customInputText={
+                      {
+                        label: 'Direccion', name: 'address',
+                        handleChange: handleChangeName, pattern: regexOptions.text,
+                        validationMessage: ''
+                      }
+                    } />
+                </div>
+                <div className="col-1 p-1">
+                </div>
+              </>
+              : null
+          }
           {
             newAddressState && phone.length > 0 && bill.client?.id > 0 &&
             <>

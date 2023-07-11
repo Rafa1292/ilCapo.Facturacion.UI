@@ -196,22 +196,39 @@ const useBill = (): BillFunctions => {
   }
 
   const getClient = async (phone: string, tableNumber: number, forApartBill?: boolean) => {
-    console.log(phone)
     forApartBill = forApartBill ? forApartBill : false
+    const currentBill = getBillByTableNumber(tableNumber)
+
     if (phone.length === 0) {
-      return
-    }
-    const response = await useGet<Client>(`clients/phone/${phone}`, true)
-    if (!response.error && response.data !== null) {
-      const client = response.data
-      const currentBill = getBillByTableNumber(tableNumber)
-      currentBill.clientId = client.id
-      currentBill.client = client
       if (forApartBill) {
-        setApartBill({...apartBill, clientId: client.id, client: client})
-      }
-      else {
+        setApartBill({ ...apartBill, clientId: 0, client: { ...initialClient, phone } })
+      } else {
+        currentBill.clientId = 0
+        currentBill.client = { ...initialClient, phone }
+        currentBill.addressId = 0
         addBill(currentBill)
+      }
+    } else {
+      const response = await useGet<Client>(`clients/phone/${phone}`, true)
+      if (!response.error && response.data !== null) {
+        const client = response.data
+        if (forApartBill) {
+          setApartBill({ ...apartBill, clientId: client.id, client: client })
+        }
+        else {
+          currentBill.clientId = client.id
+          currentBill.client = client
+          addBill(currentBill)
+        }
+      } else {
+        if (forApartBill) {
+          setApartBill({ ...apartBill, clientId: 0, client: { ...initialClient, phone } })
+        } else {
+          currentBill.clientId = 0
+          currentBill.client = { ...initialClient, phone }
+          currentBill.addressId = 0
+          addBill(currentBill)
+        }
       }
     }
   }
@@ -270,7 +287,7 @@ const useBill = (): BillFunctions => {
           const newBill: Bill = {
             ...currentBill,
             isCommanded: false,
-            items: currentBill.items.map(item => item.saleItemId === saleItemId ? {...billItem, discount} : item)
+            items: currentBill.items.map(item => item.saleItemId === saleItemId ? { ...billItem, discount } : item)
           }
           addBill(newBill)
         }
@@ -350,8 +367,8 @@ const useBill = (): BillFunctions => {
 
   const setBillAddress = async (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => {
     forApartBill = forApartBill ? forApartBill : false
-    if(forApartBill){
-      setApartBill({...apartBill, addressId})
+    if (forApartBill) {
+      setApartBill({ ...apartBill, addressId })
     }
     else {
       const currentBill = getBill(billId, tableNumber)
@@ -400,7 +417,7 @@ const useBill = (): BillFunctions => {
         const discount = billItem.discount + tmpBillItem.discount
         newBill = {
           ...currentBill,
-          items: [...tmpBillItems, {...tmpBillItem, discount}]
+          items: [...tmpBillItems, { ...tmpBillItem, discount }]
         }
       }
     }
@@ -543,10 +560,8 @@ const useBill = (): BillFunctions => {
     }
     return false
   }
-  // Refactorizacion de funciones
 
   const closeApartBill = async (workDayUserIdClose: number, billId: number, billHistories: BillAccountHistory[]): Promise<boolean> => {
-    console.log('closeApartBill')
     const originalBill = getBillById(billId)
     const response = await usePatch('bills/closeApart', { bill: { ...apartBill, billAccountHistories: billHistories, workDayUserIdClose } as Bill, originalBill: originalBill }, true)
     if (!response.error) {

@@ -25,7 +25,7 @@ interface Props {
   tableNumber: number
 }
 
-const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }: Props) => {
+const BillPayMethodPullApart = ({ close, billId, tableNumber, closeApartBill }: Props) => {
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
   const [addressId, setAddressId] = React.useState<number>(0)
@@ -155,9 +155,8 @@ const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }:
       <div className="col-5 d-flex flex-wrap shadow position-relative" style={{ height: 'calc(100vh - 45px)', overflowX: 'hidden' }}>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ marginTop: '4vh', height: '6vh' }}>
           {
-            phone.length > 0 &&
             <div className="col-3 p-1">
-              <CustomInputText value={name}
+              <CustomInputText value={name} disabled={phone.length === 0}
                 customInputText={
                   {
                     label: 'Cliente', name: 'name',
@@ -176,7 +175,25 @@ const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }:
             } />
           </div>
           {
-            newAddressState && phone.length > 0 && bill.client?.id > 0 &&
+            phone.length === 0 || bill.client?.id === 0 ?
+              <>
+                <div className="col-4 p-1">
+                  <CustomInputText value={''} disabled={true}
+                    customInputText={
+                      {
+                        label: 'Direccion', name: 'address',
+                        handleChange: handleChangeName, pattern: regexOptions.text,
+                        validationMessage: ''
+                      }
+                    } />
+                </div>
+                <div className="col-1 p-1">
+                </div>
+              </>
+              : null
+          }
+          {
+            newAddressState && bill.client?.id > 0 &&
             <>
               <div className="col-4 d-flex flex-wrap p-1">
                 <CustomInputText value={newAddress}
@@ -197,7 +214,7 @@ const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }:
             </>
           }
           {
-            !newAddressState && phone.length > 0 && bill.client?.id > 0 &&
+            !newAddressState && bill.client?.id > 0 &&
             <>
               <div className="col-4 d-flex flex-wrap p-1">
                 <CustomInputSelect showLabel={false} value={addressId}
@@ -250,7 +267,7 @@ const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }:
                               return (
                                 index < 1 &&
                                 <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
-                                  <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() => 
+                                  <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() =>
                                     billFunctions.moveBillItemBack(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber)}>
                                     Mover
                                   </button>
@@ -341,8 +358,8 @@ const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }:
           }
         </div>
       </div>
-      <div className="col-7 d-flex flex-wrap justify-content-center py-2 scroll" style={{height: 'calc(100vh - 45px)', overflowY: 'scroll'}}>
-        <BillPayMethodSplit closeBillSplit={closeApartBill} billId={bill.id} close={close} initialParts={1} size='col-6'  getBillTotal={getBillTotal} />
+      <div className="col-7 d-flex flex-wrap justify-content-center py-2 scroll" style={{ height: 'calc(100vh - 45px)', overflowY: 'scroll' }}>
+        <BillPayMethodSplit closeBillSplit={closeApartBill} billId={bill.id} close={close} initialParts={1} size='col-6' getBillTotal={getBillTotal} />
       </div>
 
     </div>

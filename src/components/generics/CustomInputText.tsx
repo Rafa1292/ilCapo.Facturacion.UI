@@ -6,9 +6,10 @@ interface Props {
   customInputText: CustomInputAttributes
   value: string
   showLabel?: boolean
+  disabled?: boolean
 }
 
-const CustomInputText = ({ customInputText, value, showLabel }: Props) => {
+const CustomInputText = ({ customInputText, value, showLabel, disabled = false }: Props) => {
 
   return (
     <>
@@ -25,6 +26,7 @@ const CustomInputText = ({ customInputText, value, showLabel }: Props) => {
             value={value}
             onChange={customInputText.handleChange}
             required
+            disabled={disabled}
             pattern={customInputText.pattern}
           />
           <Form.Control.Feedback id={customInputText.name} type="invalid">
