@@ -255,9 +255,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
       }
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
         <BillResume
-          setDeliveryMethod={setDeliveryMethod}
           setDiscount={billFunctions.setDiscount}
-          setBillAddress={billFunctions.setBillAddress}
           moveBillItem={moveBillItem} pullApartBill={pullApartBill}
           showPayMethods={() => setShowPayMethods(!showPayMethods)}
           removeCombinedLinkedProduct={removeCombinedLinkedProduct}

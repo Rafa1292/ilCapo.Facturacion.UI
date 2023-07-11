@@ -327,16 +327,55 @@ const useBill = (): BillFunctions => {
     const currentBill = getBill(billId, 0)
     const response = await useGet<Bill>(`bills/serve/${currentBill.id}`, true)
     if (!response.error) {
-      addBill({...currentBill, isServed: true})
+      addBill({ ...currentBill, isServed: true })
     }
   }
-  // todo
-  // obtener facturas abiertas agregar initial workdayuserId
-  // agregar command time para no alterar tiempo de espera
-  // Refactorizacion de funciones
-  const setCurrentBill = (currentBill: Bill) => {
-    setBill(currentBill)
+
+  const completeBill = async (currentBill: Bill) => {
+    for (const billItem of currentBill.items) {
+      for (const billItemLinkedProduct of billItem.billProducts) {
+        const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
+        if (!response.error && response.data !== null) {
+          billItemLinkedProduct.products = response.data
+          for (const linkedProduct of billItemLinkedProduct.products) {
+            for (const productModifier of linkedProduct.modifiers) {
+              const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
+              if (!response.error && response.data !== null) {
+                productModifier.elements = response.data
+              }
+              else {
+                productModifier.elements = []
+              }
+            }
+          }
+        }
+        else {
+          billItemLinkedProduct.products = []
+        }
+      }
+    }
+    return { ...currentBill, isCommanded: currentBill.id > 0 ? true : false }
   }
+
+  const setBillAddress = async (addressId: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    currentBill.addressId = addressId
+    currentBill.isCommanded = false
+    addBill(currentBill)
+  }
+
+  const setDeliveryMethod = (deliveryMethod: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    currentBill.deliveryMethod = deliveryMethod
+    currentBill.tableNumber = deliveryMethod !== 0 ? 0 : tableNumber
+    addBill(currentBill)
+  }
+
+  const printBill = () => {
+    console.log(bill)
+  }
+  // Refactorizacion de funciones
+
 
   const addBillItem = (billItem: BillItem, tableNumber: number) => {
     const currentBill = getBillByTableNumber(tableNumber)
@@ -362,16 +401,6 @@ const useBill = (): BillFunctions => {
       const currentBills = newBill.tableNumber > 0 ? bills.filter(bill => bill.tableNumber !== tableNumber) : bills.filter(bill => bill.id !== currentBill.id)
       setBills([...currentBills, newBill])
     }
-  }
-
-  const setDeliveryMethod = (deliveryMethod: number) => {
-    const tableNumber = deliveryMethod !== 0 ? 0 : bill.tableNumber
-    setBill({
-      ...bill,
-      deliveryMethod: deliveryMethod,
-      isCommanded: false,
-      tableNumber
-    })
   }
 
   const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number) => {
@@ -400,14 +429,6 @@ const useBill = (): BillFunctions => {
     return false
   }
 
-  const printBill = () => {
-    console.log(bill)
-  }
-
-  const setBillAddress = (addressId: number) => {
-    setBill({ ...bill, addressId: addressId, isCommanded: false })
-  }
-
   const setDiscount = (discount: number) => {
     const itemdiscount = discount / bill.items.length
     const tmpBillItems = bill.items
@@ -417,31 +438,7 @@ const useBill = (): BillFunctions => {
     setBill({ ...bill, items: tmpBillItems, isCommanded: false })
   }
 
-  const completeBill = async (bill: Bill) => {
-    for (const billItem of bill.items) {
-      for (const billItemLinkedProduct of billItem.billProducts) {
-        const response = await useGetList<LinkedProduct[]>(`linkedProducts/${billItemLinkedProduct.id}`, true)
-        if (!response.error && response.data !== null) {
-          billItemLinkedProduct.products = response.data
-          for (const linkedProduct of billItemLinkedProduct.products) {
-            for (const productModifier of linkedProduct.modifiers) {
-              const response = await useGetList<LinkedProductModifierElement[]>(`linkedProductModifierElements/${productModifier.id}`, true)
-              if (!response.error && response.data !== null) {
-                productModifier.elements = response.data
-              }
-              else {
-                productModifier.elements = []
-              }
-            }
-          }
-        }
-        else {
-          billItemLinkedProduct.products = []
-        }
-      }
-    }
-    return { ...bill, isCommanded: bill.id > 0 ? true : false }
-  }
+
 
   return {
     bill,
@@ -465,7 +462,6 @@ const useBill = (): BillFunctions => {
     setDiscount,
     setDeliveryMethod,
     serve,
-    setCurrentBill,
     addDescriptionToBillProduct,
     changeTableNumber,
     getOpenBills,

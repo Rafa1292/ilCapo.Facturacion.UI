@@ -30,12 +30,10 @@ interface Props {
   showPayMethods(): void
   pullApartBill: boolean
   moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
-  setBillAddress(addressId: number): void
   setDiscount(discount: number): void
-  setDeliveryMethod(deliveryMethod: number): void
 }
 
-const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, moveBillItem, setBillAddress, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -43,7 +41,7 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
   const [availableTables, setAvailableTables] = React.useState<number[]>([])
-  const { user, billFunctions } = useContext(AppContext)
+  const { billFunctions } = useContext(AppContext)
 
 
   const getBillTax = () => {
@@ -101,7 +99,7 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
 
   const handleChangeAddress = (event: any) => {
     const { value } = event.target
-    setBillAddress(value)
+    billFunctions.setBillAddress(value, bill.id, bill.tableNumber)
     setAddressId(value)
   }
 
@@ -154,7 +152,7 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
 
   const handleChangeTable = async () => {
     await getTableNumbersWithBillOpen()
-    setDeliveryMethod(0)
+    billFunctions.setDeliveryMethod(0, bill.id, bill.tableNumber)
   }
 
   useEffect(() => {
@@ -171,10 +169,10 @@ const BillResume = ({ bill, setDeliveryMethod, showPayMethods, setDiscount, move
     <>
       <div className="col-12 d-flex flex-wrap p-0">
         <div className="col-12 d-flex flex-wrap justify-content-center position-absolute" style={{ top: '1vh' }}>
-          <span onClick={() => setDeliveryMethod(1)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success' : 'bg-dark'}`}>
+          <span onClick={() => billFunctions.setDeliveryMethod(1, bill.id, bill.tableNumber)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 1 ? 'bg-success' : 'bg-dark'}`}>
             <img src={carry} height={25} />
           </span>
-          <span onClick={() => setDeliveryMethod(2)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success' : 'bg-dark'}`}>
+          <span onClick={() => billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 2 ? 'bg-success' : 'bg-dark'}`}>
             <img src={moto} height={25} />
           </span>
           <span onClick={() => handleChangeTable()} className={`p-2 rounded hover mx-1 ${bill.deliveryMethod === 0 ? 'bg-success' : 'bg-dark'}`}>

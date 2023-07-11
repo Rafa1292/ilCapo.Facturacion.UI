@@ -59,14 +59,12 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
   const [close, setClose] = useState(true)
 
   const closeTable = () => {
-    billFunctions.setCurrentBill(initialBill)
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.remove('bill-makerContainer_show')
     setClose(true)
   }
 
   const openTable = () => {
-    billFunctions.setCurrentBill(initialBill)
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.add('bill-makerContainer_show')
     setClose(false)
