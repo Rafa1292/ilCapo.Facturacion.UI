@@ -93,7 +93,7 @@ const SideMenuItem = ({ bill, removeBill, saleItemCategories }: Props) => {
         {
           !close &&
           <BillMaker removeBill={removeBill}
-            bill={billFunctions.bill}
+            bill={bill}
             saleItemCategories={saleItemCategories}
             close={closeTable} />
         }

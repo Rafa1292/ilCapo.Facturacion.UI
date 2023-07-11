@@ -40,7 +40,6 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
   useEffect(() => {
     const currentBill = billFunctions.getBillByTableNumber(tableNumber)
     setBill(currentBill)
-    console.log('bill')
   }, [billFunctions.bills])
 
 

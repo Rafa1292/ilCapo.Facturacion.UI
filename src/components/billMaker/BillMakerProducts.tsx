@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/billMakerProducts.scss'
 import { SaleItem } from '../../types/saleItem'
 import { Product } from '../../types/product'
@@ -6,28 +6,29 @@ import BillMakerModifierGroups from './BillMakerModifierGroups'
 import { BillItem } from '../../types/billItem'
 import { ModifierElement } from '../../types/modifierElement'
 import { LinkedProduct } from '../../types/linkedProduct'
+import AppContext from '../../context/AppContext'
 
 interface Props {
   saleItem: SaleItem
   billItem: BillItem
   tableNumber: number
   setSaleItem: (saleItem: SaleItem | undefined) => void
-  addBillItem: (billItem: BillItem, tableNumber: number) => void
   addLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
   removeLinkedProductModifierElement: (modifierElement: ModifierElement, saleItemProductId: number) => void
   setNewBillItem: () => void
   newCombinedLinkedProduct: (linkedProduct: LinkedProduct, billItemLinkedProductId: number) => void
 }
 
-const BillMakerProducts = ({ saleItem, tableNumber, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
+const BillMakerProducts = ({ saleItem, tableNumber, setSaleItem, billItem, newCombinedLinkedProduct, setNewBillItem, addLinkedProductModifierElement, removeLinkedProductModifierElement }: Props) => {
   const [product, setProduct] = useState<Product>()
   const [incompleteProducts, setIncompleteProducts] = useState<number[]>([])
   const [validate, setValidate] = useState<boolean>(false)
   const [saleItemProductId, setSaleItemProductId] = useState<number>(0)
+  const { billFunctions } = useContext(AppContext)
 
   const addNewBillItem = () => {
     if (validateBillItem()) {
-      addBillItem(billItem, tableNumber)
+      billFunctions.addBillItem(billItem, billItem.billId, tableNumber)
       setNewBillItem()
       setSaleItem(undefined)
     }

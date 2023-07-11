@@ -12,17 +12,15 @@ import AppContext from '../context/AppContext'
 
 
 interface Props {
-  nextBillFunctions: BillFunctions
   bill: Bill
   close: () => void
   removeBill: (id: number) => void
   pullApartBill: boolean
   setPullApartBill: (pullApartBill: boolean) => void
-  moveBillItemBack: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
 }
 
 
-const BillPayMethod = ({ bill, nextBillFunctions, removeBill, close, moveBillItemBack, setPullApartBill, }: Props) => {
+const BillPayMethod = ({ bill, removeBill, close, setPullApartBill, }: Props) => {
   const [option, setOption] = useState<number>(1)
   const { billFunctions, user } = useContext(AppContext)
 
@@ -99,10 +97,19 @@ const BillPayMethod = ({ bill, nextBillFunctions, removeBill, close, moveBillIte
     }
   }
 
-  const handleCloseApartBill = async (billHistories: BillAccountHistory[]) => {
-    const response = await nextBillFunctions.closeApartBill(bill, billHistories)
+  const handleCloseBillSplit = async (billHistories: BillAccountHistory[]) => {
+    const response = await billFunctions.closeBill(user.workDayUser.id, bill.id, billHistories)
     if (response) {
-      nextBillFunctions.updateBillFromDB(bill.id)
+      close()
+      removeBill(bill.id)
+    }
+  }
+
+
+  const handleCloseApartBill = async (billHistories: BillAccountHistory[]) => {
+    const response = await billFunctions.closeApartBill(user.workDayUser.id, bill.id, billHistories)
+    if (response) {
+      billFunctions.updateBillFromDB(bill.id)
     }
   }
 
@@ -139,17 +146,16 @@ const BillPayMethod = ({ bill, nextBillFunctions, removeBill, close, moveBillIte
       }
       {
         option === 2 &&
-        <BillPayMethodSplit billId={bill.id} close={close} getBillTotal={getBillTotal}
+        <BillPayMethodSplit closeBillSplit={handleCloseBillSplit} billId={bill.id} close={close} getBillTotal={getBillTotal}
         />
       }
       {
         option === 3 &&
         <BillPayMethodPullApart
+          billId={bill.id}
+          tableNumber={bill.tableNumber}
           close={close}
-          closeBill={handleCloseApartBill}
-          moveBillItemBack={moveBillItemBack}
-          bill={nextBillFunctions.bill}
-          getClient={nextBillFunctions.getClient} />
+          closeApartBill={handleCloseApartBill} />
       }
     </>
   )

@@ -56,8 +56,8 @@ const initialBill: Bill = {
 
 
 const useBill = (): BillFunctions => {
-  const [bill, setBill] = useState<Bill>(initialBill)
   const [bills, setBills] = useState<Bill[]>([])
+  const [apartBill, setApartBill] = useState<Bill>(initialBill)
 
   const addDescriptionToBillProduct = async (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number): Promise<void> => {
     const currentBill = await getBill(billId, tableNumber)
@@ -195,14 +195,24 @@ const useBill = (): BillFunctions => {
     return initialBill
   }
 
-  const getClient = async (phone: string, tableNumber: number) => {
+  const getClient = async (phone: string, tableNumber: number, forApartBill?: boolean) => {
+    console.log(phone)
+    forApartBill = forApartBill ? forApartBill : false
+    if (phone.length === 0) {
+      return
+    }
     const response = await useGet<Client>(`clients/phone/${phone}`, true)
     if (!response.error && response.data !== null) {
       const client = response.data
       const currentBill = getBillByTableNumber(tableNumber)
       currentBill.clientId = client.id
       currentBill.client = client
-      addBill(currentBill)
+      if (forApartBill) {
+        setApartBill({...apartBill, clientId: client.id, client: client})
+      }
+      else {
+        addBill(currentBill)
+      }
     }
   }
 
@@ -215,19 +225,13 @@ const useBill = (): BillFunctions => {
   }
 
   const removeBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
-    const currentBill: Bill = getBill(billId, tableNumber)
+    const currentBill = getBill(billId, tableNumber)
     const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
     const newBill = {
       ...currentBill,
       items: tmpBillItems
     }
-    if (billId > 0) {
-      const currentBills = bills.filter(bill => bill.id !== currentBill.id)
-      setBills([...currentBills, newBill])
-    } else {
-      const currentBills = bills.filter(bill => bill.tableNumber !== currentBill.tableNumber)
-      setBills([...currentBills, newBill])
-    }
+    addBill(newBill)
   }
 
   const updateBillFromDB = async (id: number) => {
@@ -253,18 +257,22 @@ const useBill = (): BillFunctions => {
           }
           return newBillItemLinkedProduct
         })
+
         if (billItem.billProducts.length === 0) {
-          removeBillItem(billItem, billId, 0)
+          removeBillItem(billItem, billId, tableNumber)
         }
         else {
-          billItem.quantity = billItem.billProducts.length
+          let discount = 0
+          if (billItem.discount > 0) {
+            discount = billItem.discount / billItem.quantity
+          }
+          billItem.quantity = billItem.quantity - 1
           const newBill: Bill = {
             ...currentBill,
             isCommanded: false,
-            items: currentBill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
+            items: currentBill.items.map(item => item.saleItemId === saleItemId ? {...billItem, discount} : item)
           }
-          const currentBills = bills.filter(bill => bill.id > 0 ? bill.id !== billId : bill.tableNumber !== tableNumber)
-          setBills([...currentBills, newBill])
+          addBill(newBill)
         }
       }
     }
@@ -280,23 +288,6 @@ const useBill = (): BillFunctions => {
     const closeBills = bills.filter(bill => bill.close)
     setBills([...currentBills, ...closeBills, newBill])
     await usePatch('bills', newBill, true)
-  }
-
-  const closeBill = async (workDayUserIdClose: number, billId: number, billHistories?: BillAccountHistory[]): Promise<boolean> => {
-    const currentBill = getBill(billId, 0)
-    const response = await usePatch<Bill>('bills/close',
-      {
-        ...currentBill,
-        workDayUserIdClose,
-        billAccountHistories: billHistories ?
-          billHistories :
-          currentBill.billAccountHistories
-      }, true)
-    if (!response.error) {
-      updateBillFromDB(billId)
-      return true
-    }
-    return false
   }
 
   const addAccountHistory = async (accountHistory: AccountHistory, billId: number) => {
@@ -357,11 +348,17 @@ const useBill = (): BillFunctions => {
     return { ...currentBill, isCommanded: currentBill.id > 0 ? true : false }
   }
 
-  const setBillAddress = async (addressId: number, billId: number, tableNumber: number) => {
-    const currentBill = getBill(billId, tableNumber)
-    currentBill.addressId = addressId
-    currentBill.isCommanded = false
-    addBill(currentBill)
+  const setBillAddress = async (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => {
+    forApartBill = forApartBill ? forApartBill : false
+    if(forApartBill){
+      setApartBill({...apartBill, addressId})
+    }
+    else {
+      const currentBill = getBill(billId, tableNumber)
+      currentBill.addressId = addressId
+      currentBill.isCommanded = false
+      addBill(currentBill)
+    }
   }
 
   const setDeliveryMethod = (deliveryMethod: number, billId: number, tableNumber: number) => {
@@ -371,14 +368,28 @@ const useBill = (): BillFunctions => {
     addBill(currentBill)
   }
 
-  const printBill = () => {
-    console.log(bill)
+  const printBill = (billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    console.log(currentBill)
   }
-  // Refactorizacion de funciones
 
+  const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    const billItem = currentBill.items.find(item => item.saleItemId === saleItemId)
+    if (!billItem) return
+    for (const billProduct of billItem.billProducts) {
+      if (billProduct.saleItemProductId === saleItemProductId) {
+        billProduct.products = billProduct.products.filter((x) => x.productId !== productId)
+        billProduct.products = billProduct.products.map(x => { return { ...x, isCommanded: false } as LinkedProduct })
+      }
+    }
+    currentBill.items = currentBill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
+    addBill(currentBill)
+  }
 
-  const addBillItem = (billItem: BillItem, tableNumber: number) => {
-    const currentBill = getBillByTableNumber(tableNumber)
+  const addBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    let newBill = { ...currentBill }
     if (currentBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
       const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
       const tmpBillItem = currentBill.items.find(item => item.saleItemId === billItem.saleItemId)
@@ -386,67 +397,178 @@ const useBill = (): BillFunctions => {
         tmpBillItem.quantity = tmpBillItem.quantity + 1
         billItem.billProducts = billItem.billProducts.map(x => { return { ...x, itemNumber: tmpBillItem.quantity } as BillItemLinkedProduct })
         tmpBillItem.billProducts = [...tmpBillItem.billProducts, ...billItem.billProducts]
-        const newBill = {
+        const discount = billItem.discount + tmpBillItem.discount
+        newBill = {
           ...currentBill,
-          items: [...tmpBillItems, tmpBillItem]
+          items: [...tmpBillItems, {...tmpBillItem, discount}]
         }
-        addBill(newBill)
       }
     }
     else {
-      const newBill = {
+      newBill = {
         ...currentBill,
         items: [...currentBill.items, billItem]
       }
-      const currentBills = newBill.tableNumber > 0 ? bills.filter(bill => bill.tableNumber !== tableNumber) : bills.filter(bill => bill.id !== currentBill.id)
-      setBills([...currentBills, newBill])
     }
+    addBill(newBill)
   }
 
-  const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number) => {
-    const billItem = bill.items.find(item => item.saleItemId === saleItemId)
-    console.log(billItem)
-    if (!billItem) return
-    for (const billItemLinkedProduct of billItem.billProducts) {
-      if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
-        console.log('productId', productId)
-        billItemLinkedProduct.products = billItemLinkedProduct.products.filter((x) => x.productId !== productId)
-        billItemLinkedProduct.products = billItemLinkedProduct.products.map(x => { return { ...x, isCommanded: false } as LinkedProduct })
+  const setDiscount = (discount: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    const itemdiscount = discount / currentBill.items.length
+    const tmpBillItems = currentBill.items
+    for (const billItem of tmpBillItems) {
+      billItem.discount = itemdiscount
+    }
+    const newBill = { ...currentBill, items: tmpBillItems, isCommanded: false }
+    addBill(newBill)
+  }
+
+  const addApartBillItem = (billItem: BillItem) => {
+    let newBill = { ...apartBill }
+    if (apartBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
+      const tmpBillItems = apartBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
+      const tmpBillItem = apartBill.items.find(item => item.saleItemId === billItem.saleItemId)
+      if (tmpBillItem) {
+        tmpBillItem.quantity = tmpBillItem.quantity + 1
+        billItem.billProducts = billItem.billProducts.map(x => { return { ...x, itemNumber: tmpBillItem.quantity } as BillItemLinkedProduct })
+        tmpBillItem.billProducts = [...tmpBillItem.billProducts, ...billItem.billProducts]
+        newBill = {
+          ...apartBill,
+          items: [...tmpBillItems, tmpBillItem]
+        }
       }
     }
-    setBill({
-      ...bill,
-      items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
-    })
+    else {
+      newBill = {
+        ...apartBill,
+        items: [...apartBill.items, billItem]
+      }
+    }
+    setApartBill(newBill)
   }
 
-  const closeApartBill = async (originalBill: Bill, billHistories: BillAccountHistory[]): Promise<boolean> => {
-    const response = await usePatch<any>('bills/closeApart', { bill: { ...bill, billAccountHistories: billHistories } as Bill, originalBill: originalBill }, true)
+  const moveBillItem = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => {
+    const bill = getBill(billId, tableNumber)
+    if (bill.items.length > 1 || bill.items[0].quantity > 1) {
+      for (const billItem of bill.items) {
+        if (billItem.saleItemId === saleItemId) {
+          const tmpBillProducts: BillItemLinkedProduct[] = []
+          for (const billProduct of billItem.billProducts) {
+            if (billProduct.itemNumber === itemNumber) {
+              tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+            }
+          }
+          const tmpBillItemId = billItem.quantity === 1 ? billItem.id : 0
+          let discount = 0
+          if (billItem.discount > 0) {
+            discount = billItem.discount / billItem.quantity
+
+          }
+          addApartBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1, id: tmpBillItemId, discount } as BillItem)
+          removeLinkedProduct(saleItemId, itemNumber, bill.id, bill.tableNumber)
+        }
+      }
+    }
+  }
+
+  const removeApartBillItem = (billItem: BillItem) => {
+    const tmpBillItems = apartBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
+    const newBill = {
+      ...apartBill,
+      items: tmpBillItems
+    }
+    setApartBill(newBill)
+  }
+
+  const removeApartLinkedProduct = (saleItemId: number, itemNumber: number) => {
+    for (const billItem of apartBill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        billItem.billProducts = billItem.billProducts.filter(linkedProduct => linkedProduct.itemNumber !== itemNumber).map(x => {
+          const newBillItemLinkedProduct: BillItemLinkedProduct = {
+            ...x,
+            products: x.products.map(product => { return { ...product, isCommanded: false } }),
+            itemNumber: x.itemNumber > itemNumber ?
+              x.itemNumber - 1 :
+              x.itemNumber
+          }
+          return newBillItemLinkedProduct
+        })
+
+        if (billItem.billProducts.length === 0) {
+          removeApartBillItem(billItem)
+        }
+        else {
+          billItem.quantity = billItem.quantity - 1
+          const newBill: Bill = {
+            ...apartBill,
+            isCommanded: false,
+            items: apartBill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
+          }
+          setApartBill(newBill)
+        }
+      }
+    }
+  }
+
+  const moveBillItemBack = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => {
+    for (const billItem of apartBill.items) {
+      if (billItem.saleItemId === saleItemId) {
+        const tmpBillProducts: BillItemLinkedProduct[] = []
+        for (const billProduct of billItem.billProducts) {
+          if (billProduct.itemNumber === itemNumber) {
+            tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
+          }
+        }
+        console.log(billItem)
+        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, billId, tableNumber)
+        removeApartLinkedProduct(saleItemId, itemNumber)
+      }
+    }
+  }
+
+  const closeBill = async (workDayUserIdClose: number, billId: number, billHistories?: BillAccountHistory[]): Promise<boolean> => {
+    const currentBill = getBill(billId, 0)
+    const response = await usePatch<Bill>('bills/close',
+      {
+        ...currentBill,
+        workDayUserIdClose,
+        billAccountHistories: billHistories ?
+          billHistories :
+          currentBill.billAccountHistories
+      }, true)
     if (!response.error) {
-      setBill(initialBill)
+      updateBillFromDB(billId)
+      return true
+    }
+    return false
+  }
+  // Refactorizacion de funciones
+
+  const closeApartBill = async (workDayUserIdClose: number, billId: number, billHistories: BillAccountHistory[]): Promise<boolean> => {
+    console.log('closeApartBill')
+    const originalBill = getBillById(billId)
+    const response = await usePatch('bills/closeApart', { bill: { ...apartBill, billAccountHistories: billHistories, workDayUserIdClose } as Bill, originalBill: originalBill }, true)
+    if (!response.error) {
+      setApartBill(initialBill)
       return true
     }
     return false
   }
 
-  const setDiscount = (discount: number) => {
-    const itemdiscount = discount / bill.items.length
-    const tmpBillItems = bill.items
-    for (const billItem of tmpBillItems) {
-      billItem.discount = itemdiscount
-    }
-    setBill({ ...bill, items: tmpBillItems, isCommanded: false })
-  }
+
 
 
 
   return {
-    bill,
     bills,
+    apartBill,
     addBillItem,
     removeBillItem,
+    moveBillItemBack,
     addAccountHistory,
     removeAccountHistory,
+    moveBillItem,
     printBill,
     removeLinkedProduct,
     editLinkedProduct,

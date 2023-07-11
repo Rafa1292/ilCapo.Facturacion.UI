@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import CustomInputText from './generics/CustomInputText'
 import CustomInputNumber from './generics/CustomInputNumber'
 import { regexOptions } from '../enums/regexOptions'
@@ -16,27 +16,35 @@ import { BillItem } from '../types/billItem'
 import BillPayMethodSplit from './BillPayMethodSplit'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
+import AppContext from '../context/AppContext'
 
 interface Props {
-  bill: Bill
-  getClient(phone: string, tableNumber: number): void
-  moveBillItemBack(billItemLinkedProductId: number, saleItemId: number, itemNumber: number): void
-  closeBill(billHistories: BillAccountHistory[]): void
+  closeApartBill(billHistories: BillAccountHistory[]): void
   close: () => void
+  billId: number
+  tableNumber: number
 }
 
-const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillItemBack }: Props) => {
+const BillPayMethodPullApart = ({  close, billId, tableNumber, closeApartBill }: Props) => {
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
   const [addressId, setAddressId] = React.useState<number>(0)
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+  const { billFunctions } = useContext(AppContext)
+  const [bill, setBill] = React.useState<Bill>(billFunctions.apartBill)
 
   const handleChangePhone = (event: any) => {
     const { value } = event.target
     setPhone(value)
-    getClient(value, bill.tableNumber)
+    billFunctions.getClient(value, bill.tableNumber, true)
+  }
+
+  const handleChangeAddress = (event: any) => {
+    const { value } = event.target
+    setAddressId(value)
+    billFunctions.setBillAddress(value, billId, tableNumber, true)
   }
 
   const handleChangeName = (event: any) => {
@@ -44,14 +52,16 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
     setName(value)
   }
 
+  const saveNewClient = async () => {
+    const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
+    if (!response.error) {
+      billFunctions.getClient(response.data.phone, bill.tableNumber, true)
+    }
+  }
+
   const handleChangeNewAddress = (event: any) => {
     const { value } = event.target
     setNewAddress(value)
-  }
-
-  const handleChangeAddress = (event: any) => {
-    const { value } = event.target
-    setAddressId(value)
   }
 
   const saveNewAddress = async () => {
@@ -59,15 +69,9 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
     if (!response.error) {
       bill.client.addressess.push(response.data)
       setAddressId(response.data?.id)
+      billFunctions.setBillAddress(response.data?.id, billId, tableNumber, true)
       setNewAddressState(false)
       setNewAddress('')
-    }
-  }
-
-  const saveNewClient = async () => {
-    const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
-    if (!response.error) {
-      getClient(response.data.phone, bill.tableNumber)
     }
   }
 
@@ -137,12 +141,14 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
     return dottedLine
   }
 
+
   useEffect(() => {
-    if (bill.client) {
-      setName(bill.client.name)
-      setPhone(bill.client.phone)
+    if (billFunctions.apartBill.client) {
+      setName(billFunctions.apartBill.client.name)
+      setPhone(billFunctions.apartBill.client.phone)
     }
-  }, [bill])
+    setBill(billFunctions.apartBill)
+  }, [billFunctions.apartBill])
 
   return (
     <div className='col-12 d-flex flex-wrap' style={{ height: 'calc(100vh - 45px)', overflow: 'hidden' }}>
@@ -216,7 +222,7 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
             </div>
           }
         </div>
-        <div className="col-12 d-flex flex-wrap scroll" style={{ height: 'calc(70vh - 45px)', overflowY: 'scroll' }}>
+        <div className="col-12 d-flex flex-wrap scroll align-content-start" style={{ height: 'calc(70vh - 45px)', overflowY: 'scroll' }}>
           {
             bill.items?.length !== 0 &&
             <>
@@ -244,7 +250,8 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
                               return (
                                 index < 1 &&
                                 <div key={index} className='col-12 d-flex flex-wrap p-0 position-relative'>
-                                  <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() => moveBillItemBack(billProduct.id, billItem.saleItemId, billProduct.itemNumber)}>
+                                  <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() => 
+                                    billFunctions.moveBillItemBack(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber)}>
                                     Mover
                                   </button>
                                   <div className="col-7 d-flex flex-wrap p-2 ">
@@ -335,7 +342,7 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
         </div>
       </div>
       <div className="col-7 d-flex flex-wrap justify-content-center py-2 scroll" style={{height: 'calc(100vh - 45px)', overflowY: 'scroll'}}>
-        <BillPayMethodSplit billId={bill.id} close={close} initialParts={1} size='col-6'  getBillTotal={getBillTotal} />
+        <BillPayMethodSplit closeBillSplit={closeApartBill} billId={bill.id} close={close} initialParts={1} size='col-6'  getBillTotal={getBillTotal} />
       </div>
 
     </div>

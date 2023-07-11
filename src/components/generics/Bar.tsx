@@ -13,14 +13,13 @@ interface Props {
   left: number
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
-  bill: Bill
-  updateBill: (id: number) => void
   removeBill: (id: number) => void
 }
 
-const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, updateBill }: Props) => {
+const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories }: Props) => {
   const billFunctions = useBill()
   const [close, setClose] = useState(true)
+  const [bill, setBill] = useState({} as Bill)
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainer${tableNumber}`)
@@ -33,6 +32,12 @@ const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, upd
     container?.classList.add('bill-makerContainer_show')
     setClose(false)
   }
+
+  useEffect(() => {
+    const currentBill = billFunctions.getBillByTableNumber(tableNumber)
+    setBill(currentBill)
+  }, [billFunctions.bills])
+
   return (
     <>
       <div className='bill-makerContainer' id={`billMakerContainer${tableNumber}`}>
@@ -41,7 +46,7 @@ const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories, bill, upd
         </span>
         {
           !close &&
-          <BillMaker removeBill={removeBill} bill={billFunctions.bill} saleItemCategories={saleItemCategories} close={closeTable} />
+          <BillMaker removeBill={removeBill} bill={bill} saleItemCategories={saleItemCategories} close={closeTable} />
         }
       </div>
       <div className="bar_container d-flex flex-wrap position-absolute" onClick={() => openTable()} style={{ top: `${top}px`, left: `${left}px` }}>

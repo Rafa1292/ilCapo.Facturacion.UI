@@ -11,14 +11,12 @@ import AppContext from '../context/AppContext'
 interface Props {
   billItem: BillItem
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
-  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   pullApartBill: boolean
-  moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
   billId: number
   tableNumber: number
 }
 
-const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, billId, tableNumber,  handleEditLinkedProduct, removeCombinedLinkedProduct }: Props) => {
+const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEditLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
   const { billFunctions } = useContext(AppContext)
 
@@ -91,14 +89,15 @@ const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, billId, tableNu
                       {
                         pullApartBill &&
                         <>
-                          <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() => moveBillItem(billProduct.id, billItem.saleItemId, billProduct.itemNumber)}>
+                          <button className='position-absolute btn btn-outline-success' style={{ top: '5px', right: '5px' }} onClick={() =>
+                            billFunctions.moveBillItem(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber)}>
                             Mover
                           </button>
                         </>
                         ||
                         <>
                           <div className='position-absolute' style={{ top: '5px', right: '5px' }}>
-                            <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => billFunctions.removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber )} />
+                            <CustomBtn height='25px' buttonType={buttonTypes.delete} action={() => billFunctions.removeLinkedProduct(billItem.saleItemId, billProduct.itemNumber, billId, tableNumber)} />
                           </div>
                           <div className='position-absolute' style={{ top: '5px', right: '30px' }}>
                             <CustomBtn height='25px' buttonType={buttonTypes.edit} action={() => handleEditLinkedProduct(billItem.saleItemId, billProduct.itemNumber)} />
@@ -144,7 +143,8 @@ const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, billId, tableNu
                           <div className="col-12 d-flex flex-wrap">
                             <span className='col-12 text-start flex-wrap d-flex position-relative'>
                               <div style={{ position: 'absolute', left: '-20px' }}>
-                                <CustomBtn buttonType={buttonTypes.cancel} action={() => removeCombinedLinkedProduct(billProduct.saleItemProductId, billProduct.products[1]?.productId, billItem.saleItemId)} height='20px' />
+                                <CustomBtn buttonType={buttonTypes.cancel} action={() =>
+                                  billFunctions.removeCombinedLinkedProduct(billProduct.saleItemProductId, billProduct.products[1]?.productId, billItem.saleItemId, billId, tableNumber)} height='20px' />
                               </div>
                               Combinar con:
                             </span>
@@ -162,7 +162,7 @@ const BillResumeItem = ({ billItem, pullApartBill, moveBillItem, billId, tableNu
                           customInputText={
                             {
                               label: 'Descripcion', name: 'description',
-                              handleChange: (ev)=>handleDescription(ev, billProduct.itemNumber, billProduct.saleItemProductId), pattern: regexOptions.text,
+                              handleChange: (ev) => handleDescription(ev, billProduct.itemNumber, billProduct.saleItemProductId), pattern: regexOptions.text,
                               validationMessage: 'Ingrese una descripcion valida'
                             }
                           } />

@@ -57,6 +57,7 @@ interface Props {
 const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
   const { user, logout, billFunctions } = useContext(AppContext)
   const [close, setClose] = useState(true)
+  const [bill, setBill] = useState({} as Bill)
 
   const closeTable = () => {
     const container = document.getElementById(`billMakerContainerToGo${0}`)
@@ -71,8 +72,10 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
   }
 
   useEffect(() => {
+    const currentBill = billFunctions.getBillByTableNumber(0)
+    setBill(currentBill)
     setClose(true)
-  }, [bills])
+  }, [billFunctions.bills])
 
 
   return (
@@ -84,7 +87,7 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
         {
           !close &&
           <BillMaker removeBill={removeBill}
-            bill={billFunctions.bill}
+            bill={bill}
             saleItemCategories={saleItemCategories}
             close={closeTable}/>
         }

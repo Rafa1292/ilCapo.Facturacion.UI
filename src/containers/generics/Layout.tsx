@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Layout = ({ children }: Props) => {
-  const { user, billFunctions } = useContext(AppContext)
+  const { user } = useContext(AppContext)
 
   return (
     <>

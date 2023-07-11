@@ -26,14 +26,11 @@ interface Props {
   getClient(phone: string, table: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
-  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
   showPayMethods(): void
   pullApartBill: boolean
-  moveBillItem: (billItemLinkedProductId: number, saleItemId: number, itemNumber: number) => void
-  setDiscount(discount: number): void
 }
 
-const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, pullApartBill, handleEditLinkedProduct, commandBill, getClient, removeCombinedLinkedProduct }: Props) => {
+const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProduct, commandBill, getClient }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -278,8 +275,7 @@ const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, pullApart
                 <BillResumeItem
                   billId={bill.id}
                   tableNumber={bill.tableNumber}
-                  moveBillItem={moveBillItem} pullApartBill={pullApartBill}
-                  removeCombinedLinkedProduct={removeCombinedLinkedProduct}
+                  pullApartBill={pullApartBill}
                   handleEditLinkedProduct={handleEditLinkedProduct}
                   key={index}
                   billItem={billItem} />
@@ -297,7 +293,7 @@ const BillResume = ({ bill, showPayMethods, setDiscount, moveBillItem, pullApart
               <div className='cash_btn' onClick={showPayMethods}>
                 <div className='cash_icon'></div>
               </div>
-              <BillResumeDiscount setBillDiscount={setDiscount} total={getBillTotal()} />
+              <BillResumeDiscount billId={bill.id} tableNumber={bill.tableNumber} total={getBillTotal()} />
             </div>
             <div className="col-4 d-flex flex-wrap">
               <strong className="col-7 px-2 text-end">Subtotal:</strong>

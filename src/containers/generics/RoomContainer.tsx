@@ -16,10 +16,14 @@ interface Props {
 
 const RoomContainer = ({ tables, saleItemCategories, removeBill }: Props) => {
   const [isLoading, setIsLoading] = useState(true)
-  const { setMenuDeliveryTime } = useContext(AppContext)
+  const { setMenuDeliveryTime, billFunctions } = useContext(AppContext)
 
   useEffect(() => {
-    setIsLoading(false)
+    const initialize = async () => {
+      await billFunctions.getOpenBills()
+      setIsLoading(false)
+    }
+    initialize()
   }, [tables])
 
   return (

@@ -16,12 +16,13 @@ interface billAccountHistoriesContainer {
 interface Props {
   getBillTotal: () => number
   close: () => void
+  closeBillSplit: (accountHistories: BillAccountHistory[]) => void
   size?: string
   initialParts?: number
   billId: number
 }
 
-const BillPayMethodSplit = ({ getBillTotal, billId,  close, size = 'col-4', initialParts = 2 }: Props) => {
+const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-4', initialParts = 2 }: Props) => {
   const [parts, setParts] = useState<number>(0)
   const [billAccountHistoriesContainerList, setBillAccountHistoriesContainerList] = useState<billAccountHistoriesContainer[]>([])
   const { billFunctions, user } = useContext(AppContext)
@@ -114,8 +115,9 @@ const BillPayMethodSplit = ({ getBillTotal, billId,  close, size = 'col-4', init
   }
 
   const handleCloseBill = () => {
+    console.log('handleClose')
     if (wouldBePay()) {
-      billFunctions.closeBill(user.workDayUser.id, billId, billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat())
+      closeBillSplit(billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat())
     }
   }
 

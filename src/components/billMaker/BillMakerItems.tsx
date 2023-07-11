@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { SaleItem } from '../../types/saleItem'
 import BillMakerProducts from './BillMakerProducts'
@@ -11,12 +11,12 @@ import { LinkedProductModifier } from '../../types/linkedProductModifier'
 import { LinkedProductModifierElement } from '../../types/linkedProductModifierElement'
 import { ModifierElement } from '../../types/modifierElement'
 import { parseCurrency } from '../../utils/currencyParser'
+import AppContext from '../../context/AppContext'
 
 interface Props {
   saleItemCategory: SaleItemCategory
   editBilItem: BillItem
   tableNumber: number
-  addBillItem: (billItem: BillItem, tableNumber: number) => void
 }
 
 const initialBillItem: BillItem = {
@@ -73,7 +73,7 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
   updatedBy: 0
 }
 
-const BillMakerItems = ({ saleItemCategory, tableNumber, addBillItem, editBilItem }: Props) => {
+const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
 
@@ -238,7 +238,6 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, addBillItem, editBilIte
             newCombinedLinkedProduct={newCombinedLinkedProduct}
             setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} 
             addLinkedProductModifierElement={newLinkedProductModifierElement} 
-            addBillItem={addBillItem} 
             tableNumber={tableNumber}
             billItem={billItem} 
             saleItem={saleItem} />

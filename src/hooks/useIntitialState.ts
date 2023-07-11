@@ -105,10 +105,10 @@ const useInitialState = (): appState => {
           workDayUser: tmpWorkDayUser !== undefined ? tmpWorkDayUser : { ...user.workDayUser }
         }
         if (tmpUserState.workDayUser.id > 0)
-          await billFunctions.getOpenBills()
-        setUser({...tmpUserState, workDayUser: tmpUserState.workDayUser})
-        
+          setUser({ ...tmpUserState, workDayUser: tmpUserState.workDayUser })
+
       }
+      await billFunctions.getOpenBills()
       await getBussinessConfig()
     }
     initializeComponent()

@@ -1,16 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import CustomModal from './generics/CustomModal'
 import CustomInputNumber from './generics/CustomInputNumber'
+import AppContext from '../context/AppContext'
 
 interface Props {
   total: number
-  setBillDiscount(discount: number): void
+  billId: number
+  tableNumber: number
 }
 
-const BillResumeDiscount = ({ total, setBillDiscount }: Props) => {
+const BillResumeDiscount = ({ total, billId, tableNumber }: Props) => {
   const [show, setShow] = React.useState(false)
   const [discount, setDiscount] = React.useState(0)
   const [discountAmount, setDiscountAmount] = React.useState(0)
+  const { billFunctions } = useContext(AppContext)
 
   const handleChangeDiscount = (e: any) => {
     const value = e.target.value
@@ -30,7 +33,7 @@ const BillResumeDiscount = ({ total, setBillDiscount }: Props) => {
   }
 
   const handleChangeApplyDiscount = () => {
-    setBillDiscount(discountAmount)
+    billFunctions.setDiscount(discountAmount, billId, tableNumber)
     setShow(false)
   }
 

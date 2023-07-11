@@ -4,14 +4,12 @@ import { BillAccountHistory } from './billAccountHistory'
 import { BillItem } from './billItem'
 
 export interface BillFunctions {
-  bill: Bill
+  apartBill: Bill
   bills: Bill[]
-  addBillItem: (billItem: BillItem, tableNumber: number) => void
-  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number) => void
-  closeApartBill: (originalBill: Bill, billHistories: BillAccountHistory[]) => Promise<boolean>
-  setDiscount : (discount: number) => void  
+  closeApartBill: (workDayUserIdClose: number, billId: number, billHistories: BillAccountHistory[]) => Promise<boolean>
   
-  //Refactor
+  //Refactor  
+  addBillItem: (billItem: BillItem, billId: number, tableNumber: number) => void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number) => void
   addAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   closeBill: (workDayUserIdClose: number, billId: number, billHistories?: BillAccountHistory[]) => Promise<boolean>
@@ -21,14 +19,18 @@ export interface BillFunctions {
   getOpenBills: () => Promise<void>
   getBillFromDB: (tmpId: number) => void
   getBillById: (tmpId: number) => void
-  getClient: (phone: string, tableNumber: number) => void
+  getClient: (phone: string, tableNumber: number, forApartBill?: boolean) => void
   getBillByTableNumber: (tableNumber: number) => Bill
-  printBill: () => void
+  moveBillItem: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
+  moveBillItemBack : (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
+  printBill: (billId: number, tableNumber: number) => void
+  removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number, billId: number, tableNumber: number) => void
   removeAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   removeBillItem: (billItem: BillItem, billId: number , tableNumber: number) => void
   removeLinkedProduct: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
   serve : (billId: number) => void
-  setBillAddress: (addressId: number, billId: number, tableNumber: number) => void
+  setBillAddress: (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => void
   setDeliveryMethod: (deliveryMethod: number, billId: number, tableNumber: number) => void
+  setDiscount : (discount: number, billId: number, tableNumber: number) => void  
   updateBillFromDB: (id: number) => void
 }
