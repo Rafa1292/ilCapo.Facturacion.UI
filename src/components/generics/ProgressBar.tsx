@@ -36,7 +36,7 @@ const ProgressBar = ({ timeMargin, initialWaitingSeconds, isCommanded, styleClas
 
     if (isCommanded) {
       if (isServe)
-        return `linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) ${fill > 20 ? fill - 20 : fill - 2}%, rgba(0, 0, 0, 0) ${fill}%)`
+        return `linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) ${100}%, rgba(0, 0, 0, 0) ${100}%)`
       return `linear-gradient(0deg, rgba(50, 200, 50, 1) 0%, rgba(50, 200, 50, 1) ${fill > 20 ? fill - 20 : fill - 2}%, rgba(50, 200, 50, 0) ${fill}%)`
     }
 

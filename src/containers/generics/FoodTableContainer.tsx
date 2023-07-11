@@ -5,38 +5,6 @@ import FoodTable from '../../components/generics/FoodTable'
 import { Bill } from '../../types/bill'
 import { Client } from '../../types/client'
 import AppContext from '../../context/AppContext'
-import { sys } from 'typescript'
-
-const initialClient: Client = {
-  id: 0,
-  name: '',
-  phone: '',
-  addressess: [],
-  delete: false,
-  createdBy: 0,
-  updatedBy: 0
-}
-
-const initialBill: Bill = {
-  id: 0,
-  addressId: 0,
-  client: initialClient,
-  clientId: 0,
-  close: false,
-  deliveryMethod: 0,
-  tableNumber: 0,
-  workDayUserId: 0,
-  items: [],
-  isCommanded: false,
-  isServed: false,
-  isNull: false,
-  billAccountHistories: [],
-  delete: false,
-  createdAt: new Date(Date.now()),
-  updatedAt: new Date(Date.now()),
-  createdBy: 0,
-  updatedBy: 0
-}
 
 interface Props {
   top: number
@@ -58,7 +26,7 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCatego
     let tmpInitialTime = null
     let tmpFinalTime = null
     if (currentBill.isCommanded) {
-      tmpInitialTime = new Date(currentBill.updatedAt)
+      tmpInitialTime = new Date(currentBill.commandTime)
       tmpFinalTime = new Date(tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000)
     } else if (menuDeliveryTime) {
       tmpInitialTime = menuDeliveryTime

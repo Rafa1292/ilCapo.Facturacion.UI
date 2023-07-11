@@ -335,7 +335,7 @@ const BillPayMethodPullApart = ({ bill, close, getClient, closeBill, moveBillIte
         </div>
       </div>
       <div className="col-7 d-flex flex-wrap justify-content-center py-2 scroll" style={{height: 'calc(100vh - 45px)', overflowY: 'scroll'}}>
-        <BillPayMethodSplit close={close} initialParts={1} size='col-6' closeBill={closeBill} getBillTotal={getBillTotal} />
+        <BillPayMethodSplit billId={bill.id} close={close} initialParts={1} size='col-6'  getBillTotal={getBillTotal} />
       </div>
 
     </div>

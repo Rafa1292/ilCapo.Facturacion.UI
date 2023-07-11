@@ -14,10 +14,6 @@ import AppContext from '../context/AppContext'
 interface Props {
   nextBillFunctions: BillFunctions
   bill: Bill
-  addAccountHistory: (accountHistory: AccountHistory) => void
-  removeAccountHistory: (accountHistory: AccountHistory) => void
-  fastPayAction: (accountHistory: AccountHistory, billId: number) => Promise<boolean>
-  closeBill: () => Promise<boolean>
   close: () => void
   removeBill: (id: number) => void
   pullApartBill: boolean
@@ -26,9 +22,10 @@ interface Props {
 }
 
 
-const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill, close, moveBillItemBack, setPullApartBill, closeBill, fastPayAction, removeAccountHistory }: Props) => {
+const BillPayMethod = ({ bill, nextBillFunctions, removeBill, close, moveBillItemBack, setPullApartBill, }: Props) => {
   const [option, setOption] = useState<number>(1)
-  const { billFunctions } = useContext(AppContext)
+  const { billFunctions, user } = useContext(AppContext)
+
   const getAccountHistoriesTotal = (): number => {
     let accountHistoriesTotal = 0
     for (const billAccountHistory of bill.billAccountHistories) {
@@ -71,14 +68,14 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
       Swal.fire('Error', 'El monto asigando no debe ser mayor al total de la factura', 'error')
     }
     else {
-      addAccountHistory(accountHistory)
+      billFunctions.addAccountHistory(accountHistory, bill.id)
       return true
     }
     return false
   }
 
   const handleFastPayAction = async (accountHistory: AccountHistory) => {
-    const response = await billFunctions.fastPayAction(accountHistory, bill.id)
+    const response = await billFunctions.fastPayAction(accountHistory, bill.id, user.workDayUser.id)
     if (response) {
       close()
       removeBill(bill.id)
@@ -95,7 +92,7 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
   }
 
   const handleCloseBill = async () => {
-    const response = await closeBill()
+    const response = await billFunctions.closeBill(user.workDayUser.id, bill.id)
     if (response) {
       close()
       removeBill(bill.id)
@@ -107,6 +104,10 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
     if (response) {
       nextBillFunctions.updateBillFromDB(bill.id)
     }
+  }
+
+  const handleRemoveAccountHistory = (accountHistory: AccountHistory) => {
+    billFunctions.removeAccountHistory(accountHistory, bill.id)
   }
 
   return (
@@ -125,13 +126,20 @@ const BillPayMethod = ({ bill, addAccountHistory, nextBillFunctions, removeBill,
       {
         option === 1 &&
         <div className="col-4 justify-content-center p-2 d-flex flex-wrap">
-          <BillPayMethodForm fastPayAction={handleFastPayAction} removeAccountHistory={removeAccountHistory} action={handleCloseBill} actionLabel='Pagar factura' billAccountHistories={bill.billAccountHistories} setAccountHistory={setAccountHistory} getBillTotal={getBillTotal}
+          <BillPayMethodForm
+            fastPayAction={handleFastPayAction}
+            removeAccountHistory={handleRemoveAccountHistory}
+            action={handleCloseBill}
+            actionLabel='Pagar factura'
+            billAccountHistories={bill.billAccountHistories}
+            setAccountHistory={setAccountHistory}
+            getBillTotal={getBillTotal}
           />
         </div>
       }
       {
         option === 2 &&
-        <BillPayMethodSplit close={close} closeBill={closeBill} getBillTotal={getBillTotal}
+        <BillPayMethodSplit billId={bill.id} close={close} getBillTotal={getBillTotal}
         />
       }
       {

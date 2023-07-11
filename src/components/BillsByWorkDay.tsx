@@ -10,7 +10,7 @@ import Swal from 'sweetalert2'
 
 const BillsByWorkDay = () => {
   const [bills, setBills] = useState<Bill[]>([])
-  const { user } = useContext(AppContext)
+  const { user, billFunctions } = useContext(AppContext)
   const [showState, setShowState] = useState<number>(1)
   const [tmpBills, setTmpBills] = useState<Bill[]>([])
 
@@ -58,14 +58,16 @@ const BillsByWorkDay = () => {
   const handleShowBills = (showClose: boolean, showAll: boolean) => {
     if (showAll) {
       setShowState(3)
-      setTmpBills(bills)
+      const allBills = [...bills]
+      allBills.push(...billFunctions.bills.filter(bill => !bill.close && !bills.find(b => b.id === bill.id)))
+      setTmpBills(allBills)
     } else {
       if (showClose) {
         setShowState(2)
         setTmpBills(bills.filter(bill => bill.close))
       } else {
         setShowState(1)
-        setTmpBills(bills.filter(bill => !bill.close))
+        setTmpBills(billFunctions.bills.filter(bill => !bill.close))
       }
     }
   }
@@ -73,10 +75,10 @@ const BillsByWorkDay = () => {
 
   useEffect(() => {
     const getBillsByWorkDay = async () => {
-      const response = await useGetList<Bill[]>(`bills/billsByWorkDayUser/${user.workDayUser.id}`, true)
+      const response = await useGetList<Bill[]>(`bills/billsByWorkDayUserClose/${user.workDayUser.id}`, true)
       if (!response.error) {
         setBills(response.data)
-        setTmpBills(response.data.filter(bill => bill.close === false))
+        setTmpBills(billFunctions.bills.filter(bill => !bill.close))
       }
     }
     getBillsByWorkDay()
@@ -104,7 +106,7 @@ const BillsByWorkDay = () => {
               <BillReview bill={bill} />
               <button disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
               {
-                showState === 1 &&
+                showState === 2 &&
                 <button disabled={bill.isNull} className="btn btn-outline-danger mx-2" onClick={() => cancelBill(bill.id)}>Anular</button>
               }
             </TableRow>

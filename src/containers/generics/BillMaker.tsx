@@ -145,7 +145,6 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   }
 
   const commandBill = async () => {
-    bill.workDayUserId = user.workDayUser.id
     if (validateBill()) {
       if (bill?.id === 0) {
         await newBill()
@@ -158,7 +157,9 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   }
 
   const newBill = async () => {
-    const response = await usePost<Bill>('bills', bill, true)
+    bill.workDayUserIdOpen = user.workDayUser.id
+    bill.workDayUserIdClose = user.workDayUser.id
+    const response = await usePost<Bill>('bills', {...bill, commandTime: new Date(Date.now())}, true)
     if (!response.error) {
       const { id } = response.data
       billFunctions.updateBillFromDB(id)
@@ -166,7 +167,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
   }
 
   const updateBill = async () => {
-    const response = await usePatch('bills', bill, true)
+    const response = await usePatch('bills', {...bill, commandTime: new Date(Date.now())}, true)
     if (!response.error) {
       billFunctions.updateBillFromDB(bill.id)
     }
@@ -199,6 +200,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
 
   useEffect(() => {
     initializeSearchProducts(saleItemCategories)
+    console.log('bill', bill)
   }, [bill])
 
 
@@ -209,8 +211,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
         &&
         <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{ maxHeight: '100vh', alignContent: 'baseline', overflowY: 'scroll' }}>
           <BillPayMethod removeBill={removeBill} close={close} moveBillItemBack={moveBillItemBack} nextBillFunctions={nextBillFunctions}
-            setPullApartBill={setPullApartBill} pullApartBill={pullApartBill} closeBill={closeBill}
-            fastPayAction={fastPayAction} removeAccountHistory={removeAccountHistory} bill={bill} addAccountHistory={addAccountHistory} />
+            setPullApartBill={setPullApartBill} pullApartBill={pullApartBill} bill={bill} />
         </div>
         ||
         <div className="col-8 bill-maker" >

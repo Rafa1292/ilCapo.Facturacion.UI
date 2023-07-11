@@ -1,33 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import CustomInputNumber from './generics/CustomInputNumber'
 import { AccountHistory } from '../types/accountHistory'
 import { PayMethod } from '../types/payMethod'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import BillPayMethodForm from './BillPayMethodForm'
 import BillPayMethodSplitForm from './BillPayMethodSplitForm'
+import AppContext from '../context/AppContext'
 
-const initialAccountHistory: AccountHistory = {
-  amount: 0,
-  currentBalance: 0,
-  delete: false,
-  id: 0,
-  pay: false,
-  payMethod: {} as PayMethod,
-  payMethodId: 0,
-  previousBalance: 0,
-  createdBy: 0,
-  updatedBy: 0
-}
-
-const initialBillAccountHistory: BillAccountHistory = {
-  id: 0,
-  accountHistoryId: 0,
-  delete: false,
-  accountHistory: initialAccountHistory,
-  billId: 0,
-  createdBy: 0,
-  updatedBy: 0
-}
 
 interface billAccountHistoriesContainer {
   id: number
@@ -36,15 +15,16 @@ interface billAccountHistoriesContainer {
 
 interface Props {
   getBillTotal: () => number
-  closeBill: (billHistories: BillAccountHistory[]) => void
   close: () => void
   size?: string
   initialParts?: number
+  billId: number
 }
 
-const BillPayMethodSplit = ({ getBillTotal, closeBill, close, size = 'col-4', initialParts = 2 }: Props) => {
+const BillPayMethodSplit = ({ getBillTotal, billId,  close, size = 'col-4', initialParts = 2 }: Props) => {
   const [parts, setParts] = useState<number>(0)
   const [billAccountHistoriesContainerList, setBillAccountHistoriesContainerList] = useState<billAccountHistoriesContainer[]>([])
+  const { billFunctions, user } = useContext(AppContext)
 
   const handleChange = (event: any) => {
     const numberOfParts = event.target.value
@@ -135,13 +115,12 @@ const BillPayMethodSplit = ({ getBillTotal, closeBill, close, size = 'col-4', in
 
   const handleCloseBill = () => {
     if (wouldBePay()) {
-      closeBill(billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat())
+      billFunctions.closeBill(user.workDayUser.id, billId, billAccountHistoriesContainerList.map(billAccountHistoriesContainer => billAccountHistoriesContainer.billAccountHistories).flat())
     }
   }
 
 
   useEffect(() => {
-    console.log(billAccountHistoriesContainerList)
     handleChange({ target: { value: initialParts } })
   }, [])
 

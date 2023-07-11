@@ -40,6 +40,7 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
   useEffect(() => {
     const currentBill = billFunctions.getBillByTableNumber(tableNumber)
     setBill(currentBill)
+    console.log('bill')
   }, [billFunctions.bills])
 
 
@@ -86,7 +87,7 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
             }
             {
               bill.isCommanded && !bill.isServed &&
-              <strong onClick={() => billFunctions.serve()} style={{ position: 'absolute', bottom: '-20px' }}>Servir</strong>
+              <strong onClick={() => billFunctions.serve(bill.id)} style={{ position: 'absolute', bottom: '-20px' }}>Servir</strong>
             }
           </div>
         </>

@@ -105,7 +105,7 @@ const useInitialState = (): appState => {
           workDayUser: tmpWorkDayUser !== undefined ? tmpWorkDayUser : { ...user.workDayUser }
         }
         if (tmpUserState.workDayUser.id > 0)
-          await billFunctions.getBillsByWorkDayUser(tmpUserState.workDayUser.id)
+          await billFunctions.getOpenBills()
         setUser({...tmpUserState, workDayUser: tmpUserState.workDayUser})
         
       }

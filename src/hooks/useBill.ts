@@ -39,7 +39,9 @@ const initialBill: Bill = {
   close: false,
   deliveryMethod: 0,
   tableNumber: 0,
-  workDayUserId: 0,
+  workDayUserIdOpen: 0,
+  workDayUserIdClose: 0,
+  commandTime: new Date(Date.now()),
   isServed: false,
   isNull: false,
   items: [],
@@ -106,9 +108,14 @@ const useBill = (): BillFunctions => {
     return undefined
   }
 
-  const fastPayAction = async (accountHistory: AccountHistory, billId: number): Promise<boolean> => {
+  const fastPayAction = async (accountHistory: AccountHistory, billId: number, workDayUserIdClose: number): Promise<boolean> => {
     const currentBill = getBillById(billId)
-    const response = await usePatch<Bill>('bills/close', { ...currentBill, billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }] }, true)
+    const response = await usePatch<Bill>('bills/close',
+      {
+        ...currentBill,
+        workDayUserIdClose,
+        billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }]
+      }, true)
     if (!response.error) {
       updateBillFromDB(billId)
       return true
@@ -124,8 +131,8 @@ const useBill = (): BillFunctions => {
     }
   }
 
-  const getBillsByWorkDayUser = async (workDayUserId: number) => {
-    const response = await useGetList<Bill[]>(`bills/billsByWorkDayUser/${workDayUserId}`, true)
+  const getOpenBills = async () => {
+    const response = await useGetList<Bill[]>('bills/openBills', true)
     if (!response.error) {
       const tmpBills: Bill[] = []
       for (const bill of response.data) {
@@ -189,12 +196,10 @@ const useBill = (): BillFunctions => {
   }
 
   const getClient = async (phone: string, tableNumber: number) => {
-    console.log('getClient', tableNumber)
     const response = await useGet<Client>(`clients/phone/${phone}`, true)
     if (!response.error && response.data !== null) {
       const client = response.data
       const currentBill = getBillByTableNumber(tableNumber)
-      console.log('getClient', currentBill)
       currentBill.clientId = client.id
       currentBill.client = client
       addBill(currentBill)
@@ -276,6 +281,55 @@ const useBill = (): BillFunctions => {
     setBills([...currentBills, ...closeBills, newBill])
     await usePatch('bills', newBill, true)
   }
+
+  const closeBill = async (workDayUserIdClose: number, billId: number, billHistories?: BillAccountHistory[]): Promise<boolean> => {
+    const currentBill = getBill(billId, 0)
+    const response = await usePatch<Bill>('bills/close',
+      {
+        ...currentBill,
+        workDayUserIdClose,
+        billAccountHistories: billHistories ?
+          billHistories :
+          currentBill.billAccountHistories
+      }, true)
+    if (!response.error) {
+      updateBillFromDB(billId)
+      return true
+    }
+    return false
+  }
+
+  const addAccountHistory = async (accountHistory: AccountHistory, billId: number) => {
+    const currentBill = await getBill(billId, 0)
+    currentBill.billAccountHistories = [
+      ...currentBill.billAccountHistories,
+      {
+        ...initialBillAccounthistory,
+        accountHistoryId: accountHistory.id,
+        accountHistory: accountHistory
+      }]
+    addBill(currentBill)
+  }
+
+  const removeAccountHistory = (accountHistory: AccountHistory, billId: number) => {
+    const currentBill = getBill(billId, 0)
+    const tmpBillHistories = currentBill.billAccountHistories
+    for (const billAccountHistory of currentBill.billAccountHistories) {
+      if (billAccountHistory.accountHistory.amount === accountHistory.amount && billAccountHistory.accountHistory.payMethodId === accountHistory.payMethodId) {
+        tmpBillHistories.splice(tmpBillHistories.indexOf(billAccountHistory), 1)
+      }
+    }
+    currentBill.billAccountHistories = tmpBillHistories
+    addBill(currentBill)
+  }
+
+  const serve = async (billId: number) => {
+    const currentBill = getBill(billId, 0)
+    const response = await useGet<Bill>(`bills/serve/${currentBill.id}`, true)
+    if (!response.error) {
+      addBill({...currentBill, isServed: true})
+    }
+  }
   // todo
   // obtener facturas abiertas agregar initial workdayuserId
   // agregar command time para no alterar tiempo de espera
@@ -320,26 +374,6 @@ const useBill = (): BillFunctions => {
     })
   }
 
-  const addAccountHistory = (accountHistory: AccountHistory) => {
-    setBill({
-      ...bill,
-      billAccountHistories: [...bill.billAccountHistories, { ...initialBillAccounthistory, accountHistoryId: accountHistory.id, accountHistory: accountHistory }]
-    })
-  }
-
-  const removeAccountHistory = (accountHistory: AccountHistory) => {
-    const tmpBillItems: BillAccountHistory[] = bill.billAccountHistories
-    for (const billAccountHistory of bill.billAccountHistories) {
-      if (billAccountHistory.accountHistory.amount === accountHistory.amount && billAccountHistory.accountHistory.payMethodId === accountHistory.payMethodId) {
-        tmpBillItems.splice(tmpBillItems.indexOf(billAccountHistory), 1)
-      }
-    }
-    setBill({
-      ...bill,
-      billAccountHistories: tmpBillItems
-    })
-  }
-
   const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number) => {
     const billItem = bill.items.find(item => item.saleItemId === saleItemId)
     console.log(billItem)
@@ -355,15 +389,6 @@ const useBill = (): BillFunctions => {
       ...bill,
       items: bill.items.map(item => item.saleItemId === saleItemId ? billItem : item)
     })
-  }
-
-  const closeBill = async (billHistories?: BillAccountHistory[]): Promise<boolean> => {
-    const response = await usePatch<Bill>('bills/close', { ...bill, billAccountHistories: billHistories ? billHistories : bill.billAccountHistories }, true)
-    if (!response.error) {
-      setBill({ ...initialBill })
-      return true
-    }
-    return false
   }
 
   const closeApartBill = async (originalBill: Bill, billHistories: BillAccountHistory[]): Promise<boolean> => {
@@ -390,13 +415,6 @@ const useBill = (): BillFunctions => {
       billItem.discount = itemdiscount
     }
     setBill({ ...bill, items: tmpBillItems, isCommanded: false })
-  }
-
-  const serve = async () => {
-    const response = await useGet<Bill>(`bills/serve/${bill.id}`, true)
-    if (!response.error) {
-      setBill({ ...bill, isServed: true })
-    }
   }
 
   const completeBill = async (bill: Bill) => {
@@ -450,7 +468,7 @@ const useBill = (): BillFunctions => {
     setCurrentBill,
     addDescriptionToBillProduct,
     changeTableNumber,
-    getBillsByWorkDayUser,
+    getOpenBills,
     getBillByTableNumber
   }
 }

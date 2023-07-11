@@ -10,37 +10,6 @@ import { Client } from '../types/client'
 import { SaleItemCategory } from '../types/saleItemCategory'
 import SideMenu from '../components/generics/SideMenu'
 
-const initialClient: Client = {
-  id: 0,
-  name: '',
-  phone: '',
-  addressess: [],
-  delete: false,
-  createdBy: 0,
-  updatedBy: 0
-}
-
-const initialBill: Bill = {
-  id: 0,
-  addressId: 0,
-  client: initialClient,
-  clientId: 0,
-  close: false,
-  deliveryMethod: 0,
-  tableNumber: 0,
-  workDayUserId: 0,
-  items: [],
-  isCommanded: false,
-  isServed: false,
-  isNull: false,
-  updatedAt: new Date(Date.now()),
-  billAccountHistories: [],
-  delete: false,
-  createdAt: new Date(Date.now()),
-  createdBy: 0,
-  updatedBy: 0
-}
-
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true)
   const { setWorkDayUser, setRoomEdit, system, setMenuDeliveryTime } = useContext(AppContext)

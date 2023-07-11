@@ -10,7 +10,9 @@ export interface Bill {
   deliveryMethod: number
   clientId: number
   addressId: number
-  workDayUserId: number
+  workDayUserIdOpen: number
+  workDayUserIdClose: number
+  commandTime: Date
   items: BillItem[]
   isCommanded: boolean
   isServed: boolean
