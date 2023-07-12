@@ -17,10 +17,9 @@ interface Props {
   initialTime: Date | null
   finalTime: Date | null
   setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
-  removeBill: (id: number) => void
 }
 
-const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, initialTime, finalTime, setMenuDeliveryTime }: Props) => {
+const FoodTable = ({ top, left, tableNumber, saleItemCategories, initialTime, finalTime, setMenuDeliveryTime }: Props) => {
   const [close, setClose] = useState(true)
   const { billFunctions } = useContext(AppContext)
   const [bill, setBill] = useState({} as Bill)
@@ -56,7 +55,6 @@ const FoodTable = ({ top, left, tableNumber, removeBill, saleItemCategories, ini
             {
               !close &&
               <BillMaker
-                removeBill={removeBill}
                 saleItemCategories={saleItemCategories}
                 bill={bill}
                 close={closeTable} />

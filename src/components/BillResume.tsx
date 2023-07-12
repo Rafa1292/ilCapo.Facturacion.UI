@@ -23,14 +23,13 @@ import { get } from 'http'
 import AppContext from '../context/AppContext'
 interface Props {
   bill: Bill
-  getClient(phone: string, table: number): void
   handleEditLinkedProduct(saleItemId: number, itemNumber: number): void
   commandBill(): void
   showPayMethods(): void
   pullApartBill: boolean
 }
 
-const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProduct, commandBill, getClient }: Props) => {
+const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProduct, commandBill }: Props) => {
   const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
@@ -81,7 +80,7 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
   const handleChangePhone = (event: any) => {
     const { value } = event.target
     setPhone(value)
-    getClient(value, bill.tableNumber)
+    billFunctions.getClient(value, bill.id, bill.tableNumber)
   }
 
   const handleChangeName = (event: any) => {
@@ -129,7 +128,7 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
   const saveNewClient = async () => {
     const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
     if (!response.error) {
-      getClient(response.data.phone, bill.tableNumber)
+      billFunctions.getClient(response.data.phone, bill.id, bill.tableNumber)
     }
   }
 

@@ -15,11 +15,10 @@ import useBill from '../../hooks/useBill'
 
 interface Props {
   bill: Bill
-  removeBill: (id: number) => void
   saleItemCategories: SaleItemCategory[]
 }
 
-const SideMenuItem = ({ bill, removeBill, saleItemCategories }: Props) => {
+const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system } = useContext(AppContext)
@@ -92,7 +91,7 @@ const SideMenuItem = ({ bill, removeBill, saleItemCategories }: Props) => {
         </span>
         {
           !close &&
-          <BillMaker removeBill={removeBill}
+          <BillMaker 
             bill={bill}
             saleItemCategories={saleItemCategories}
             close={closeTable} />

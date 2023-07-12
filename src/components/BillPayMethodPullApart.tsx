@@ -38,7 +38,7 @@ const BillPayMethodPullApart = ({ close, billId, tableNumber, closeApartBill }: 
   const handleChangePhone = (event: any) => {
     const { value } = event.target
     setPhone(value)
-    billFunctions.getClient(value, bill.tableNumber, true)
+    billFunctions.getClient(value, bill.id, bill.tableNumber, true)
   }
 
   const handleChangeAddress = (event: any) => {
@@ -55,7 +55,7 @@ const BillPayMethodPullApart = ({ close, billId, tableNumber, closeApartBill }: 
   const saveNewClient = async () => {
     const response = await usePost<Client>('clients', { id: 0, delete: false, name: name, phone: phone, addressess: [], createdBy: 1, updatedBy: 1 }, true)
     if (!response.error) {
-      billFunctions.getClient(response.data.phone, bill.tableNumber, true)
+      billFunctions.getClient(response.data.phone, bill.id, bill.tableNumber, true)
     }
   }
 

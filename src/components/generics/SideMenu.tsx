@@ -49,32 +49,31 @@ const initialBill: Bill = {
 }
 
 interface Props {
-  bills: Bill[]
-  removeBill: (id: number) => void
   saleItemCategories: SaleItemCategory[]
 }
 
-const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
+const SideMenu = ({ saleItemCategories }: Props) => {
   const { user, logout, billFunctions } = useContext(AppContext)
   const [close, setClose] = useState(true)
-  const [bill, setBill] = useState({} as Bill)
+  const [bill, setBill] = useState(initialBill)
 
   const closeTable = () => {
+    billFunctions.removeIncompleteBill()
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.remove('bill-makerContainer_show')
     setClose(true)
   }
 
   const openTable = () => {
+    setBill(initialBill)
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.add('bill-makerContainer_show')
     setClose(false)
   }
 
   useEffect(() => {
-    const currentBill = billFunctions.getBillByTableNumber(0)
+    const currentBill = billFunctions.getBill(0,0)
     setBill(currentBill)
-    setClose(true)
   }, [billFunctions.bills])
 
 
@@ -86,7 +85,7 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
         </span>
         {
           !close &&
-          <BillMaker removeBill={removeBill}
+          <BillMaker
             bill={bill}
             saleItemCategories={saleItemCategories}
             close={closeTable}/>
@@ -133,12 +132,11 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
           </div>
           <ul className="nav flex-column">
             {
-              bills.map((bill, index) => {
+              billFunctions.bills.filter(x => x.id > 0 && x.tableNumber === 0 && !x.close).map((bill, index) => {
                 return (
                   <li className='nav-item' key={index}>
                     <SideMenuItem
                       bill={bill}
-                      removeBill={removeBill}
                       saleItemCategories={saleItemCategories} />
                   </li>
                 )
@@ -156,4 +154,4 @@ const Navbar = ({ bills, removeBill, saleItemCategories }: Props) => {
   )
 }
 
-export default Navbar
+export default SideMenu

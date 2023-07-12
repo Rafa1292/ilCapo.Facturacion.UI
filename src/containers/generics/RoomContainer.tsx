@@ -11,10 +11,9 @@ import { SaleItemCategory } from '../../types/saleItemCategory'
 interface Props {
   tables: tableProps[]
   saleItemCategories: SaleItemCategory[]
-  removeBill: (id: number) => void
 }
 
-const RoomContainer = ({ tables, saleItemCategories, removeBill }: Props) => {
+const RoomContainer = ({ tables, saleItemCategories }: Props) => {
   const [isLoading, setIsLoading] = useState(true)
   const { setMenuDeliveryTime, billFunctions } = useContext(AppContext)
 
@@ -34,7 +33,6 @@ const RoomContainer = ({ tables, saleItemCategories, removeBill }: Props) => {
             tables.map(table => {
               if (table.type === 'table_container') {
                 return <FoodTableContainer
-                  removeBill={removeBill}
                   menuDeliveryTime={table.menuDeliveryTime}
                   setMenuDeliveryTime={setMenuDeliveryTime}
                   key={table.number}

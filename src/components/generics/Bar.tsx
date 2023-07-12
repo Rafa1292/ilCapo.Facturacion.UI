@@ -13,10 +13,9 @@ interface Props {
   left: number
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
-  removeBill: (id: number) => void
 }
 
-const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories }: Props) => {
+const Bar = ({ top, left, tableNumber, saleItemCategories }: Props) => {
   const billFunctions = useBill()
   const [close, setClose] = useState(true)
   const [bill, setBill] = useState({} as Bill)
@@ -46,7 +45,7 @@ const Bar = ({ top, left, tableNumber, removeBill, saleItemCategories }: Props) 
         </span>
         {
           !close &&
-          <BillMaker removeBill={removeBill} bill={bill} saleItemCategories={saleItemCategories} close={closeTable} />
+          <BillMaker bill={bill} saleItemCategories={saleItemCategories} close={closeTable} />
         }
       </div>
       <div className="bar_container d-flex flex-wrap position-absolute" onClick={() => openTable()} style={{ top: `${top}px`, left: `${left}px` }}>

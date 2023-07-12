@@ -14,13 +14,12 @@ import AppContext from '../context/AppContext'
 interface Props {
   bill: Bill
   close: () => void
-  removeBill: (id: number) => void
   pullApartBill: boolean
   setPullApartBill: (pullApartBill: boolean) => void
 }
 
 
-const BillPayMethod = ({ bill, removeBill, close, setPullApartBill, }: Props) => {
+const BillPayMethod = ({ bill, close, setPullApartBill, }: Props) => {
   const [option, setOption] = useState<number>(1)
   const { billFunctions, user } = useContext(AppContext)
 
@@ -76,7 +75,6 @@ const BillPayMethod = ({ bill, removeBill, close, setPullApartBill, }: Props) =>
     const response = await billFunctions.fastPayAction(accountHistory, bill.id, user.workDayUser.id)
     if (response) {
       close()
-      removeBill(bill.id)
     }
   }
 
@@ -93,7 +91,6 @@ const BillPayMethod = ({ bill, removeBill, close, setPullApartBill, }: Props) =>
     const response = await billFunctions.closeBill(user.workDayUser.id, bill.id)
     if (response) {
       close()
-      removeBill(bill.id)
     }
   }
 
@@ -101,7 +98,6 @@ const BillPayMethod = ({ bill, removeBill, close, setPullApartBill, }: Props) =>
     const response = await billFunctions.closeBill(user.workDayUser.id, bill.id, billHistories)
     if (response) {
       close()
-      removeBill(bill.id)
     }
   }
 

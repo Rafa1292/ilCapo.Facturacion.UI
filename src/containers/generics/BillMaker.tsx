@@ -18,7 +18,6 @@ import { Client } from '../../types/client'
 interface Props {
   close: () => void
   saleItemCategories: SaleItemCategory[]
-  removeBill: (id: number) => void
   bill: Bill
 }
 
@@ -46,7 +45,7 @@ const initialBillItem: BillItem = {
 }
 
 
-const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
+const BillMaker = ({ close, saleItemCategories, bill }: Props) => {
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
@@ -172,7 +171,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
         showPayMethods
         &&
         <div className="col-8 d-flex justify-content-center flex-wrap scroll" style={{ maxHeight: '100vh', alignContent: 'baseline', overflowY: 'scroll' }}>
-          <BillPayMethod removeBill={removeBill} close={close}
+          <BillPayMethod close={close}
             setPullApartBill={setPullApartBill} pullApartBill={pullApartBill} bill={bill} />
         </div>
         ||
@@ -217,8 +216,7 @@ const BillMaker = ({ close, saleItemCategories, removeBill, bill }: Props) => {
       <div className="col-4 shadow bill-resume position-relative" style={{ height: '100vh', zIndex: '100' }}>
         <BillResume
           pullApartBill={pullApartBill}
-          showPayMethods={() => setShowPayMethods(!showPayMethods)}
-          getClient={getClient} commandBill={commandBill}
+          showPayMethods={() => setShowPayMethods(!showPayMethods)} commandBill={commandBill}
           handleEditLinkedProduct={handleEditLinkedProduct}
           bill={bill} />
       </div>

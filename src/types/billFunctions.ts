@@ -17,9 +17,10 @@ export interface BillFunctions {
   editLinkedProduct: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => BillItem | undefined
   fastPayAction: (accountHistory: AccountHistory, billId: number, workDayUserIdClose: number) => Promise<boolean>
   getOpenBills: () => Promise<void>
+  getBill: (billId: number, tableNumber: number) => Bill
   getBillFromDB: (tmpId: number) => void
   getBillById: (tmpId: number) => void
-  getClient: (phone: string, tableNumber: number, forApartBill?: boolean) => void
+  getClient: (phone: string, billId: number, tableNumber: number, forApartBill?: boolean) => void
   getBillByTableNumber: (tableNumber: number) => Bill
   moveBillItem: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
   moveBillItemBack : (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
@@ -28,6 +29,7 @@ export interface BillFunctions {
   removeAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   removeBillItem: (billItem: BillItem, billId: number , tableNumber: number) => void
   removeLinkedProduct: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
+  removeIncompleteBill : () => void
   serve : (billId: number) => void
   setBillAddress: (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => void
   setDeliveryMethod: (deliveryMethod: number, billId: number, tableNumber: number) => void

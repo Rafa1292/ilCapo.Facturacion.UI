@@ -12,11 +12,10 @@ interface Props {
   tableNumber: number
   saleItemCategories: SaleItemCategory[]
   menuDeliveryTime: Date | null | undefined
-  removeBill: (id: number) => void
   setMenuDeliveryTime: (tableNumber: number, date: Date | null) => void
 }
 
-const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCategories, menuDeliveryTime, setMenuDeliveryTime }: Props) => {
+const FoodTableContainer = ({ top, left, tableNumber, saleItemCategories, menuDeliveryTime, setMenuDeliveryTime }: Props) => {
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system, billFunctions } = useContext(AppContext)
@@ -44,7 +43,6 @@ const FoodTableContainer = ({ top, left, removeBill, tableNumber, saleItemCatego
   return (
     <>
       <FoodTable
-        removeBill={removeBill}
         initialTime={initialTime}
         finalTime={finalTime}
         setMenuDeliveryTime={setMenuDeliveryTime}

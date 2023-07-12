@@ -16,13 +16,6 @@ const Home = () => {
   const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
   const { billFunctions } = useContext(AppContext)
 
-  const removeBill = (id: number) => {
-    const billToRemove = billFunctions.bills.find(bill => bill.id === id)
-    const billsTmp = billFunctions.bills.filter(bill => bill.id !== id)
-    if (billToRemove !== undefined)
-      setMenuDeliveryTime(billToRemove.tableNumber, null)
-    // setBills(billsTmp)
-  }
 
   useEffect(() => {
     setRoomEdit(false)
@@ -51,13 +44,10 @@ const Home = () => {
     <Content isLoading={system.loader && isLoading ? true : false}>
       <>
         <SideMenu
-          removeBill={removeBill}
-          saleItemCategories={saleItemCategories}
-          bills={billFunctions.bills.filter(x => x.tableNumber === 0 && !x.close)} />
+          saleItemCategories={saleItemCategories}/>
         {
           <RoomContainer
             saleItemCategories={saleItemCategories}
-            removeBill={removeBill}
             tables={system.bussinessConfig.tables} />
         }
       </>

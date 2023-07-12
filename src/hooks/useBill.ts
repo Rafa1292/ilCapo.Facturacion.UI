@@ -124,11 +124,24 @@ const useBill = (): BillFunctions => {
   }
 
   const getBill = (billId: number, tableNumber: number) => {
+    if (billId === 0 && tableNumber === 0) {
+      const currentBill = bills.find(bill => bill.tableNumber === 0 && bill.id === 0)
+      if (currentBill)
+        return currentBill
+      return { ...initialBill }
+    }
     if (billId === 0) {
       return getBillByTableNumber(tableNumber)
     } else {
       return getBillById(billId)
     }
+  }
+
+  const removeIncompleteBill = () => {
+    let billsForCarry = bills.filter(bill => bill.tableNumber === 0)
+    billsForCarry = billsForCarry.filter(bill => bill.id !== 0)
+    const tableBills = bills.filter(bill => bill.tableNumber !== 0)
+    setBills([...tableBills, ...billsForCarry])
   }
 
   const getOpenBills = async () => {
@@ -195,9 +208,9 @@ const useBill = (): BillFunctions => {
     return initialBill
   }
 
-  const getClient = async (phone: string, tableNumber: number, forApartBill?: boolean) => {
+  const getClient = async (phone: string, billId: number, tableNumber: number, forApartBill?: boolean) => {
     forApartBill = forApartBill ? forApartBill : false
-    const currentBill = getBillByTableNumber(tableNumber)
+    const currentBill = getBill(billId, tableNumber)
 
     if (phone.length === 0) {
       if (forApartBill) {
@@ -234,11 +247,13 @@ const useBill = (): BillFunctions => {
   }
 
   const addBill = (currentBill: Bill) => {
-    const currentBills = currentBill.tableNumber > 0 ?
-      bills.filter(bill => bill.tableNumber !== currentBill.tableNumber && !bill.close) :
-      bills.filter(bill => bill.id !== currentBill.id)
-    const closeBills = bills.filter(bill => bill.close)
-    setBills([...currentBills, ...closeBills, currentBill])
+    const memoryBills = bills.filter(bill => bill.id === 0 && bill.tableNumber > 0 && bill.tableNumber !== currentBill.tableNumber && !bill.close)
+    const tableBills = bills.filter(bill => bill.tableNumber > 0 && bill.id > 0 && bill.tableNumber !== currentBill.tableNumber && !bill.close)    
+    const toGoBills = bills.filter(bill => bill.tableNumber === 0 && bill.id !== currentBill.id && !bill.close && bill.id > 0)
+    const tmpBills = [...tableBills, ...memoryBills, ...toGoBills]
+    if(!currentBill.close)
+      tmpBills.push(currentBill)
+    setBills(tmpBills)
   }
 
   const removeBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
@@ -253,11 +268,7 @@ const useBill = (): BillFunctions => {
 
   const updateBillFromDB = async (id: number) => {
     const currentBill = await getBillFromDB(id)
-    let currentBills = bills.filter(bill => bill.id !== id)
-    currentBills = currentBills.filter(bill => bill.tableNumber !== currentBill.tableNumber)
-    if (!currentBill.close)
-      currentBills.push(currentBill)
-    setBills([...currentBills])
+    addBill(currentBill)
   }
 
   const removeLinkedProduct = (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => {
@@ -571,13 +582,10 @@ const useBill = (): BillFunctions => {
     return false
   }
 
-
-
-
-
   return {
     bills,
     apartBill,
+    getBill,
     addBillItem,
     removeBillItem,
     moveBillItemBack,
@@ -598,6 +606,7 @@ const useBill = (): BillFunctions => {
     setBillAddress,
     setDiscount,
     setDeliveryMethod,
+    removeIncompleteBill,
     serve,
     addDescriptionToBillProduct,
     changeTableNumber,
