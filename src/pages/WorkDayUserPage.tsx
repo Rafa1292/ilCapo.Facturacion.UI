@@ -49,7 +49,7 @@ const WorkDayUserPage = () => {
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
   const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
-  const [bills, setBills] = useState<Bill[]>([])
+  const [totalBills, setTotalBills] = useState(0)
   const navigate = useNavigate()
 
   const handleCurrencyChange = (event: any, index: number) => {
@@ -95,11 +95,10 @@ const WorkDayUserPage = () => {
 
   }
 
-  const getTotalBills = () => {
-    const total = billFunctions.bills.reduce((total, bill) => total + getBillTotal(bill), 0)
+  const getTotalBills = (bills: Bill[]) => {
+    const total = bills.reduce((total, bill) => total + getBillTotal(bill), 0)
     return total
   }
-
 
   const closeWorkDayUser = async () => {
     const response = await usePatch<WorkDayUser>('workDayUsers', currentWorkDayUser, true)
@@ -114,14 +113,14 @@ const WorkDayUserPage = () => {
     const getBillsByWorkDay = async () => {
       const response = await useGetList<Bill[]>(`bills/billsByWorkDayUserClose/${user.workDayUser.id}`, true)
       if (!response.error) {
-        console.log('bills', response.data)
-        setBills(response.data)
+        const bills = response.data.filter(bill => bill.close && !bill.isNull)
+        const tmpTotalBills = getTotalBills(bills)
+        setTotalBills(tmpTotalBills)
       }
     }
     getBillsByWorkDay()
     setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
-    console.log('currentWorkDayUser', currentWorkDayUser)
   }, [billFunctions.bills])
 
 
@@ -155,7 +154,7 @@ const WorkDayUserPage = () => {
               Inversiones:
             </div>
             <div className="col-5 mx-3 text-start">
-              ¢ 5.000
+              {parseCurrency(currentWorkDayUser.investments.reduce((total, investment) => total + Number(investment.amount), 0).toString())}
             </div>
             <div className="col-5 fw-bold text-end">
               Ingresos:
@@ -168,7 +167,7 @@ const WorkDayUserPage = () => {
             </div>
             <div className="col-5 mx-3 text-start">
               {
-                parseCurrency(getTotalBills().toString())
+                parseCurrency(totalBills.toString())
               }
             </div>
           </div>

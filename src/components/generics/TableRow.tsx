@@ -36,20 +36,3 @@ const TableRow = ({ tableData, bgColor, children, classElement, crossOut }: Prop
 }
 
 export default TableRow
-
-// <div className={`${classElement}`}>
-//   {
-//     tableData.map((data, index) =>
-//       <div className={`custom-center col-12 ${crossOut ? 'cross-out text-danger' : ''}`} key={index}>
-//         {data}
-//       </div>)
-//   }
-//   {
-//     children &&
-//     <div className={crossOut ? 'cross-out text-danger' : ''}>
-//       <div className='col-12 d-flex p-0 m-0 justify-content-end'>
-//         {children}
-//       </div>
-//     </div>
-//   }
-// </div>
