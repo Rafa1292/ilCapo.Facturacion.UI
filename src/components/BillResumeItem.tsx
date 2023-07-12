@@ -19,9 +19,10 @@ interface Props {
 const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEditLinkedProduct }: Props) => {
   const [show, setShow] = useState(false)
   const { billFunctions } = useContext(AppContext)
+  const [editDiscount, setEditDiscount] = useState(false)
 
   const getBillItemTotal = (billItem: BillItem): number => {
-    return ((billItem.unitPrice + billItem.tax - billItem.discount) * billItem.quantity) + getBillItemModifiersPrice(billItem)
+    return ((billItem.unitPrice + billItem.tax) * billItem.quantity)  - billItem.discount + getBillItemModifiersPrice(billItem)
   }
 
   const getDottedLine = (name: string): string => {
@@ -57,7 +58,11 @@ const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEd
     }
   }
 
-
+  const handleSetBillItemDiscount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const discount = Number(event.target.value)
+    billFunctions.setBillItemDiscount(discount, billItem.id , billId, tableNumber)
+    setEditDiscount(false)
+  }
 
   return (
     <div className="col-12 d-flex flex-wrap p-0" style={{ height: 'fit-content', borderBottom: '2px solid rgba(33,37,41,.8)' }}>
@@ -66,7 +71,14 @@ const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEd
         <strong className='text-center col-2'>{parseCurrency(Number(billItem.unitPrice).toString())}</strong>
         <strong className='text-center col-1'>{billItem.quantity}</strong>
         <strong className='text-center col-2'>{billItem.tax}</strong>
-        <strong className='text-center col-2'>{billItem.discount}</strong>
+        {
+          editDiscount ?
+            <>
+              <input type='number' onBlur={handleSetBillItemDiscount} className='col-2 text-center rounded' style={{height: '25px', border: '1px solid rgba(0,0,0,.4)'}}></input>
+            </>
+            :
+            <strong className='text-center col-2 pointer' onDoubleClick={() => setEditDiscount(true)}>{billItem.discount}</strong>
+        }
         <strong className='text-center col-2'>{parseCurrency(getBillItemTotal(billItem).toString())}</strong>
         <div className="col-12 d-flex justify-content-center">
           <span className='hover' style={{ cursor: 'pointer', color: 'darkgreen' }} onClick={() => setShow(!show)}>{!show ? 'Ver items' : 'Ocultar items'}</span>

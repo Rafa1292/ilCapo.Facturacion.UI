@@ -34,5 +34,6 @@ export interface BillFunctions {
   setBillAddress: (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => void
   setDeliveryMethod: (deliveryMethod: number, billId: number, tableNumber: number) => void
   setDiscount : (discount: number, billId: number, tableNumber: number) => void  
+  setBillItemDiscount: (discount: number, billItemId: number, billId: number, tableNumber: number) => void
   updateBillFromDB: (id: number) => void
 }

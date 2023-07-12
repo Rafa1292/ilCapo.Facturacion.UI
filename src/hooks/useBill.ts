@@ -452,6 +452,18 @@ const useBill = (): BillFunctions => {
     addBill(newBill)
   }
 
+  const setBillItemDiscount = (discount: number, billItemId: number, billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    const tmpBillItems = currentBill.items
+    for (const billItem of tmpBillItems) {
+      if (billItem.id === billItemId) {
+        billItem.discount = discount
+      }
+    }
+    const newBill = { ...currentBill, items: tmpBillItems, isCommanded: false }
+    addBill(newBill)
+  }
+
   const addApartBillItem = (billItem: BillItem) => {
     let newBill = { ...apartBill }
     if (apartBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
@@ -585,6 +597,7 @@ const useBill = (): BillFunctions => {
   return {
     bills,
     apartBill,
+    setBillItemDiscount,
     getBill,
     addBillItem,
     removeBillItem,
