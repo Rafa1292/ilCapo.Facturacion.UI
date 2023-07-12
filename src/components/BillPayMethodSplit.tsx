@@ -6,6 +6,7 @@ import { BillAccountHistory } from '../types/billAccountHistory'
 import BillPayMethodForm from './BillPayMethodForm'
 import BillPayMethodSplitForm from './BillPayMethodSplitForm'
 import AppContext from '../context/AppContext'
+import Swal from 'sweetalert2'
 
 
 interface billAccountHistoriesContainer {
@@ -22,7 +23,7 @@ interface Props {
   billId: number
 }
 
-const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-4', initialParts = 2 }: Props) => {
+const BillPayMethodSplit = ({ getBillTotal, closeBillSplit, close, size = 'col-4', initialParts = 2 }: Props) => {
   const [parts, setParts] = useState<number>(0)
   const [billAccountHistoriesContainerList, setBillAccountHistoriesContainerList] = useState<billAccountHistoriesContainer[]>([])
   const { billFunctions, user } = useContext(AppContext)
@@ -44,22 +45,27 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-
   }
 
   const setBillAccountHistory = (accountHistory: AccountHistory, billItemListId: number) => {
-    const tmpBillAccountHistoriesContainerList = [...billAccountHistoriesContainerList]
-    for (const billAccountHistoriesContainer of tmpBillAccountHistoriesContainerList) {
-      if (billAccountHistoriesContainer.id === billItemListId) {
-        const billAccountHistory: BillAccountHistory = {
-          id: 0,
-          accountHistoryId: 0,
-          delete: false,
-          accountHistory: accountHistory,
-          billId: 0,
-          createdBy: 0,
-          updatedBy: 0
-        }
-        billAccountHistoriesContainer.billAccountHistories.push(billAccountHistory)
-      }
+    if (accountHistory.payMethodId === 0) {
+      Swal.fire('Error', 'Debe seleccionar un metodo de pago', 'error')
     }
-    setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
+    else {
+      const tmpBillAccountHistoriesContainerList = [...billAccountHistoriesContainerList]
+      for (const billAccountHistoriesContainer of tmpBillAccountHistoriesContainerList) {
+        if (billAccountHistoriesContainer.id === billItemListId) {
+          const billAccountHistory: BillAccountHistory = {
+            id: 0,
+            accountHistoryId: 0,
+            delete: false,
+            accountHistory: accountHistory,
+            billId: 0,
+            createdBy: 0,
+            updatedBy: 0
+          }
+          billAccountHistoriesContainer.billAccountHistories.push(billAccountHistory)
+        }
+      }
+      setBillAccountHistoriesContainerList(tmpBillAccountHistoriesContainerList)
+    }
   }
 
   const removeAccountHistory = (accountHistory: AccountHistory, billItemListId: number) => {
@@ -127,7 +133,7 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-
   }, [])
 
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center position-relative align-content-start' style={{ height: 'calc(100vh - 45px)' }}>
+    <div className='col-12 d-flex flex-wrap justify-content-center position-relative align-content-start' style={{ height: 'calc(100vh - 45px)'}}>
       <div className="col-4 d-flex flex-wrap justify-content-center ">
         <CustomInputNumber isRequired={false} showLabel={false} value={parts} customInputNumber={
           {
@@ -136,7 +142,8 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-
           }
         } />
       </div>
-      <div className="col-12 d-flex flex-wrap justify-content-center">
+
+      <div className="col-12 d-flex flex-wrap justify-content-center scroll" style={{height: '85vh', overflowY: 'scroll'}}>
         {
           billAccountHistoriesContainerList?.length > 0 &&
           billAccountHistoriesContainerList?.map((billAccountHistoriesContainer, index) => (
@@ -147,9 +154,10 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit,  close, size = 'col-
           ))
         }
       </div>
+
       {
         wouldBePay() &&
-        <div className="col-12 d-flex flex-wrap justify-content-center" style={{ position: 'absolute', bottom: '10px' }}>
+        <div className="col-12 shadow d-flex flex-wrap justify-content-center py-2" style={{ position: 'absolute', bottom: '0', background: 'white' }}>
           <button type="button" className="btn btn-success col-10 p-4" onClick={handleCloseBill}>Cerrar cuenta</button>
         </div>
       }

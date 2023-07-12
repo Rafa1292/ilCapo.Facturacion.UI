@@ -301,7 +301,7 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
           }
         </div>
 
-        <div className="col-12 d-flex flex-wrap position-absolute" style={{ height: '16vh', background: 'white', bottom: '15px' }}>
+        <div className="col-12 d-flex flex-wrap position-absolute" style={{ height: '16vh', background: 'white', bottom: '0' }}>
           <div className="col-12 d-flex flex-wrap py-4">
             <div className="col-8 d-flex flex-wrap justify-content-around">
               <div className='command_btn' onClick={commandBill}>

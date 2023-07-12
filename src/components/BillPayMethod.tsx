@@ -61,6 +61,10 @@ const BillPayMethod = ({ bill, close, setPullApartBill, }: Props) => {
   }
 
   const setAccountHistory = (accountHistory: AccountHistory): boolean => {
+    if(accountHistory.payMethodId === 0 ){
+      Swal.fire('Error', 'Debe seleccionar un metodo de pago', 'error')
+      return false
+    }
     if (getAccountHistoriesTotal() + Number(accountHistory.amount) > getBillTotal()) {
       Swal.fire('Error', 'El monto asigando no debe ser mayor al total de la factura', 'error')
     }

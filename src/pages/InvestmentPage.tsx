@@ -46,8 +46,7 @@ const InvestmentPage = () => {
     }
     const getInvestments = async () => {
       await refreshInvestments()
-    }
-    
+    }    
     getInvestments()
     getPayMethods()
     getProviders()

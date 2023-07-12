@@ -64,7 +64,7 @@ const BillPayMethodForm = ({ setAccountHistory, removeAccountHistory, fastPayAct
       </div>
       {
         billAccountHistories?.length > 0 && showAction &&
-        <button onClick={handleAction} className={`col-12 btn ${isEnoughMoney() ? 'btn-success' : 'btn-success disabled'} my-4 p-4`}>{actionLabel}</button>
+        <button onClick={handleAction} className={`col-12 btn ${isEnoughMoney() ? 'btn-outline-success' : 'btn-success disabled'} my-4 p-4`}>{actionLabel}</button>
       }
     </div>
   )

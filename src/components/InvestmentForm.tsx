@@ -81,7 +81,6 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
       errors.push('Debe seleccionar una forma de pago')
       isValid = false
     }
-    console.log(totalAccountHistories, Number(accountHistory.amount))
     if (totalAccountHistories + Number(accountHistory.amount) > investment.amount) {
       errors.push('El monto total de las formas de pago no puede ser mayor al monto de la compra')
       isValid = false
@@ -137,7 +136,6 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
 
   const handleInvestmentDetail = (investmentDetail: InvestmentDetail): boolean => {
     const investmentDetails = [...investment.investmentDetails, { ...investmentDetail, id: investment.investmentDetails.length + 1 }]
-    const investmentAmount = Number(investment.amount) + getDetailTotal(investmentDetail)
     setInvestment({ ...investment, investmentDetails, amount: Number(investment.amount) + getDetailTotal(investmentDetail) })
     return true
   }
