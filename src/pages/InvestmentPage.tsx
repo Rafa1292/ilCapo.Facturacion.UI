@@ -82,15 +82,15 @@ const InvestmentPage = () => {
               <div className='col-6 d-flex justify-content-between align-items-center'>
                 <div className='col-8 text-center'>
                   {
-                    investmment?.investmentAccountHistories?.length === 0 &&
+                    investmment?.investmentHistories?.length === 0 &&
                     <div className='col-12 text-center'>
                       Pago pendiente
                     </div>
                   }
                   <div className="col-12 d-flex flex-wrap">
                     {
-                      investmment?.investmentAccountHistories?.length > 0 &&
-                      investmment?.investmentAccountHistories?.map((investmentAccountHistory, index) => (
+                      investmment?.investmentHistories?.length > 0 &&
+                      investmment?.investmentHistories?.map((investmentAccountHistory, index) => (
                         <div className='col-12 d-flex flex-wrap' key={index}>
                           <div className="col-6">
                             {getPayMethodName(investmentAccountHistory?.accountHistory?.payMethodId)}

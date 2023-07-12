@@ -31,7 +31,7 @@ const initialInvestment: Investment = {
   pendingPay: false,
   providerId: 0,
   workDayUserId: 0,
-  investmentAccountHistories: [],
+  investmentHistories: [],
   discount: 0,
   investmentDetails: [],
   iva: 0,
@@ -71,7 +71,7 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
 
   const validateAccountHistory = (accountHistory: AccountHistory) => {
     const errors: string[] = []
-    const totalAccountHistories = investment.investmentAccountHistories.reduce((total, investmentAccountHistory) => Number(total) + Number(investmentAccountHistory.accountHistory.amount), 0)
+    const totalAccountHistories = investment.investmentHistories.reduce((total, investmentAccountHistory) => Number(total) + Number(investmentAccountHistory.accountHistory.amount), 0)
     let isValid = true
     if (accountHistory.amount <= 0) {
       errors.push('El monto debe ser mayor a 0')
@@ -91,8 +91,8 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
 
   const handleAccountHistory = (accountHistory: AccountHistory): boolean => {
     if (validateAccountHistory(accountHistory)) {
-      const investmentAccountHistory: InvestmentAccountHistory = { ...initialInvestmentAccountHistory, accountHistory, id: investment.investmentAccountHistories.length + 1 }
-      setInvestment({ ...investment, investmentAccountHistories: [...investment.investmentAccountHistories, investmentAccountHistory] })
+      const investmentAccountHistory: InvestmentAccountHistory = { ...initialInvestmentAccountHistory, accountHistory, id: investment.investmentHistories.length + 1 }
+      setInvestment({ ...investment, investmentHistories: [...investment.investmentHistories, investmentAccountHistory] })
       return true
     }
     return false
@@ -101,7 +101,7 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
   const handleCheck = (event: any) => {
     const { name, checked } = event.target
     if (checked) {
-      setInvestment({ ...investment, investmentAccountHistories: [], [name]: checked })
+      setInvestment({ ...investment, investmentHistories: [], [name]: checked })
     }
     else {
       setInvestment({ ...investment, [name]: checked })
@@ -109,8 +109,8 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
   }
 
   const handleDeleteAccountHistory = (id: number) => {
-    const investmentAccountHistories = investment.investmentAccountHistories.filter(investmentAccountHistory => investmentAccountHistory.id !== id)
-    setInvestment({ ...investment, investmentAccountHistories: investmentAccountHistories })
+    const investmentAccountHistories = investment.investmentHistories.filter(investmentAccountHistory => investmentAccountHistory.id !== id)
+    setInvestment({ ...investment, investmentHistories: investmentAccountHistories })
   }
 
   const handleSubmit = async () => {
@@ -324,10 +324,10 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
         {
           !investment.pendingPay &&
           <div className="col-3 d-flex flex-wrap align-items-center">
-            <AccountHistoryForm defaultAmount={investment.investmentDetails.reduce((acc, investmentDetail) => acc + getTotal(investmentDetail), 0)} selectedPayMethodsId={investment?.investmentAccountHistories?.map(x => x?.accountHistory?.payMethodId)} isPay={true} handleAccountHistory={handleAccountHistory} />
+            <AccountHistoryForm defaultAmount={investment.investmentDetails.reduce((acc, investmentDetail) => acc + getTotal(investmentDetail), 0)} selectedPayMethodsId={investment?.investmentHistories?.map(x => x?.accountHistory?.payMethodId)} isPay={true} handleAccountHistory={handleAccountHistory} />
             <div className="col-12 d-flex flex-wrap justify-content-center mt-4">
               {
-                investment.investmentAccountHistories.map((expenseAccountHistory, index) => {
+                investment.investmentHistories.map((expenseAccountHistory, index) => {
                   return (
                     <div key={index} className="col-12 d-flex flex-wrap justify-content-center">
                       <span className=''>

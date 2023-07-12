@@ -10,7 +10,7 @@ export interface Investment {
   discount: number
   workDayUserId: number
   investmentDetails: InvestmentDetail[]
-  investmentAccountHistories: InvestmentAccountHistory[]
+  investmentHistories: InvestmentAccountHistory[]
   pendingPay: boolean
   delete: boolean
   createdBy?: number

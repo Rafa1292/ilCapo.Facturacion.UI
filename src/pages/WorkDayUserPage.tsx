@@ -9,6 +9,9 @@ import { useGetList, usePatch } from '../hooks/useAPI'
 import { parseCurrency } from '../utils/currencyParser'
 import { BillItem } from '../types/billItem'
 import { Bill } from '../types/bill'
+import { PayMethod } from '../types/payMethod'
+import { Expense } from '../types/expense'
+import { Investment } from '../types/investment'
 
 const initialWordayUser: WorkDayUser = {
   id: 0,
@@ -49,6 +52,8 @@ const WorkDayUserPage = () => {
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
   const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
+  const [payMethods, setPayMethods] = useState<PayMethod[]>([])
+  const [bills, setBills] = useState<Bill[]>([])
   const [totalBills, setTotalBills] = useState(0)
   const navigate = useNavigate()
 
@@ -100,6 +105,52 @@ const WorkDayUserPage = () => {
     return total
   }
 
+  const getTotalBillsByPayMethod = (payMethodId: number) => {
+    let tmpTotalBills = 0
+    for (const bill of bills) {
+      for (const billHistory of bill.billAccountHistories) {
+        if (billHistory.accountHistory.payMethodId === payMethodId) {
+          tmpTotalBills += billHistory.accountHistory.amount
+        }
+      }
+    }
+    return tmpTotalBills
+  }
+
+  const getTotalExpensesByPayMethod = (payMethodId: number) => {
+    let tmpTotalExpenses = 0
+    for (const expense of currentWorkDayUser.expenses) {
+      for (const expenseHistory of expense.expenseAccountHistories) {
+        if (expenseHistory.accountHistory.payMethodId === payMethodId) {
+          tmpTotalExpenses += expenseHistory.accountHistory.amount
+        }
+      }
+    }
+    return tmpTotalExpenses
+  }
+
+  const getTotalInvestmentsByPayMethod = (payMethodId: number) => {
+    let tmpTotalInvestments = 0
+    for (const investment of currentWorkDayUser.investments) {
+      for (const investmentHistory of investment.investmentHistories) {
+        if (investmentHistory.accountHistory.payMethodId === payMethodId) {
+          tmpTotalInvestments += investmentHistory.accountHistory.amount
+        }
+      }
+    }
+    return tmpTotalInvestments
+  }
+
+  const getTotalEntriesByPayMethod = (payMethodId: number) => {
+    let tmpTotalEntries = 0
+    for (const entry of currentWorkDayUser.entries) {
+      if (entry.accountHistory.payMethodId === payMethodId) {
+        tmpTotalEntries += entry.accountHistory.amount
+      }
+    }
+    return tmpTotalEntries
+  }
+
   const closeWorkDayUser = async () => {
     const response = await usePatch<WorkDayUser>('workDayUsers', currentWorkDayUser, true)
     if (!response.error) {
@@ -116,8 +167,16 @@ const WorkDayUserPage = () => {
         const bills = response.data.filter(bill => bill.close && !bill.isNull)
         const tmpTotalBills = getTotalBills(bills)
         setTotalBills(tmpTotalBills)
+        setBills(bills)
       }
     }
+    const getPayMethods = async () => {
+      const response = await useGetList<PayMethod[]>('paymethods', true)
+      if (!response.error) {
+        setPayMethods(response.data.filter(paymethod => paymethod.isPublic))
+      }
+    }
+    getPayMethods()
     getBillsByWorkDay()
     setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
@@ -129,46 +188,99 @@ const WorkDayUserPage = () => {
       {currentWorkDayUser.id === 0 &&
         <WorkDayUserForm />
         ||
-        <div className='d-flex col-4 justify-content-center flex-wrap'>
+        <div className='d-flex col-10 justify-content-center flex-wrap'>
           <h4 className='col-12 text-center'>Esta es tu jornada de hoy</h4>
           <div className="col-12 justify-content-center d-flex flex-wrap mt-3">
-            <div className="col-5 fw-bold text-end">
-              Usuario:
-            </div>
-            <div className="col-5 mx-3 text-start">
-              Mariela  Gonzales
-            </div>
-            <div className="col-5 fw-bold text-end">
-              Dinero inicial:
-            </div>
-            <div className="col-5 mx-3 text-start">
-              {parseCurrency(currentWorkDayUser.initialCash.toString())}
-            </div>
-            <div className="col-5 fw-bold text-end">
-              Gastos:
-            </div>
-            <div className="col-5 mx-3 text-start">
-              {parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
-            </div>
-            <div className="col-5 fw-bold text-end">
-              Inversiones:
-            </div>
-            <div className="col-5 mx-3 text-start">
-              {parseCurrency(currentWorkDayUser.investments.reduce((total, investment) => total + Number(investment.amount), 0).toString())}
-            </div>
-            <div className="col-5 fw-bold text-end">
-              Ingresos:
-            </div>
-            <div className="col-5 mx-3 text-start">
-              {parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString())}
-            </div>
-            <div className="col-5 fw-bold text-end">
-              Ventas:
-            </div>
-            <div className="col-5 mx-3 text-start">
+            <div className="col-12 d-flex flex-wrap justify-content-center border-bottom border-secondary py-2">
+              <div className="col-3 fw-bold text-end">
+                Usuario:
+              </div>
+              <div className="col-3 px-3 text-start">
+                Mariela  Gonzales
+              </div>
+              <div className="col-3 fw-bold text-end">
+                Dinero inicial:
+              </div>
+              <div className="col-3 px-3 text-start">
+                {parseCurrency(currentWorkDayUser.initialCash.toString())}
+              </div>
               {
-                parseCurrency(totalBills.toString())
+                payMethods.map((payMethod, index) => (
+                  <div key={index} className="col-2 mt-3 text-center fw-bold">
+                    -{payMethod.name}:
+                  </div>
+                ))
               }
+            </div>
+            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
+              <div className="col-3 fw-bold text-end">
+                Gastos:
+              </div>
+              <div className="col-3 px-3 text-start">
+                {parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
+              </div>
+              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
+                {
+                  payMethods.map((payMethod, index) => (
+                    <div key={index} className="col-2 text-center">
+                      {parseCurrency(getTotalExpensesByPayMethod(payMethod.id).toString())}
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
+              <div className="col-3 fw-bold text-end">
+                Inversiones:
+              </div>
+              <div className="col-3 px-3 text-start">
+                {parseCurrency(currentWorkDayUser.investments.reduce((total, investment) => total + Number(investment.amount), 0).toString())}
+              </div>
+              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
+                {
+                  payMethods.map((payMethod, index) => (
+                    <div key={index} className="col-2 text-center">
+                      {parseCurrency(getTotalInvestmentsByPayMethod(payMethod.id).toString())}
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
+              <div className="col-3 fw-bold text-end">
+                Ingresos:
+              </div>
+              <div className="col-3 px-3 text-start">
+                {parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString())}
+              </div>
+              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
+                {
+                  payMethods.map((payMethod, index) => (
+                    <div key={index} className="col-2 text-center">
+                      {parseCurrency(getTotalEntriesByPayMethod(payMethod.id).toString())}
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
+              <div className="col-3 fw-bold text-end">
+                Venta total:
+              </div>
+              <div className="col-3 px-3 text-start">
+                {
+                  parseCurrency(totalBills.toString())
+                }
+              </div>
+              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
+                {
+                  payMethods.map((payMethod, index) => (
+                    <div key={index} className="col-2 text-center">
+                      {parseCurrency(getTotalBillsByPayMethod(payMethod.id).toString())}
+                    </div>
+                  ))
+                }
+              </div>
             </div>
           </div>
           {

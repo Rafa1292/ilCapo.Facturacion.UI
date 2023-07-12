@@ -560,7 +560,6 @@ const useBill = (): BillFunctions => {
             tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
           }
         }
-        console.log(billItem)
         addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, billId, tableNumber)
         removeApartLinkedProduct(saleItemId, itemNumber)
       }
