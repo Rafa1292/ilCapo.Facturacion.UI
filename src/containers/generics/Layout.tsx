@@ -29,12 +29,12 @@ const Layout = ({ children }: Props) => {
 
           <div className='container-fluid'>
             <div className="row">
-              <main className="col-12 d-flex flex-wrap p-2 justify-content-center" style={{ height: '100vh', overflow: 'hidden' }}>
+              <main className="col-12 d-flex flex-wrap justify-content-center" style={{ height: '100vh', overflow: 'hidden', paddingTop: '50px' }}>
                 {
                   user.workDayUser.close && location.pathname !== '/bills' &&
                   <>
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <h5 className="text-2xl font-bold text-gray-700">El día de trabajo ya ha sido cerrado</h5>
+                    <div className="flex flex-col items-center justify-center my-3">
+                      <h5 className="">El día de trabajo ya ha sido cerrado</h5>
                     </div>
                     <WorkDayUserPage isClose={true}/>
                   </>
