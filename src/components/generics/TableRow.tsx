@@ -1,32 +1,55 @@
 import React from 'react'
 
+interface TableRowProps {
+  content: string
+  col: number
+}
+
 interface Props {
-  tableData: string[]
+  tableData: TableRowProps[]
   children?: React.ReactNode
   classElement?: string
   crossOut?: boolean
+  bgColor: string
 }
 
-const TableRow = ({ tableData, children, classElement, crossOut }: Props) => {
+const TableRow = ({ tableData, bgColor, children, classElement, crossOut }: Props) => {
+  const actionsWidth = 12 - tableData.reduce((acc, curr) => acc + curr.col, 0)
+
   return (
-    <tr className={`${classElement}`}>
+    <div className={`col-12 d-flex flex-wrap py-3 ${classElement}`} style={{ background: bgColor }}>
       {
-        tableData.map((data, index) => <td key={index}>
-          <div className={`custom-center ${crossOut ? 'cross-out text-danger' : ''}`}>
-            {data}
+        tableData.map((data, index) =>
+          <div style={{color: 'white'}} className={`text-center col-${data.col} ${crossOut ? 'cross-out text-danger' : ''}`} key={index}>
+            {data.content}
           </div>
-        </td>)
+        )
       }
       {
         children &&
-        <td className={crossOut ? 'cross-out text-danger' : ''}>
-          <div className='col-12 d-flex p-0 m-0 justify-content-end'>
-            {children}
-          </div>
-        </td>
+        <div className={`d-flex flex-wrap justify-content-center col-${actionsWidth}`}>
+          {children}
+        </div>
       }
-    </tr>
+    </div>
   )
 }
 
 export default TableRow
+
+// <div className={`${classElement}`}>
+//   {
+//     tableData.map((data, index) =>
+//       <div className={`custom-center col-12 ${crossOut ? 'cross-out text-danger' : ''}`} key={index}>
+//         {data}
+//       </div>)
+//   }
+//   {
+//     children &&
+//     <div className={crossOut ? 'cross-out text-danger' : ''}>
+//       <div className='col-12 d-flex p-0 m-0 justify-content-end'>
+//         {children}
+//       </div>
+//     </div>
+//   }
+// </div>

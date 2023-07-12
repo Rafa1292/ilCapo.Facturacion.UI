@@ -27,7 +27,7 @@ const Layout = ({ children }: Props) => {
 
           <div className="container-fluid">
             <div className="row">
-              <main className="col-12 d-flex flex-wrap p-2 justify-content-center">
+              <main className="col-12 d-flex flex-wrap p-2 justify-content-center" style={{height: '100vh', overflow: 'hidden'}}>
                 {
                   user.workDayUser.close &&
                   <div className="flex flex-col items-center justify-center h-full">

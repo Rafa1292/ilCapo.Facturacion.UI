@@ -1,40 +1,34 @@
 import React from 'react'
 import '../../scss/table.scss'
+
+interface header {
+  label: string
+  col: number
+}
 interface Props {
   children: React.ReactNode
-  headers: string[]
+  headers: header[]
 }
 const Table = ({ headers, children }: Props) => {
   const [darkMode, setDarkMode] = React.useState<boolean>(true)
+  const darkBg = '#212529'
+  const darkBgStripped = '#2c3034'
 
   return (
     <>
-      <div className="col-12 d-flex justify-content-end">
-        <div className="form-check form-switch">
-          <input className="form-check-input" onChange={(() => setDarkMode(!darkMode))} type="checkbox" role="switch" id="flexSwitchCheckChecked" checked={darkMode} />
-          <label className="form-check-label text-secondary" htmlFor="flexSwitchCheckChecked">Modo oscuro</label>
+      <div className="table-container col-12">
+        <div className="d-flex flex-wrap text-white py-2 top-left-radius top-right-radius" style={{ background: darkBg, width: 'calc(100% - 2px)' }}>
+          {
+            headers.map((header, index) => (
+              <span key={index} className={`text-center col-${header.col}`}>
+                {header.label}
+              </span>
+            ))
+          }
         </div>
-      </div>
-      <div className="table-responsive table-container col-12">
-
-        <table className={`table shadow table-hover table-striped rounded ${darkMode ? 'table-dark' : ''}`}>
-          <thead>
-            <tr>
-              {
-                headers.map((header, index) => (
-                  <th key={index} scope="col" className={`${index === 0 ? 'top-left-radius' : ''} ${index === (headers.length - 1) ? 'top-right-radius' : ''}`}>
-                    <span className={'d-flex justify-content-center col-12'}>
-                      {header}
-                    </span>
-                  </th>
-                ))
-              }
-            </tr>
-          </thead>
-          <tbody>
-            {children}
-          </tbody>
-        </table>
+        <div className="col-12 m-0 p-0 scroll" style={{ maxHeight: '70vh', overflowY: 'scroll' }}>
+          {children}
+        </div>
       </div>
     </>
   )

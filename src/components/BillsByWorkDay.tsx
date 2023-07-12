@@ -8,11 +8,17 @@ import { BillItem } from '../types/billItem'
 import BillReview from './BillReview'
 import Swal from 'sweetalert2'
 
-const BillsByWorkDay = () => {
-  const [bills, setBills] = useState<Bill[]>([])
-  const { user, billFunctions } = useContext(AppContext)
+interface Props {
+  bills: Bill[]
+  getBillsByWorkDay: () => void
+}
+
+const BillsByWorkDay = ({ bills, getBillsByWorkDay }: Props) => {
+  const { billFunctions } = useContext(AppContext)
   const [showState, setShowState] = useState<number>(1)
   const [tmpBills, setTmpBills] = useState<Bill[]>([])
+  const darkBg = '#212529'
+  const darkBgStripped = '#2c3034'
 
   const getBillTotal = (bill: Bill) => {
     let billTotal = 0
@@ -52,6 +58,7 @@ const BillsByWorkDay = () => {
         showConfirmButton: false,
         timer: 1500
       })
+      getBillsByWorkDay()
     }
   }
 
@@ -72,37 +79,48 @@ const BillsByWorkDay = () => {
     }
   }
 
-
   useEffect(() => {
-    const getBillsByWorkDay = async () => {
-      const response = await useGetList<Bill[]>(`bills/billsByWorkDayUserClose/${user.workDayUser.id}`, true)
-      if (!response.error) {
-        setBills(response.data)
-        setTmpBills(billFunctions.bills.filter(bill => !bill.close))
-      }
+    if (showState === 1){
+      setTmpBills(billFunctions.bills.filter(bill => !bill.close))
     }
-    getBillsByWorkDay()
-  }, [])
+    if (showState === 2){
+      setTmpBills(bills.filter(bill => bill.close))
+    }
+  }, [bills])
 
   return (
-    <div className='col-10 d-flex flex-wrap'>
-      <div className="col-12 d-flex flex-wrap justify-content-center">
+    <div className='col-10 d-flex flex-wrap align-content-start' style={{ height: '100%', marginTop: '200px' }}>
+      <div className="col-12 d-flex flex-wrap justify-content-center" style={{ height: 'fit-content' }}>
         <ul className="nav nav-tabs">
           <li className="nav-item pointer">
             <span className={`nav-link ${showState === 1 ? 'active' : ''}`} onClick={() => handleShowBills(false, false)}>Pendientes</span>
           </li>
           <li className="nav-item pointer">
-            <span className={`nav-link ${showState === 2  ? 'active' : ''}`} onClick={() => handleShowBills(true, false)}>Cerradas</span>
+            <span className={`nav-link ${showState === 2 ? 'active' : ''}`} onClick={() => handleShowBills(true, false)}>Cerradas</span>
           </li>
           <li className="nav-item pointer">
             <span className={`nav-link ${showState === 3 ? 'active' : ''}`} onClick={() => handleShowBills(true, true)}>Todas</span>
           </li>
         </ul>
       </div>
-      <Table headers={['#', 'Nombre', 'Total', '']}>
+      <Table headers={[
+        { label: '#', col: 1 },
+        { label: 'Nombre', col: 3 },
+        { label: 'Monto', col: 3 },
+        { label: '', col: 5 },
+      ]}>
         {
           tmpBills.sort((a, b) => b.id - a.id).map((bill: Bill, index) => (
-            <TableRow crossOut={bill.isNull} classElement={bill.isNull ? 'cross-out text-danger' : ''} key={index} tableData={[bill.id.toString(), bill.client?.name, getBillTotal(bill).toString()]}>
+            <TableRow
+              bgColor={index % 2 === 0 ? darkBgStripped : darkBg}
+              crossOut={bill.isNull}
+              classElement={bill.isNull ? 'cross-out text-danger' : ''}
+              key={index}
+              tableData={[
+                { content: bill.id.toString(), col: 1 },
+                { content: bill.client?.name, col: 3 },
+                { content: getBillTotal(bill).toString(), col: 3 }
+              ]}>
               <BillReview bill={bill} />
               <button disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
               {

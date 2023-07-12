@@ -5,7 +5,7 @@ import WorkDayUserForm from '../components/WorkDayUserForm'
 import AppContext from '../context/AppContext'
 import CustomInputNumber from '../components/generics/CustomInputNumber'
 import { regexOptions } from '../enums/regexOptions'
-import { usePatch } from '../hooks/useAPI'
+import { useGetList, usePatch } from '../hooks/useAPI'
 import { parseCurrency } from '../utils/currencyParser'
 import { BillItem } from '../types/billItem'
 import { Bill } from '../types/bill'
@@ -49,6 +49,7 @@ const WorkDayUserPage = () => {
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
   const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
+  const [bills, setBills] = useState<Bill[]>([])
   const navigate = useNavigate()
 
   const handleCurrencyChange = (event: any, index: number) => {
@@ -110,9 +111,17 @@ const WorkDayUserPage = () => {
   }
 
   useEffect(() => {
-    console.log('workDayUserPage')
+    const getBillsByWorkDay = async () => {
+      const response = await useGetList<Bill[]>(`bills/billsByWorkDayUserClose/${user.workDayUser.id}`, true)
+      if (!response.error) {
+        console.log('bills', response.data)
+        setBills(response.data)
+      }
+    }
+    getBillsByWorkDay()
     setWorkDayUser()
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
+    console.log('currentWorkDayUser', currentWorkDayUser)
   }, [billFunctions.bills])
 
 

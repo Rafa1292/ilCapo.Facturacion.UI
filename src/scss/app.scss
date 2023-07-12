@@ -269,7 +269,7 @@ main {
 }
 
 .scroll::-webkit-scrollbar:vertical {
-  width: 5px;
+  width: 2px;
 }
 
 .scroll::-webkit-scrollbar-button:increment,
@@ -450,8 +450,8 @@ label {
 }
 
 .nav-tabs .nav-link {
-  color: black;
-  background: rgba(0,0,0,.05);
+  color: white;
+  background: #212529;
 }
 
 .nav-tabs .nav-link.active {
