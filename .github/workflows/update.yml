@@ -1,0 +1,16 @@
+name: updateApp
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update App
+        uses: ./.github/workflows/updateApp
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
