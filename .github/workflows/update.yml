@@ -3,7 +3,7 @@ name: updateApp
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   update:
