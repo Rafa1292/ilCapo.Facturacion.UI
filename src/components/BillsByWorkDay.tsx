@@ -14,7 +14,7 @@ interface Props {
 }
 
 const BillsByWorkDay = ({ bills, getBillsByWorkDay }: Props) => {
-  const { billFunctions } = useContext(AppContext)
+  const { billFunctions, user } = useContext(AppContext)
   const [showState, setShowState] = useState<number>(1)
   const [tmpBills, setTmpBills] = useState<Bill[]>([])
   const darkBg = '#212529'
@@ -124,7 +124,7 @@ const BillsByWorkDay = ({ bills, getBillsByWorkDay }: Props) => {
               <BillReview bill={bill} />
               <button disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
               {
-                showState === 2 &&
+                showState === 2 && !user.workDayUser.close &&
                 <button disabled={bill.isNull} className="btn btn-outline-danger mx-2" onClick={() => cancelBill(bill.id)}>Anular</button>
               }
             </TableRow>

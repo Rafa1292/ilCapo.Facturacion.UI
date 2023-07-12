@@ -12,6 +12,7 @@ import { Bill } from '../types/bill'
 import { PayMethod } from '../types/payMethod'
 import { Expense } from '../types/expense'
 import { Investment } from '../types/investment'
+import BillsPage from './BillsPage'
 
 const initialWordayUser: WorkDayUser = {
   id: 0,
@@ -48,7 +49,11 @@ const initialCurrencies: currencyCount[] = [
   { value: 5, count: 0 },
 ]
 
-const WorkDayUserPage = () => {
+interface Props {
+  isClose?: boolean
+}
+
+const WorkDayUserPage = ({ isClose = false }: Props) => {
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
   const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
@@ -282,38 +287,76 @@ const WorkDayUserPage = () => {
                 }
               </div>
             </div>
-          </div>
-          {
-            !currentWorkDayUser.close &&
-            <button className="btn btn-outline-danger col-5 mt-3" onClick={() => setCurrentWorkDayUser({ ...currentWorkDayUser, close: true })}>Cerrar jornada</button>
-            ||
-            <>
-              <CustomInputNumber value={currentWorkDayUser.finalCash} showLabel={false} customInputNumber={
-                {
-                  label: 'Dinero final', name: 'finalCash',
-                  handleChange: handleChange, pattern: regexOptions.decimal, validationMessage: 'Cantidad final invalida'
-                }
-              } />
-              <button className="btn btn-outline-danger col-5 mt-3" onClick={closeWorkDayUser}>Enviar</button>
-              <div className="col-12 text-center fs-5 my-3">
-                Conteo individual de dinero
-              </div>
-              <div className="col-12">
-                <div className="row">
-                  {currencies.map((currency, index) => (
-                    <div className="col-4 my-2" key={index}>
-                      <div className="row">
-                        <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{ alignContent: 'center' }}>
-                          <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{ alignContent: 'center' }}>{currency.value}</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="number" className="form-control bg-transparent border border-secondary" name={`currency${currency.value}`} value={currency.count} onChange={(event) => handleCurrencyChange(event, index)} />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+            <div className="col-12 d-flex my-4 flex-wrap">
+              <div className="col-4 d-flex flex-wrap">
+                <div className="col-6 fw-bold text-end">
+                  Dinero esperado:
+                </div>
+                <div className="col-3 px-3 text-start">
+                  {
+                    currentWorkDayUser.finalCash - currentWorkDayUser.diference
+                  }
                 </div>
               </div>
+              <div className="col-4 d-flex flex-wrap">
+                <div className="col-6 fw-bold text-end">
+                  Dinero actual:
+                </div>
+                <div className="col-3 px-3 text-start">
+                  {
+                    currentWorkDayUser.finalCash
+                  }
+                </div>
+              </div>
+              <div className="col-4 d-flex flex-wrap">
+                <div className="col-6 fw-bold text-end">
+                  Diferencia:
+                </div>
+                <div className="col-3 px-3 text-start">
+                  {
+                    currentWorkDayUser.diference
+                  }
+                </div>
+              </div>
+            </div>
+            <button className='btn btn-outline-danger' onClick={logout}>Cerrar sesion</button>
+          </div>
+          {
+            !isClose &&
+            <>
+              {
+                !currentWorkDayUser.close &&
+                <button className="btn btn-outline-danger col-5 mt-3" onClick={() => setCurrentWorkDayUser({ ...currentWorkDayUser, close: true })}>Cerrar jornada</button>
+                ||
+                <>
+                  <CustomInputNumber value={currentWorkDayUser.finalCash} showLabel={false} customInputNumber={
+                    {
+                      label: 'Dinero final', name: 'finalCash',
+                      handleChange: handleChange, pattern: regexOptions.decimal, validationMessage: 'Cantidad final invalida'
+                    }
+                  } />
+                  <button className="btn btn-outline-danger col-5 mt-3" onClick={closeWorkDayUser}>Enviar</button>
+                  <div className="col-12 text-center fs-5 my-3">
+                    Conteo individual de dinero
+                  </div>
+                  <div className="col-12">
+                    <div className="row">
+                      {currencies.map((currency, index) => (
+                        <div className="col-4 my-2" key={index}>
+                          <div className="row">
+                            <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{ alignContent: 'center' }}>
+                              <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{ alignContent: 'center' }}>{currency.value}</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="number" className="form-control bg-transparent border border-secondary" name={`currency${currency.value}`} value={currency.count} onChange={(event) => handleCurrencyChange(event, index)} />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              }
             </>
           }
         </div>
