@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import CustomModal from './generics/CustomModal'
 import GenericForm from './generics/GenericForm'
-import CustomInputNumber from './generics/CustomInputNumber'
 import CustomInputSelect from './generics/CustomInputSelect'
 import CustomInputCheck from './generics/CustomInputChecbox'
 import { Investment } from '../types/investment'
 import { InvestmentAccountHistory } from '../types/investmentAccountHistory'
 import { AccountHistory } from '../types/accountHistory'
 import { Provider } from '../types/provider'
-import { regexOptions } from '../enums/regexOptions'
 import { buttonTypes } from '../enums/buttonTypes'
 import CustomBtn from './generics/CustomBtn'
 import { parseCurrency } from '../utils/currencyParser'
@@ -64,8 +62,8 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
   const [inputs, setInputs] = useState<Input[]>([])
   const [currentInvestmentDetail, setCurrentInvestmentDetail] = useState<InvestmentDetail | null>(null)
 
-  const handleProvider = (event: any) => {
-    const { value } = event.target
+  const handleProvider = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
     setInvestment({ ...investment, providerId: value })
   }
 
@@ -98,7 +96,7 @@ const InvestmentForm = ({ refreshInvestments }: Props) => {
     return false
   }
 
-  const handleCheck = (event: any) => {
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target
     if (checked) {
       setInvestment({ ...investment, investmentHistories: [], [name]: checked })

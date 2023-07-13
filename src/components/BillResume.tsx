@@ -19,7 +19,6 @@ import carry from '../assets/icons/carry.png'
 import { useGet, usePost } from '../hooks/useAPI'
 import { Address } from '../types/address'
 import BillResumeDiscount from './BillResumeDiscount'
-import { get } from 'http'
 import AppContext from '../context/AppContext'
 interface Props {
   bill: Bill
@@ -30,7 +29,7 @@ interface Props {
 }
 
 const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProduct, commandBill }: Props) => {
-  const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+  const [triangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const [phone, setPhone] = React.useState<string>('')
   const [name, setName] = React.useState<string>('')
   const [addressId, setAddressId] = React.useState<number>(0)
@@ -77,24 +76,24 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
     return billSubtotal
   }
 
-  const handleChangePhone = (event: any) => {
+  const handleChangePhone = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setPhone(value)
     billFunctions.getClient(value, bill.id, bill.tableNumber)
   }
 
-  const handleChangeName = (event: any) => {
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setName(value)
   }
 
-  const handleChangeNewAddress = (event: any) => {
+  const handleChangeNewAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setNewAddress(value)
   }
 
-  const handleChangeAddress = (event: any) => {
-    const { value } = event.target
+  const handleChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
     billFunctions.setBillAddress(value, bill.id, bill.tableNumber)
     setAddressId(value)
   }
@@ -325,7 +324,7 @@ const BillResume = ({ bill, showPayMethods, pullApartBill, handleEditLinkedProdu
           </div>
           <div className="col-12 d-flex" style={{ overflow: 'hidden' }}>
             {
-              triangles.map((triangle, index) => {
+              triangles.map((index) => {
                 return (
                   <div key={index} className="triangle"></div>
                 )

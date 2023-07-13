@@ -14,7 +14,6 @@ import add from '../assets/icons/add.png'
 import { parseCurrency } from '../utils/currencyParser'
 import { BillItem } from '../types/billItem'
 import BillPayMethodSplit from './BillPayMethodSplit'
-import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import AppContext from '../context/AppContext'
 
@@ -31,23 +30,23 @@ const BillPayMethodPullApart = ({ close, billId, tableNumber, closeApartBill }: 
   const [addressId, setAddressId] = React.useState<number>(0)
   const [newAddressState, setNewAddressState] = React.useState<boolean>(false)
   const [newAddress, setNewAddress] = React.useState<string>('')
-  const [triangles, setTriangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+  const [triangles] = React.useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
   const { billFunctions } = useContext(AppContext)
   const [bill, setBill] = React.useState<Bill>(billFunctions.apartBill)
 
-  const handleChangePhone = (event: any) => {
+  const handleChangePhone = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setPhone(value)
     billFunctions.getClient(value, bill.id, bill.tableNumber, true)
   }
 
-  const handleChangeAddress = (event: any) => {
+  const handleChangeAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    setAddressId(value)
-    billFunctions.setBillAddress(value, billId, tableNumber, true)
+    setAddressId(Number(value))
+    billFunctions.setBillAddress(Number(value), billId, tableNumber, true)
   }
 
-  const handleChangeName = (event: any) => {
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setName(value)
   }
@@ -59,7 +58,7 @@ const BillPayMethodPullApart = ({ close, billId, tableNumber, closeApartBill }: 
     }
   }
 
-  const handleChangeNewAddress = (event: any) => {
+  const handleChangeNewAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setNewAddress(value)
   }

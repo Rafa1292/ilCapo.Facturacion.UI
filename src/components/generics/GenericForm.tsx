@@ -14,7 +14,7 @@ interface Props {
 
 const GenericForm = ({ children, submitText, handleSubmit, errors, cancel, formNeedsValidation = true }: Props) => {
   const [validated, setValidated] = useState(false)
-
+  // eslint-disable-next-line
   const validateForm = async (event: any) => {
     if (!formNeedsValidation) {
       event.preventDefault()
@@ -40,7 +40,7 @@ const GenericForm = ({ children, submitText, handleSubmit, errors, cancel, formN
           <ul className="list-group list-group-flush">
             {
               errors.map((error, index) => (
-                <li key={index} style={{border: 'none'}} className="list-group-item p-1 text-danger">{error}</li>
+                <li key={index} style={{ border: 'none' }} className="list-group-item p-1 text-danger">{error}</li>
               ))
             }
           </ul>

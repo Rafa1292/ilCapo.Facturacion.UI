@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomInputNumber from './generics/CustomInputNumber'
 import { AccountHistory } from '../types/accountHistory'
-import { PayMethod } from '../types/payMethod'
 import { BillAccountHistory } from '../types/billAccountHistory'
-import BillPayMethodForm from './BillPayMethodForm'
 import BillPayMethodSplitForm from './BillPayMethodSplitForm'
-import AppContext from '../context/AppContext'
 import Swal from 'sweetalert2'
 
 
@@ -26,10 +23,10 @@ interface Props {
 const BillPayMethodSplit = ({ getBillTotal, closeBillSplit, close, size = 'col-4', initialParts = 2 }: Props) => {
   const [parts, setParts] = useState<number>(0)
   const [billAccountHistoriesContainerList, setBillAccountHistoriesContainerList] = useState<billAccountHistoriesContainer[]>([])
-  const { billFunctions, user } = useContext(AppContext)
 
-  const handleChange = (event: any) => {
-    const numberOfParts = event.target.value
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
+    const numberOfParts = value
     const tmpBillAccountHistoriesContainer: billAccountHistoriesContainer[] = []
     for (let i = 1; i <= numberOfParts; i++) {
       tmpBillAccountHistoriesContainer.push({ id: i, billAccountHistories: [] })
@@ -129,11 +126,11 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit, close, size = 'col-4
 
 
   useEffect(() => {
-    handleChange({ target: { value: initialParts } })
+    handleChange({ target: { value: initialParts.toString() } } as React.ChangeEvent<HTMLInputElement>)
   }, [])
 
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center position-relative align-content-start' style={{ height: 'calc(100vh - 45px)'}}>
+    <div className='col-12 d-flex flex-wrap justify-content-center position-relative align-content-start' style={{ height: 'calc(100vh - 45px)' }}>
       <div className="col-4 d-flex flex-wrap justify-content-center ">
         <CustomInputNumber isRequired={false} showLabel={false} value={parts} customInputNumber={
           {
@@ -143,7 +140,7 @@ const BillPayMethodSplit = ({ getBillTotal, closeBillSplit, close, size = 'col-4
         } />
       </div>
 
-      <div className="col-12 d-flex flex-wrap justify-content-center scroll" style={{height: '85vh', overflowY: 'scroll'}}>
+      <div className="col-12 d-flex flex-wrap justify-content-center scroll" style={{ height: '85vh', overflowY: 'scroll' }}>
         {
           billAccountHistoriesContainerList?.length > 0 &&
           billAccountHistoriesContainerList?.map((billAccountHistoriesContainer, index) => (

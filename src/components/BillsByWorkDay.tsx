@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useGet, useGetList } from '../hooks/useAPI'
+import { useGet } from '../hooks/useAPI'
 import { Bill } from '../types/bill'
 import AppContext from '../context/AppContext'
 import Table from './generics/Table'
@@ -50,7 +50,7 @@ const BillsByWorkDay = ({ bills, getBillsByWorkDay }: Props) => {
   }
 
   const cancelBill = async (billId: number) => {
-    const response = await useGet<any>(`bills/cancel/${billId}`, true)
+    const response = await useGet(`bills/cancel/${billId}`, true)
     if (!response.error) {
       Swal.fire({
         icon: 'success',

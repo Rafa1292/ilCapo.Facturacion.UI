@@ -47,7 +47,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
     const getModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.combinableModifierGroupId}`, false)
       if (!response.error) {
-        response.data.elements?.map((tmpElement, index) => {
+        response.data.elements?.map((tmpElement) => {
           if (tmpElement.productReference?.productId === productId) {
             setCombine(true)
             setSelectedElement(tmpElement)
@@ -63,7 +63,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
     const getUpgradeModifierGroup = async () => {
       const response = await useGet<ModifierGroup>(`modifierGroups/${element.modifierUpgrade.newModifierGroupId}`, false)
       if (!response.error) {
-        response.data.elements?.map((tmpElement, index) => {
+        response.data.elements?.map((tmpElement) => {
           if (tmpElement.productReference && tmpElement.productReference?.productId === productId) {
             setCombine(true)
             setSelectedElement(tmpElement)

@@ -10,9 +10,6 @@ import { parseCurrency } from '../utils/currencyParser'
 import { BillItem } from '../types/billItem'
 import { Bill } from '../types/bill'
 import { PayMethod } from '../types/payMethod'
-import { Expense } from '../types/expense'
-import { Investment } from '../types/investment'
-import BillsPage from './BillsPage'
 
 const initialWordayUser: WorkDayUser = {
   id: 0,
@@ -62,8 +59,8 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
   const [totalBills, setTotalBills] = useState(0)
   const navigate = useNavigate()
 
-  const handleCurrencyChange = (event: any, index: number) => {
-    const { value } = event.target
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = Number(event.target.value)
     const newCurrencies = [...currencies]
     newCurrencies[index].count = value
     const total = newCurrencies.reduce((total, currency) => total + (currency.value * currency.count), 0)
@@ -71,8 +68,8 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
     setCurrencies(newCurrencies)
   }
 
-  const handleChange = (event: any) => {
-    const { value } = event.target
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
     setCurrentWorkDayUser({ ...currentWorkDayUser, finalCash: value })
   }
 

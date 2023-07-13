@@ -1,7 +1,6 @@
 import React from 'react'
 import AccountHistoryForm from './AccountHistoryForm'
 import { parseCurrency } from '../utils/currencyParser'
-import CustomInputNumber from './generics/CustomInputNumber'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import CustomBtn from './generics/CustomBtn'

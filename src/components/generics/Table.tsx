@@ -10,9 +10,7 @@ interface Props {
   headers: header[]
 }
 const Table = ({ headers, children }: Props) => {
-  const [darkMode, setDarkMode] = React.useState<boolean>(true)
   const darkBg = '#212529'
-  const darkBgStripped = '#2c3034'
 
   return (
     <>

@@ -1,15 +1,14 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Bill } from '../types/bill'
 import { BillFunctions } from '../types/billFunctions'
 import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
-import { useGet, useGetList, usePatch, usePost } from './useAPI'
+import { useGet, useGetList, usePatch } from './useAPI'
 import { Client } from '../types/client'
 import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
-import AppContext from '../context/AppContext'
 
 const initialBillAccounthistory: BillAccountHistory = {
   id: 0,

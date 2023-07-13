@@ -7,7 +7,6 @@ import { SaleItemCategory } from '../../types/saleItemCategory'
 import AppContext from '../../context/AppContext'
 import { Bill } from '../../types/bill'
 import ProgressBarContainer from '../../containers/generics/ProgressBarContainer'
-import { table } from 'console'
 
 interface Props {
   top: number

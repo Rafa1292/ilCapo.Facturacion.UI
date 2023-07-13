@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { SaleItem } from '../../types/saleItem'
 import BillMakerProducts from './BillMakerProducts'
@@ -11,7 +11,6 @@ import { LinkedProductModifier } from '../../types/linkedProductModifier'
 import { LinkedProductModifierElement } from '../../types/linkedProductModifierElement'
 import { ModifierElement } from '../../types/modifierElement'
 import { parseCurrency } from '../../utils/currencyParser'
-import AppContext from '../../context/AppContext'
 
 interface Props {
   saleItemCategory: SaleItemCategory
@@ -91,7 +90,7 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
 
   const newBillItemLinkedProduct = (saleItem: SaleItem): BillItemLinkedProduct[] => {
     const billItemLinkedProducts: BillItemLinkedProduct[] = []
-    saleItem.saleItemProducts.map((saleItemProduct, index) => {
+    saleItem.saleItemProducts.map((saleItemProduct) => {
       const billItemLinkedProduct = {
         ...initialBillItemLinkedProduct,
         id: 0,
@@ -118,7 +117,7 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
 
   const newLinkedProductModifiers = (product: Product): LinkedProductModifier[] => {
     const linkedProductModifiers: LinkedProductModifier[] = []
-    product.productModifiers.map((productModifier, index) => {
+    product.productModifiers.map((productModifier) => {
       const linkedProductModifier: LinkedProductModifier = {
         id: 0,
         linkedProductId: 0,

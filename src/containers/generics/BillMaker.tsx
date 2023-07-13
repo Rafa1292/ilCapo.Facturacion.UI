@@ -3,17 +3,13 @@ import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { usePost, usePatch } from '../../hooks/useAPI'
 import BillMakerItems from '../../components/billMaker/BillMakerItems'
-import useBill from '../../hooks/useBill'
 import BillResume from '../../components/BillResume'
 import CustomInputSelect from '../../components/generics/CustomInputSelect'
-import { BillItemLinkedProduct } from '../../types/billItemLinkedProduct'
 import { BillItem } from '../../types/billItem'
 import Swal from 'sweetalert2'
 import AppContext from '../../context/AppContext'
-import { BillFunctions } from '../../types/billFunctions'
 import BillPayMethod from '../../components/BillPayMethod'
 import { Bill } from '../../types/bill'
-import { Client } from '../../types/client'
 
 interface Props {
   close: () => void
@@ -50,7 +46,6 @@ const BillMaker = ({ close, saleItemCategories, bill }: Props) => {
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({ saleItemId: 0 } as BillItem)
   const { user, billFunctions } = useContext(AppContext)
-  const { addBillItem, removeLinkedProduct, getClient } = billFunctions
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
 
@@ -90,8 +85,8 @@ const BillMaker = ({ close, saleItemCategories, bill }: Props) => {
     setSaleItemCategory(saleItemCategory)
   }
 
-  const handleChange = (event: any) => {
-    const { value } = event.target
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
     const tmpSearchProduct = searchProducts.find(searchProduct => searchProduct.saleItemId === value)
     if (tmpSearchProduct) {
       const tmpSaleItemCategory = saleItemCategories.find(saleItemCategory => saleItemCategory.id === tmpSearchProduct.categoryId)

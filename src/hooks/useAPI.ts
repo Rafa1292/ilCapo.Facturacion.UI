@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { get } from 'http'
 import Swal from 'sweetalert2'
 
 class CustomResponse<T> {
@@ -39,8 +38,9 @@ const useGetList = async<T>(route: string, api: boolean): Promise<CustomResponse
 const usePost = async<T>(route: string, data: T, api: boolean): Promise<CustomResponse<T>> => {
   return await useCustom<T>(route, 'post', data, api)
 }
-
+// eslint-disable-next-line
 const usePostWithResponse = async (route: string, data: any, api: boolean): Promise<CustomResponse<any>> => {
+  // eslint-disable-next-line
   return await useCustom<any>(route, 'post', data, api)
 }
 

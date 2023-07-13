@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 const higherThanZero = (value: any) => {
   return value !== 0
 }
@@ -15,7 +16,7 @@ export const hideErrorMsg = (name: string) => {
     msg.style.display = 'none'
   }
 }
-
+// eslint-disable-next-line
 export const validateNumber = (value: any, name: string, regex: RegExp, couldBeZero?: boolean): boolean => {
   const isValid = regex.test(value)
   if (isValid) {
@@ -33,6 +34,7 @@ export const validateNumber = (value: any, name: string, regex: RegExp, couldBeZ
   }
 }
 
+// eslint-disable-next-line
 export const validateString = (value: any, name: string, length: number): boolean => {
   const currentLength = length === 0 ? 1000 : length
   const reg = new RegExp(`^[a-zA-Z0-9\\u00E0-\\u00FC\\s?]{1,${currentLength}}$`)

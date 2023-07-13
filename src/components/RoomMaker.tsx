@@ -15,7 +15,7 @@ const RoomMaker = () => {
   const [currentBussinessConfig, setCurrentBussinessConfig] = React.useState<BussinessConfig>(initialBussinesConfig)
   const { setRoomEdit, system, getBussinessConfig } = useContext(AppContext)
 
-  const newTable = (ev: any, type: string) => {
+  const newTable = (ev: React.DragEvent<HTMLDivElement>, type: string) => {
     setCurrentBussinessConfig(
       {
         ...currentBussinessConfig,
@@ -30,7 +30,7 @@ const RoomMaker = () => {
     )
   }
 
-  const editTable = (ev: any, tableNumber: number) => {
+  const editTable = (ev: React.DragEvent<HTMLDivElement>, tableNumber: number) => {
     const newTables = currentBussinessConfig.tables.map(table => {
       if (table.number === tableNumber) {
         return { ...table, x: getPosX(ev, table.type), y: getPosY(ev, table.type) }
@@ -59,7 +59,7 @@ const RoomMaker = () => {
     )
   }
 
-  const getPosX = (ev: any, type: string): number => {
+  const getPosX = (ev: React.DragEvent<HTMLDivElement>, type: string): number => {
     const viewPortWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     const posX = type === 'bar_container' ? ev.clientX - 35 : ev.clientX - 70
     if (posX < 200) {
@@ -71,7 +71,7 @@ const RoomMaker = () => {
     return posX
   }
 
-  const getPosY = (ev: any, type: string): number => {
+  const getPosY = (ev: React.DragEvent<HTMLDivElement>, type: string): number => {
     const viewPortHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
     const posY = type === 'bar_container' ? ev.clientY - 70 : ev.clientY - 65
     if (posY < 60) {
@@ -121,7 +121,7 @@ const RoomMaker = () => {
             <CustomInputNumber isRequired={false} showLabel={true} value={currentBussinessConfig.menuWaitTime} customInputNumber={
               {
                 label: 'Espera con menu', name: 'menuWaitTime',
-                handleChange: ((ev: any) => setCurrentBussinessConfig({ ...currentBussinessConfig, menuWaitTime: ev.target.value })), pattern: '', validationMessage: 'Ingrese un monto válido'
+                handleChange: ((ev: React.ChangeEvent<HTMLInputElement>) => setCurrentBussinessConfig({ ...currentBussinessConfig, menuWaitTime: Number(ev.target.value) })), pattern: '', validationMessage: 'Ingrese un monto válido'
               }
             } />
           </div>
@@ -129,7 +129,7 @@ const RoomMaker = () => {
             <CustomInputNumber isRequired={false} showLabel={true} value={currentBussinessConfig.serveWaitTime} customInputNumber={
               {
                 label: 'Espera de orden', name: 'serveWaitTime',
-                handleChange: ((ev: any) => setCurrentBussinessConfig({ ...currentBussinessConfig, serveWaitTime: ev.target.value })), pattern: '', validationMessage: 'Ingrese un monto válido'
+                handleChange: ((ev: React.ChangeEvent<HTMLInputElement>) => setCurrentBussinessConfig({ ...currentBussinessConfig, serveWaitTime: Number(ev.target.value) })), pattern: '', validationMessage: 'Ingrese un monto válido'
               }
             } />
           </div>

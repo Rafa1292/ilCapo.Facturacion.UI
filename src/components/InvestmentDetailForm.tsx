@@ -37,7 +37,7 @@ interface Props {
 const InvestmentDetailForm = ({ handleEditInvestmentDetail, handleInvestmentDetail, brands, measures, inputs, currentInvestmentDetail }: Props) => {
   const [investmentDetail, setInvestmentDetail] = useState(initialInvestmentDetail)
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setInvestmentDetail({ ...investmentDetail, [name]: value })
   }

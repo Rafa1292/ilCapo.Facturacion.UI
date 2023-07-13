@@ -1,6 +1,5 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import Navbar from '../../components/generics/Navbar'
-import SideMenu from '../../components/generics/SideMenu'
 import AppContext from '../../context/AppContext'
 import Login from '../auth/Login'
 import WorkDayUserPage from '../../pages/WorkDayUserPage'

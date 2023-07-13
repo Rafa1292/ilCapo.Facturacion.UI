@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Form } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import CustomModal from './generics/CustomModal'
 import { Expense } from '../types/expense'
 import { useGetList, usePost } from '../hooks/useAPI'
@@ -45,7 +45,7 @@ const initialExpenseAccountHistory: ExpenseAccountHistory = {
 }
 
 const ExpenseForm = () => {
-  const { user,setWorkDayUser } = useContext(AppContext)
+  const { user, setWorkDayUser } = useContext(AppContext)
   const [show, setShow] = useState<boolean>(false)
   const [expense, setExpense] = useState(initialExpense)
   const [providers, setProviders] = useState<Provider[]>([])
@@ -57,7 +57,7 @@ const ExpenseForm = () => {
       setErrors(['Debe seleccionar un proveedor'])
     } else {
       setErrors([])
-      const response = await usePost('expenses', {...expense, workDayUserId: user.workDayUser.id }, true)
+      const response = await usePost('expenses', { ...expense, workDayUserId: user.workDayUser.id }, true)
       if (!response.error) {
         setExpense(initialExpense)
         setWorkDayUser()
@@ -67,13 +67,13 @@ const ExpenseForm = () => {
 
   }
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setExpense({ ...expense, [name]: value })
   }
 
-  const handleProvider = (event: any) => {
-    const { value } = event.target
+  const handleProvider = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value)
     setExpense({ ...expense, providerId: value })
   }
 
@@ -93,7 +93,7 @@ const ExpenseForm = () => {
     } else {
       setErrors([])
       const expenseAccountHistory: ExpenseAccountHistory = { ...initialExpenseAccountHistory, accountHistory, id: expense.expenseAccountHistories.length + 1 }
-      const response = await usePost('expenses', {...expense, expenseAccountHistories: [expenseAccountHistory], workDayUserId: user.workDayUser.id }, true)
+      const response = await usePost('expenses', { ...expense, expenseAccountHistories: [expenseAccountHistory], workDayUserId: user.workDayUser.id }, true)
       if (!response.error) {
         setExpense(initialExpense)
         setWorkDayUser()
@@ -127,7 +127,7 @@ const ExpenseForm = () => {
     return isValid
   }
 
-  const handleCheck = (event: any) => {
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target
     if (checked) {
       setExpense({ ...expense, expenseAccountHistories: [], [name]: checked })
@@ -191,7 +191,8 @@ const ExpenseForm = () => {
                   return (
                     <div key={index} className="col-12 d-flex flex-wrap justify-content-start">
                       <span className=''>
-                        <CustomBtn buttonType={buttonTypes.delete} height='20px' action={() => handleDeleteAccountHistory(expenseAccountHistory.id)} />                      </span>
+                        <CustomBtn buttonType={buttonTypes.delete} height='20px' action={() => handleDeleteAccountHistory(expenseAccountHistory.id)} />
+                      </span>
                       <span className='mx-2 d-flex flex-wrap justify-content-start'>
                         -{expenseAccountHistory.accountHistory.payMethod.name}
                       </span>

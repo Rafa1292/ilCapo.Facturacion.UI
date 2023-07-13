@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import GenericForm from './generics/GenericForm'
 import { WorkDayUser } from '../types/workDayUser'
 import CustomInputNumber from './generics/CustomInputNumber'
 import { regexOptions } from '../enums/regexOptions'
 import AppContext from '../context/AppContext'
-import { useGet, usePost } from '../hooks/useAPI'
+import { usePost } from '../hooks/useAPI'
 
 const initialWorkDayUser: WorkDayUser = {
   id: 0,
@@ -47,7 +47,7 @@ const initialCurrencies: currencyCount[] = [
 const WorkDayUserForm = () => {
   const { setWorkDayUser, user, logout } = useContext(AppContext)
   const [currentWorkDayUser, setCurrentWorkDayUser] = useState({ ...initialWorkDayUser })
-  const [errors, setErrors] = useState([])
+  const [errors] = useState([])
   const [currencies, setCurrencies] = useState([...initialCurrencies])
   const submitText = 'Agregar'
 
@@ -61,13 +61,13 @@ const WorkDayUserForm = () => {
 
 
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setCurrentWorkDayUser({ ...currentWorkDayUser, [name]: value })
   }
 
-  const handleCurrencyChange = (event: any, index: number) => {
-    const { value } = event.target
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = Number(event.target.value)
     const newCurrencies = [...currencies]
     newCurrencies[index].count = value
     const total = newCurrencies.reduce((total, currency) => total + (currency.value * currency.count), 0)

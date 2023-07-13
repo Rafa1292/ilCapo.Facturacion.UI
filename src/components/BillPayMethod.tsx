@@ -6,7 +6,6 @@ import Swal from 'sweetalert2'
 import BillPayMethodForm from './BillPayMethodForm'
 import BillPayMethodSplit from './BillPayMethodSplit'
 import BillPayMethodPullApart from './BillPayMethodPullApart'
-import { BillFunctions } from '../types/billFunctions'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import AppContext from '../context/AppContext'
 

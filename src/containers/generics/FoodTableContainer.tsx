@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import useBill from '../../hooks/useBill'
 import FoodTable from '../../components/generics/FoodTable'
 import { Bill } from '../../types/bill'
-import { Client } from '../../types/client'
 import AppContext from '../../context/AppContext'
 
 interface Props {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BillItem } from '../types/billItem'
 import { parseCurrency } from '../utils/currencyParser'
 import CustomBtn from './generics/CustomBtn'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { AccountHistory } from '../types/accountHistory'
 import BillPayMethodForm from './BillPayMethodForm'
 import { BillAccountHistory } from '../types/billAccountHistory'
@@ -16,7 +16,7 @@ interface Props {
   showAction?: boolean
 }
 
-const BillPayMethodSplitForm = ({ billItemListId, showAction, closeBill, close, wouldBePay, fastPayAction, removeAccountHistory, getBillPartialTotal, billAccountHistories, setBillAccountHistory }: Props) => {
+const BillPayMethodSplitForm = ({ billItemListId, showAction, fastPayAction, removeAccountHistory, getBillPartialTotal, billAccountHistories, setBillAccountHistory }: Props) => {
   const setAccountHistory = (accountHistory: AccountHistory): boolean => {
     setBillAccountHistory(accountHistory, billItemListId)
     return true

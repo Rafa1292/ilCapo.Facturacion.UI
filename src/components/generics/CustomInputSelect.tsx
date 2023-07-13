@@ -3,8 +3,6 @@ import { Col, Form, InputGroup } from 'react-bootstrap'
 import DatalistInput from 'react-datalist-input'
 import { CustomInputAttributes } from '../../types/customInputAttributes'
 import 'react-datalist-input/dist/styles.css'
-import CustomBtn from './CustomBtn'
-import { buttonTypes } from '../../enums/buttonTypes'
 
 interface option {
   value: number

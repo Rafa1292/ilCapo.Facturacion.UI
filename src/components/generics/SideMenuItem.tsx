@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { BillItem } from '../../types/billItem'
 import { parseCurrency } from '../../utils/currencyParser'
-import ProgressBar from './ProgressBar'
 import { Bill } from '../../types/bill'
 import moto from '../../assets/icons/moto.png'
 import carry from '../../assets/icons/carry.png'
@@ -10,7 +9,6 @@ import CustomBtn from './CustomBtn'
 import BillMaker from '../../containers/generics/BillMaker'
 import { buttonTypes } from '../../enums/buttonTypes'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { BillFunctions } from '../../types/billFunctions'
 import useBill from '../../hooks/useBill'
 
 interface Props {
@@ -19,7 +17,9 @@ interface Props {
 }
 
 const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
+  // eslint-disable-next-line
   const [initialTime, setInitialTime] = useState<Date | null>(null)
+  // eslint-disable-next-line
   const [finalTime, setFinalTime] = useState<Date | null>(null)
   const { system } = useContext(AppContext)
   const [close, setClose] = useState(true)

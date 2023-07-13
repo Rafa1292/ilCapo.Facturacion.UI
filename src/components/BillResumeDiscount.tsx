@@ -15,8 +15,8 @@ const BillResumeDiscount = ({ total, billId, tableNumber }: Props) => {
   const [discountAmount, setDiscountAmount] = React.useState(0)
   const { billFunctions } = useContext(AppContext)
 
-  const handleChangeDiscount = (e: any) => {
-    const value = e.target.value
+  const handleChangeDiscount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value)
     if (value > 100) {
       setDiscount(100)
       setDiscountAmount(total)
@@ -26,8 +26,8 @@ const BillResumeDiscount = ({ total, billId, tableNumber }: Props) => {
     }
   }
 
-  const handleChangeDiscountAmount = (e: any) => {
-    const value = e.target.value
+  const handleChangeDiscountAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value)
     setDiscountAmount(value)
     setDiscount((value * 100) / total)
   }

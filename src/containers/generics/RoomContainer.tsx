@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import Content from '../../components/generics/Content'
 import FoodTableContainer from './FoodTableContainer'
 import { tableProps } from '../../types/tableProps'
-import { Bill } from '../../types/bill'
 import AppContext from '../../context/AppContext'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 

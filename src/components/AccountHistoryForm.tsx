@@ -32,16 +32,17 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
   const [payMethods, setPayMethods] = useState<PayMethod[]>([])
   const [payWith, setPayWith] = useState<number>(0)
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setAccountHistory({ ...accountHistory, [name]: Number(value) })
   }
 
-  const handlePaymethod = (event: any) => {
+  const handlePaymethod = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const payMethod = payMethods.find(paymethod => paymethod.id === value)
+    const valueNumber = Number(value)
+    const payMethod = payMethods.find(paymethod => paymethod.id === valueNumber)
     if (payMethod) {
-      setAccountHistory({ ...accountHistory, payMethodId: value, payMethod })
+      setAccountHistory({ ...accountHistory, payMethodId: valueNumber, payMethod })
     }
   }
 
@@ -53,8 +54,8 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
     }
   }
 
-  const handleChangeDiference = (event: any) => {
-    setPayWith(event.target.value)
+  const handleChangeDiference = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPayWith(Number(event.target.value))
   }
 
   const getFastPayAccountHistory = (): AccountHistory => {

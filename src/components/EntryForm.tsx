@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import CustomModal from './generics/CustomModal'
 import AppContext from '../context/AppContext'
-import GenericForm from './generics/GenericForm'
 import { Entry } from '../types/entry'
 import { AccountHistory } from '../types/accountHistory'
 import CustomInputText from './generics/CustomInputText'
@@ -26,9 +25,8 @@ const EntryForm = () => {
   const [entry, setEntry] = useState<Entry>(initialEntry)
   const { user, setWorkDayUser } = useContext(AppContext)
   const [show, setShow] = useState<boolean>(false)
-  const [errors, setErrors] = useState<string[]>([])
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setEntry({ ...entry, [name]: value })
   }
