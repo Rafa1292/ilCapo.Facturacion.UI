@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Navbar from '../../components/generics/Navbar'
 import AppContext from '../../context/AppContext'
 import Login from '../auth/Login'
@@ -12,7 +12,7 @@ interface Props {
 const Layout = ({ children }: Props) => {
   const { user } = useContext(AppContext)
   const location = useLocation()
-  
+
   return (
     <>
       {user.loggedIn === false

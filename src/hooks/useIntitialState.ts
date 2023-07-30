@@ -48,6 +48,7 @@ const useInitialState = (): appState => {
     if (!response.error && response.data !== null) {
       setUser({
         ...user,
+        loggedIn: true,
         workDayUser: { ...response.data }
       })
       return response.data
@@ -90,6 +91,11 @@ const useInitialState = (): appState => {
         bussinessConfig: response.data,
         loader: false
       })
+    } else {
+      setSystem({
+        ...system,
+        loader: false
+      })
     }
   }
 
@@ -97,18 +103,10 @@ const useInitialState = (): appState => {
     const initializeComponent = async () => {
       const credentials = localStorage.getItem('credentials')
       if (credentials) {
-        const tmpUser = JSON.parse(credentials)
-        const tmpWorkDayUser = await setWorkDayUser(tmpUser.userInfo)
-        const tmpUserState: userState = {
-          userInfo: tmpUser.userInfo,
-          loggedIn: true,
-          workDayUser: tmpWorkDayUser !== undefined ? tmpWorkDayUser : { ...user.workDayUser }
-        }
-        if (tmpUserState.workDayUser.id > 0)
-          setUser({ ...tmpUserState, workDayUser: tmpUserState.workDayUser })
-
+        const tmpUser = JSON.parse(credentials) as userState
+        await setUser({...tmpUser, loggedIn: true, workDayUser: { id: 0 } as WorkDayUser})
+        await billFunctions.getOpenBills()
       }
-      await billFunctions.getOpenBills()
       await getBussinessConfig()
     }
     initializeComponent()

@@ -52,7 +52,7 @@ const WorkDayUserForm = () => {
   const submitText = 'Agregar'
 
   const addWorkDayUser = async () => {
-    const response = await usePost<WorkDayUser>('workDayUsers', { ...currentWorkDayUser, userId: user.userInfo?.id }, true)
+    const response = await usePost<WorkDayUser>('workDayUsers', { ...currentWorkDayUser, userId: user.userInfo?.userId }, true)
     if (!response.error) {
       setCurrentWorkDayUser(response.data)
       setWorkDayUser()
