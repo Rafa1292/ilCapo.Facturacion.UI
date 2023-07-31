@@ -31,7 +31,7 @@ const initialBillItem: BillItem = {
   tax: 0,
   unitPrice: 0,
   createdBy: 0,
-  updatedBy: 0
+  updatedBy: 0,
 }
 
 const initialBillItemLinkedProduct: BillItemLinkedProduct = {
@@ -44,7 +44,7 @@ const initialBillItemLinkedProduct: BillItemLinkedProduct = {
   description: '',
   products: [],
   createdBy: 0,
-  updatedBy: 0
+  updatedBy: 0,
 }
 
 const initialLinkedProduct: LinkedProduct = {
@@ -57,7 +57,7 @@ const initialLinkedProduct: LinkedProduct = {
   productId: 0,
   unitPrice: 0,
   createdBy: 0,
-  updatedBy: 0
+  updatedBy: 0,
 }
 
 const initialLinkedProductModifierElement: LinkedProductModifierElement = {
@@ -69,10 +69,14 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
   quantity: 1,
   modifierElementId: 0,
   createdBy: 0,
-  updatedBy: 0
+  updatedBy: 0,
 }
 
-const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) => {
+const BillMakerItems = ({
+  saleItemCategory,
+  tableNumber,
+  editBilItem,
+}: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
 
@@ -83,12 +87,14 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
       saleItemId: saleItem.id,
       unitPrice: saleItem.price,
       description: saleItem.name,
-      billProducts: newBillItemLinkedProduct(saleItem)
+      billProducts: newBillItemLinkedProduct(saleItem),
     }
     setBillItem(currentBillItem)
   }
 
-  const newBillItemLinkedProduct = (saleItem: SaleItem): BillItemLinkedProduct[] => {
+  const newBillItemLinkedProduct = (
+    saleItem: SaleItem
+  ): BillItemLinkedProduct[] => {
     const billItemLinkedProducts: BillItemLinkedProduct[] = []
     saleItem.saleItemProducts.map((saleItemProduct) => {
       const billItemLinkedProduct = {
@@ -96,26 +102,30 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
         id: 0,
         saleItemProductId: saleItemProduct.id,
         itemNumber: 1,
-        products: [newLinkedProduct(saleItemProduct)]
+        products: [newLinkedProduct(saleItemProduct)],
       }
       billItemLinkedProducts.push(billItemLinkedProduct)
     })
     return billItemLinkedProducts
   }
 
-  const newLinkedProduct = (saleItemProduct: SaleItemProduct): LinkedProduct => {
+  const newLinkedProduct = (
+    saleItemProduct: SaleItemProduct
+  ): LinkedProduct => {
     const linkedProduct = {
       ...initialLinkedProduct,
       id: billItem.billProducts.length + 1,
       productId: saleItemProduct.product.id,
-      unitPrice: saleItemProduct.product.price,
+      unitPrice: saleItemProduct.product.price || 0,
       name: saleItemProduct.product.name,
-      modifiers: newLinkedProductModifiers(saleItemProduct.product)
+      modifiers: newLinkedProductModifiers(saleItemProduct.product),
     }
     return linkedProduct
   }
 
-  const newLinkedProductModifiers = (product: Product): LinkedProductModifier[] => {
+  const newLinkedProductModifiers = (
+    product: Product
+  ): LinkedProductModifier[] => {
     const linkedProductModifiers: LinkedProductModifier[] = []
     product.productModifiers.map((productModifier) => {
       const linkedProductModifier: LinkedProductModifier = {
@@ -130,29 +140,39 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
         name: productModifier.modifierGroup.name,
         quantity: 1,
         createdBy: 0,
-        updatedBy: 0
+        updatedBy: 0,
       }
       linkedProductModifiers.push(linkedProductModifier)
     })
     return linkedProductModifiers
   }
 
-  const newLinkedProductModifierElement = (modifierElement: ModifierElement, saleItemProductId: number) => {
+  const newLinkedProductModifierElement = (
+    modifierElement: ModifierElement,
+    saleItemProductId: number
+  ) => {
     const newLinkedProductModifierElement: LinkedProductModifierElement = {
       ...initialLinkedProductModifierElement,
       modifierElementId: modifierElement.id,
       name: modifierElement.name,
       price: modifierElement.price,
-      quantity: 1
+      quantity: 1,
     }
     for (const billItemLinkedProduct of billItem.billProducts) {
       if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
         for (const linkedProduct of billItemLinkedProduct.products) {
           for (const productModifier of linkedProduct.modifiers) {
-            if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
-              const currentLinkedProductModifierElement = productModifier.elements.find((x) => x.modifierElementId === modifierElement.id)
+            if (
+              productModifier.modifierGroupId ===
+              modifierElement.modifierGroupId
+            ) {
+              const currentLinkedProductModifierElement =
+                productModifier.elements.find(
+                  (x) => x.modifierElementId === modifierElement.id
+                )
               if (currentLinkedProductModifierElement) {
-                currentLinkedProductModifierElement.quantity = currentLinkedProductModifierElement.quantity + 1
+                currentLinkedProductModifierElement.quantity =
+                  currentLinkedProductModifierElement.quantity + 1
               } else {
                 productModifier.elements.push(newLinkedProductModifierElement)
               }
@@ -163,28 +183,53 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
     }
   }
 
-  const newCombinedLinkedProduct = (linkedProduct: LinkedProduct, saleItemProductId: number) => {
+  const newCombinedLinkedProduct = (
+    linkedProduct: LinkedProduct,
+    saleItemProductId: number
+  ) => {
     for (const billItemLinkedProduct of billItem.billProducts) {
       if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
-        const tmpLinkedProducts = billItemLinkedProduct.products.filter((linkedProduct) => linkedProduct.id !== 0)
-        tmpLinkedProducts.push(linkedProduct)
+        const tmpLinkedProducts = billItemLinkedProduct.products.filter(
+          (linkedProduct) => linkedProduct.id !== 0
+        )
+        const tmpLinkedProduct = {
+          ...linkedProduct,
+          unitPrice:
+            linkedProduct.unitPrice === undefined ? 0 : linkedProduct.unitPrice,
+        }
+        tmpLinkedProducts.push(tmpLinkedProduct)
         billItemLinkedProduct.products = tmpLinkedProducts
       }
     }
   }
 
-  const removeLinkedProductModifierElement = (modifierElement: ModifierElement, saleItemProductId: number) => {
+  const removeLinkedProductModifierElement = (
+    modifierElement: ModifierElement,
+    saleItemProductId: number
+  ) => {
     for (const billItemLinkedProduct of billItem.billProducts) {
       if (billItemLinkedProduct.saleItemProductId === saleItemProductId) {
         for (const linkedProduct of billItemLinkedProduct.products) {
           for (const productModifier of linkedProduct.modifiers) {
-            if (productModifier.modifierGroupId === modifierElement.modifierGroupId) {
-              const tmpLinkedProductModifier = productModifier.elements.find((linkedProductModifierElement) => linkedProductModifierElement.modifierElementId === modifierElement.id)
+            if (
+              productModifier.modifierGroupId ===
+              modifierElement.modifierGroupId
+            ) {
+              const tmpLinkedProductModifier = productModifier.elements.find(
+                (linkedProductModifierElement) =>
+                  linkedProductModifierElement.modifierElementId ===
+                  modifierElement.id
+              )
               if (tmpLinkedProductModifier) {
                 if (tmpLinkedProductModifier.quantity > 1) {
-                  tmpLinkedProductModifier.quantity = tmpLinkedProductModifier.quantity - 1
+                  tmpLinkedProductModifier.quantity =
+                    tmpLinkedProductModifier.quantity - 1
                 } else {
-                  productModifier.elements = productModifier.elements.filter((linkedProductModifierElement) => linkedProductModifierElement.modifierElementId !== modifierElement.id)
+                  productModifier.elements = productModifier.elements.filter(
+                    (linkedProductModifierElement) =>
+                      linkedProductModifierElement.modifierElementId !==
+                      modifierElement.id
+                  )
                 }
               }
             }
@@ -198,49 +243,63 @@ const BillMakerItems = ({ saleItemCategory, tableNumber, editBilItem }: Props) =
     setBillItem(initialBillItem)
   }
 
-
   useEffect(() => {
     if (editBilItem?.saleItemId > 0) {
-      const tmpSaleItem = saleItemCategory?.saleItems.find((saleItem) => saleItem.id === editBilItem?.saleItemId)
+      const tmpSaleItem = saleItemCategory?.saleItems.find(
+        (saleItem) => saleItem.id === editBilItem?.saleItemId
+      )
       setSaleItem(tmpSaleItem)
       setBillItem(editBilItem)
-    }
-    else {
+    } else {
       setSaleItem(undefined)
     }
   }, [saleItemCategory, editBilItem])
 
   return (
     <>
-      <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
-        <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{ height: saleItem !== undefined ? '0px' : '200px' }}>
-          {
-            saleItem === undefined &&
+      <div className='col-12 d-flex flex-wrap justify-content-center align-items-center'>
+        <div
+          className='col-12 d-flex flex-wrap justify-content-center align-items-center'
+          style={{ height: saleItem !== undefined ? '0px' : '200px' }}
+        >
+          {saleItem === undefined &&
             saleItemCategory?.saleItems.map((tmpSaleItem, index) => {
               return (
-                <div key={index} className="col-3 p-2 pointer" onClick={() => newBillItem(tmpSaleItem)}>
-                  <div className="card shadow bill-item" >
-                    <div className="card-body d-flex flex-wrap justify-content-center align-content-center">
-                      <h5 className="card-title mb-4 text-center">{tmpSaleItem.name}</h5>
-                      <h5 className="card-text col-12 text-center">{Number(tmpSaleItem.price) === 0 ? '' : parseCurrency(Number(tmpSaleItem.price).toString())}</h5>
+                <div
+                  key={index}
+                  className='col-3 p-2 pointer'
+                  onClick={() => newBillItem(tmpSaleItem)}
+                >
+                  <div className='card shadow bill-item'>
+                    <div className='card-body d-flex flex-wrap justify-content-center align-content-center'>
+                      <h5 className='card-title mb-4 text-center'>
+                        {tmpSaleItem.name}
+                      </h5>
+                      <h5 className='card-text col-12 text-center'>
+                        {Number(tmpSaleItem.price) === 0
+                          ? ''
+                          : parseCurrency(Number(tmpSaleItem.price).toString())}
+                      </h5>
                     </div>
                   </div>
                 </div>
               )
-            })
-          }
+            })}
         </div>
-        {
-          saleItem &&
+        {saleItem && (
           <BillMakerProducts
             setSaleItem={setSaleItem}
             newCombinedLinkedProduct={newCombinedLinkedProduct}
-            setNewBillItem={setNewBillItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} 
-            addLinkedProductModifierElement={newLinkedProductModifierElement} 
+            setNewBillItem={setNewBillItem}
+            removeLinkedProductModifierElement={
+              removeLinkedProductModifierElement
+            }
+            addLinkedProductModifierElement={newLinkedProductModifierElement}
             tableNumber={tableNumber}
-            billItem={billItem} 
-            saleItem={saleItem} />
-        }
+            billItem={billItem}
+            saleItem={saleItem}
+          />
+        )}
       </div>
     </>
   )

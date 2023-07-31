@@ -7,15 +7,18 @@ import { buttonTypes } from '../../enums/buttonTypes'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import useBill from '../../hooks/useBill'
 import { Bill } from '../../types/bill'
+import { Menu } from '../../types/menu'
 
 interface Props {
   top: number
   left: number
+  menus:  Menu[]
   tableNumber: number
+  setPrices: (menuId: number) => void
   saleItemCategories: SaleItemCategory[]
 }
 
-const Bar = ({ top, left, tableNumber, saleItemCategories }: Props) => {
+const Bar = ({ top, left, tableNumber, menus, saleItemCategories, setPrices }: Props) => {
   const billFunctions = useBill()
   const [close, setClose] = useState(true)
   const [bill, setBill] = useState({} as Bill)
@@ -45,7 +48,7 @@ const Bar = ({ top, left, tableNumber, saleItemCategories }: Props) => {
         </span>
         {
           !close &&
-          <BillMaker bill={bill} saleItemCategories={saleItemCategories} close={closeTable} />
+          <BillMaker menus={menus} bill={bill} saleItemCategories={saleItemCategories} setPrices={setPrices} close={closeTable} />
         }
       </div>
       <div className="bar_container d-flex flex-wrap position-absolute" onClick={() => openTable()} style={{ top: `${top}px`, left: `${left}px` }}>

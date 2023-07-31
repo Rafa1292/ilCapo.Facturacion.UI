@@ -3,7 +3,7 @@ import { ProductModifier } from './productModifier'
 export interface Product {
   id: number
   name: string
-  price: number
+  price?: number
   description: string
   pictureUrl: string
   allowsModify: boolean

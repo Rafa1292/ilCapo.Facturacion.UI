@@ -1,9 +1,11 @@
+import { ElementPrice } from './elementPrice'
 import { ModifierElementUpgrade } from './modifierElementUpgrade'
 import { ProductReference } from './productReference'
 
 export interface ModifierElement {
   id: number
   name: string
+  prices: ElementPrice[]
   price: number
   quantity: number
   selectedQuantity: number

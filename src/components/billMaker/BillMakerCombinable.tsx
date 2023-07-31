@@ -91,7 +91,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
         <div className="col-12 d-flex flex-wrap justify-content-center">
           {
             tmpModifierGroup?.id === modifierGroup?.id &&
-            <button className="btn btn-outline-success col-6 py-4" onClick={() => setTmpModifierGroup(upgradeModifierGroup)}>{element.modifierUpgrade.label} por {parseCurrency(element.modifierUpgrade.price.toString())}</button>
+            <button className="btn btn-outline-success col-6 py-4" onClick={() => setTmpModifierGroup(upgradeModifierGroup)}>{element.modifierUpgrade.label} por {parseCurrency(element.modifierUpgrade.price?.toString())}</button>
             ||
             <button className="btn btn-outline-danger col-6 py-4" onClick={() => setTmpModifierGroup(modifierGroup)}>No mejorar</button>
           }
@@ -113,7 +113,7 @@ const BillMakerCombinable = ({ element, newCombinedLinkedProduct, saleItemProduc
                     <h5 className="card-title col-12 text-center">{tmpElement.name}</h5>
                     {
                       tmpElement.price > 0 &&
-                      <h6 className="card-subtitle col-12 text-center mb-2 ">{parseCurrency(Number(tmpElement.price).toString())}</h6>
+                      <h6 className="card-subtitle col-12 text-center mb-2 ">{parseCurrency(Number(tmpElement.price)?.toString())}</h6>
                     }
                   </div>
                 </div>

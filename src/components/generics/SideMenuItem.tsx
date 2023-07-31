@@ -10,13 +10,21 @@ import BillMaker from '../../containers/generics/BillMaker'
 import { buttonTypes } from '../../enums/buttonTypes'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import useBill from '../../hooks/useBill'
+import { Menu } from '../../types/menu'
 
 interface Props {
   bill: Bill
   saleItemCategories: SaleItemCategory[]
+  setPrices: (menuId: number) => void
+  menus: Menu[]
 }
 
-const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
+const SideMenuItem = ({
+  bill,
+  saleItemCategories,
+  menus,
+  setPrices,
+}: Props) => {
   // eslint-disable-next-line
   const [initialTime, setInitialTime] = useState<Date | null>(null)
   // eslint-disable-next-line
@@ -26,13 +34,17 @@ const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
   const billFunctions = useBill()
 
   const closeTable = () => {
-    const container = document.getElementById(`billMakerContainerToGo${bill.id}`)
+    const container = document.getElementById(
+      `billMakerContainerToGo${bill.id}`
+    )
     container?.classList.remove('bill-makerContainer_show')
     setClose(true)
   }
 
   const openTable = () => {
-    const container = document.getElementById(`billMakerContainerToGo${bill.id}`)
+    const container = document.getElementById(
+      `billMakerContainerToGo${bill.id}`
+    )
     container?.classList.add('bill-makerContainer_show')
     setClose(false)
   }
@@ -40,7 +52,11 @@ const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
   const getBillTotal = (bill: Bill) => {
     let billTotal = 0
     for (const billItem of bill.items) {
-      billTotal += Number(billItem.unitPrice) * Number(billItem.quantity) + getBillItemModifiersPrice(billItem) + Number(billItem.tax) - Number(billItem.discount)
+      billTotal +=
+        Number(billItem.unitPrice) * Number(billItem.quantity) +
+        getBillItemModifiersPrice(billItem) +
+        Number(billItem.tax) -
+        Number(billItem.discount)
     }
     return billTotal
   }
@@ -71,7 +87,9 @@ const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
     let tmpFinalTime = null
     if (bill.isCommanded) {
       tmpInitialTime = new Date(bill.updatedAt)
-      tmpFinalTime = new Date(tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000)
+      tmpFinalTime = new Date(
+        tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000
+      )
     }
     setFinalTime(tmpFinalTime)
     setInitialTime(tmpInitialTime)
@@ -82,35 +100,55 @@ const SideMenuItem = ({ bill, saleItemCategories }: Props) => {
     calcRemainingMinutes()
   }, [bill])
 
-
   return (
     <>
-      <div className='bill-makerContainer position-fixed' id={`billMakerContainerToGo${bill.id}`}>
-        <span className='position-absolute' onClick={closeTable} style={{ zIndex: '10000', cursor: 'pointer', right: '30vw', top: '1vw', background: 'white', borderRadius: '50px' }}>
+      <div
+        className='bill-makerContainer position-fixed'
+        id={`billMakerContainerToGo${bill.id}`}
+      >
+        <span
+          className='position-absolute'
+          onClick={closeTable}
+          style={{
+            zIndex: '10000',
+            cursor: 'pointer',
+            right: '30vw',
+            top: '1vw',
+            background: 'white',
+            borderRadius: '50px',
+          }}
+        >
           <CustomBtn height='40px' buttonType={buttonTypes.cancel} />
         </span>
-        {
-          !close &&
-          <BillMaker 
+        {!close && (
+          <BillMaker
+            menus={menus}
+            setPrices={setPrices}
             bill={bill}
             saleItemCategories={saleItemCategories}
-            close={closeTable} />
-        }
+            close={closeTable}
+          />
+        )}
       </div>
-      <div className="col-12 flex-wrap d-flex py-3 orders-togo" onClick={() => openTable()}>
-        <div className="col-3 d-flex text-center">
-          {bill.client.name}
-        </div>
-        <div className="col-3 d-flex justify-content-center text-center">
+      <div
+        className='col-12 flex-wrap d-flex py-3 orders-togo'
+        onClick={() => openTable()}
+      >
+        <div className='col-3 d-flex text-center'>{bill.client.name}</div>
+        <div className='col-3 d-flex justify-content-center text-center'>
           {bill.client.phone}
         </div>
-        <div className="col-2 d-flex justify-content-center text-center">
+        <div className='col-2 d-flex justify-content-center text-center'>
           {parseCurrency(getBillTotal(bill).toString())}
         </div>
-        <div className="col-2 d-flex justify-content-center">
-          <img className='' height={18} src={bill.deliveryMethod === 2 ? moto : carry} />
+        <div className='col-2 d-flex justify-content-center'>
+          <img
+            className=''
+            height={18}
+            src={bill.deliveryMethod === 2 ? moto : carry}
+          />
         </div>
-        <div className="col-2 d-flex justify-content-center position-relative">
+        <div className='col-2 d-flex justify-content-center position-relative'>
           {/* <ProgressBar
             timeMargin={false}
             finalTime={finalTime}

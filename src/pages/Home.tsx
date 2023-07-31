@@ -7,22 +7,61 @@ import { useGet, useGetList } from '../hooks/useAPI'
 import { ProductModifier } from '../types/productModifier'
 import { SaleItemCategory } from '../types/saleItemCategory'
 import SideMenu from '../components/generics/SideMenu'
+import { Menu } from '../types/menu'
 
 const Home = () => {
   const { setRoomEdit, system } = useContext(AppContext)
-  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
+  const [saleItemCategories, setSaleItemCategories] = useState<
+    SaleItemCategory[]
+  >([])
+  const [menus, setMenus] = useState<Menu[]>([])
 
+  const setPrices = (menuId: number) => {
+    const tmpSaleItemCategories = [...saleItemCategories]
+    for (const saleItemCategory of tmpSaleItemCategories) {
+      for (const saleItem of saleItemCategory.saleItems) {
+        for (const price of saleItem.prices) {
+          if (price.menuId === menuId) {
+            saleItem.price = price.price
+            break
+          }
+        }
+        for (const itemProduct of saleItem.saleItemProducts) {
+          for (const modifier of itemProduct.product.productModifiers) {
+            if (modifier.modifierGroup?.elements !== undefined) {
+              for (const element of modifier.modifierGroup.elements) {
+                for (const price of element.prices) {
+                  if (price.menuId === menuId) {
+                    element.price = price.price
+                    break
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    console.log(tmpSaleItemCategories)
+    setSaleItemCategories(tmpSaleItemCategories)
+  }
 
   useEffect(() => {
     setRoomEdit(false)
     const getSaleItemCategories = async () => {
-      const response = await useGetList<SaleItemCategory[]>('saleItemCategories', false)
+      const response = await useGetList<SaleItemCategory[]>(
+        'saleItemCategories',
+        false
+      )
       if (!response.error) {
         const tmpSaleItemCategories = response.data
         for (const saleItemCategory of tmpSaleItemCategories) {
           for (const saleItem of saleItemCategory.saleItems) {
             for (const saleItemProduct of saleItem.saleItemProducts) {
-              const productModifiersResponse = await useGet<ProductModifier[]>(`productModifiers/byProductId/${saleItemProduct.productId}`, false)
+              const productModifiersResponse = await useGet<ProductModifier[]>(
+                `productModifiers/byProductId/${saleItemProduct.productId}`,
+                false
+              )
               if (!productModifiersResponse.error) {
                 const productModifiers = productModifiersResponse.data
                 saleItemProduct.product.productModifiers = productModifiers
@@ -30,9 +69,17 @@ const Home = () => {
             }
           }
         }
+        console.log(tmpSaleItemCategories)
         setSaleItemCategories(tmpSaleItemCategories)
       }
     }
+    const getMenus = async () => {
+      const response = await useGetList<Menu[]>('menus', false)
+      if (!response.error) {
+        setMenus(response.data)
+      }
+    }
+    getMenus()
     getSaleItemCategories()
   }, [system.loader])
 
@@ -40,11 +87,17 @@ const Home = () => {
     <Content isLoading={system.loader}>
       <>
         <SideMenu
-          saleItemCategories={saleItemCategories}/>
+          menus={menus}
+          setPrices={setPrices}
+          saleItemCategories={saleItemCategories}
+        />
         {
           <RoomContainer
+            menus={menus}
+            setPrices={setPrices}
             saleItemCategories={saleItemCategories}
-            tables={system.bussinessConfig.tables} />
+            tables={system.bussinessConfig.tables}
+          />
         }
       </>
     </Content>

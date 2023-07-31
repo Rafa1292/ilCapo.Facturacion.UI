@@ -163,7 +163,7 @@ const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEd
                             <strong className='col-12 text-start'>
                               {billProduct.products[1]?.name}
                               <span className='px-2'>
-                                {parseCurrency(billProduct.products[1]?.unitPrice.toString())}
+                                {parseCurrency(billProduct.products[1]?.unitPrice?.toString())}
                               </span>
                             </strong>
                           </div>
