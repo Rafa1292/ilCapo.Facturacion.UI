@@ -36,6 +36,14 @@ const Home = () => {
                     break
                   }
                 }
+                if (element.modifierUpgrade !== undefined && element.modifierUpgrade !== null) {
+                  for (const price of element.modifierUpgrade.prices) {
+                    if (price.menuId === menuId) {
+                      element.modifierUpgrade.price = price.price
+                      break
+                    }
+                  }
+                }
               }
             }
           }

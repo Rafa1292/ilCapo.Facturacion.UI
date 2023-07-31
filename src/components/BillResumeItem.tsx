@@ -153,7 +153,7 @@ const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEd
                         {
                           billProduct.products.length > 1 &&
                           <div className="col-12 d-flex flex-wrap">
-                            <span className='col-12 text-start flex-wrap d-flex position-relative'>
+                            <span className='text-start flex-wrap d-flex position-relative'>
                               <div style={{ position: 'absolute', left: '-20px' }}>
                                 <CustomBtn buttonType={buttonTypes.cancel} action={() =>
                                   billFunctions.removeCombinedLinkedProduct(billProduct.saleItemProductId, billProduct.products[1]?.productId, billItem.saleItemId, billId, tableNumber)} height='20px' />
