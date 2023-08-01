@@ -5,6 +5,7 @@ import { tableProps } from '../../types/tableProps'
 import AppContext from '../../context/AppContext'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import { Menu } from '../../types/menu'
+import BarContainer from './BarContainer'
 
 interface Props {
   menus: Menu[]
@@ -50,9 +51,21 @@ const RoomContainer = ({
                 />
               )
             }
-            // else if (table.type === 'bar_container') {
-            //   return <Bar removeBill={removeBill} updateBill={updateBill} bill={getBillFromTableNumber(table.number)} key={table.number} saleItemCategories={saleItemCategories} tableNumber={table.number} top={table.y} left={table.x} />
-            // }
+            else if (table.type === 'bar_container') {
+              return (
+                <BarContainer
+                menus={menus}
+                setPrices={setPrices}
+                menuDeliveryTime={table.menuDeliveryTime}
+                setMenuDeliveryTime={setMenuDeliveryTime}
+                key={table.number}
+                saleItemCategories={saleItemCategories}
+                tableNumber={table.number}
+                top={table.y}
+                left={table.x}
+              />
+              )
+            }
           })}
         </>
       </Content>
