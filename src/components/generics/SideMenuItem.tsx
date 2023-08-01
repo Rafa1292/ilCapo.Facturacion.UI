@@ -11,6 +11,7 @@ import { buttonTypes } from '../../enums/buttonTypes'
 import { SaleItemCategory } from '../../types/saleItemCategory'
 import useBill from '../../hooks/useBill'
 import { Menu } from '../../types/menu'
+import ProgressBarContainer from '../../containers/generics/ProgressBarContainer'
 
 interface Props {
   bill: Bill
@@ -149,15 +150,14 @@ const SideMenuItem = ({
           />
         </div>
         <div className='col-2 d-flex justify-content-center position-relative'>
-          {/* <ProgressBar
-            timeMargin={false}
-            finalTime={finalTime}
-            initialTime={initialTime}
-            isCommanded={billFunctions.bill.isCommanded}
-            isServe={billFunctions.bill.isServed}
+          <ProgressBarContainer
+            isServe={bill.isServed}
             styleClass='progress_bar-table not-blur'
-            tableNumber={0}
-          /> */}
+            initialTime={initialTime}
+            finalTime={finalTime}
+            isCommanded={bill.isCommanded}
+            timeMargin={false}
+          />
         </div>
       </div>
     </>
