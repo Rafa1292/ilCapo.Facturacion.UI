@@ -24,6 +24,8 @@ const initialClient: Client = {
   id: 0,
   name: '',
   phone: '',
+  mail: '',
+  cedula: '',
   addressess: [],
   delete: false,
   createdBy: 0,

@@ -21,6 +21,12 @@
   }
 }
 
+.hidden {
+  transition: all ease 200ms;
+  height: 0;
+  overflow: hidden;
+}
+
 .bill-resume_content::-webkit-scrollbar {
   -webkit-appearance: none;
 }
