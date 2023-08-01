@@ -43,7 +43,13 @@ const initialBillItem: BillItem = {
   updatedBy: 0,
 }
 
-const BillMaker = ({ close, saleItemCategories, bill, menus, setPrices }: Props) => {
+const BillMaker = ({
+  close,
+  saleItemCategories,
+  bill,
+  menus,
+  setPrices,
+}: Props) => {
   const [saleItemCategory, setSaleItemCategory] = useState<SaleItemCategory>()
   const [searchProducts, setSearchProducts] = useState<SearchProduct[]>([])
   const [editBillItem, setEditBillItem] = useState<BillItem>({
@@ -179,6 +185,12 @@ const BillMaker = ({ close, saleItemCategories, bill, menus, setPrices }: Props)
     return valid
   }
 
+  const handleChangeMenu = (tmpMenuId: number) => {
+    setMenuId(tmpMenuId)
+    setPrices(tmpMenuId)
+    billFunctions.resetBillItems(bill.id, bill.tableNumber)
+  }
+
   useEffect(() => {
     const tmpMenuId = menus[1].id
     if (tmpMenuId > 0) {
@@ -232,25 +244,50 @@ const BillMaker = ({ close, saleItemCategories, bill, menus, setPrices }: Props)
               </div>
             </div>
             <div
-              className='col-8 d-flex flex-wrap justify-content-around position-absolute bg-dark p-2 shadow'
+              className='col-8 d-flex flex-wrap justify-content-center position-absolute bg-dark p-2 shadow'
               style={{
                 borderBottom: '1px solid rgba(255,193,7,0.8)',
                 top: '0',
               }}
             >
-              {saleItemCategories.map((tmpSaleItemCategory, index) => {
-                return (
-                  <div
-                    key={index}
-                    onClick={() =>
-                      handleChangeSaleItemCategory(tmpSaleItemCategory)
-                    }
-                    className='px-3 py-1 rounded pointer item-category'
-                  >
-                    <h6 className='m-0'>{tmpSaleItemCategory.name}</h6>
-                  </div>
-                )
-              })}
+              <div
+                className='col-12 pb-2 mb-2 d-flex justify-content-center flex-wrap'
+                style={{ borderBottom: '1px solid rgba(255,255,255,.6)' }}
+              >
+                {menus.map((tmpMenu, index) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => handleChangeMenu(tmpMenu.id)}
+                      className={`px-3 mx-1 py-1 rounded pointer ${
+                        tmpMenu.id === menuId
+                          ? 'item-category_selected'
+                          : 'item-category'
+                      }`}
+                    >
+                      <h6 className='m-0'>{tmpMenu.name}</h6>
+                    </div>
+                  )
+                })}
+              </div>
+              {menuId > 0 &&
+                saleItemCategories.map((tmpSaleItemCategory, index) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        handleChangeSaleItemCategory(tmpSaleItemCategory)
+                      }
+                      className={`px-3 mx-1 py-1 rounded pointer ${
+                        tmpSaleItemCategory.id === saleItemCategory?.id
+                          ? 'item-category_selected'
+                          : 'item-category'
+                      }`}
+                    >
+                      <h6 className='m-0'>{tmpSaleItemCategory.name}</h6>
+                    </div>
+                  )
+                })}
             </div>
             <div className='position-absolute '>
               <button

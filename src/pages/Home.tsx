@@ -50,7 +50,6 @@ const Home = () => {
         }
       }
     }
-    console.log(tmpSaleItemCategories)
     setSaleItemCategories(tmpSaleItemCategories)
   }
 

@@ -257,6 +257,12 @@ const useBill = (): BillFunctions => {
     setBills(tmpBills)
   }
 
+  const resetBillItems = (billId: number, tableNumber: number) => {
+    const currentBill = getBill(billId, tableNumber)
+    currentBill.items = []
+    addBill(currentBill)
+  }
+
   const removeBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
     const currentBill = getBill(billId, tableNumber)
     const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
@@ -604,6 +610,7 @@ const useBill = (): BillFunctions => {
     moveBillItemBack,
     addAccountHistory,
     removeAccountHistory,
+    resetBillItems,
     moveBillItem,
     printBill,
     removeLinkedProduct,
