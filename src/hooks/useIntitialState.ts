@@ -6,6 +6,7 @@ import { useGet, usePostWithResponse } from './useAPI'
 import { UserInfo } from '../types/userInfo'
 import { BussinessConfig } from '../types/bussinessConfig'
 import useBill from './useBill'
+import Swal from 'sweetalert2'
 
 
 const initialUser: userState = {
@@ -33,6 +34,13 @@ const useInitialState = (): appState => {
         userInfo: response.data.userInfo,
         loggedIn: true,
         workDayUser: { ...user.workDayUser }
+      })
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Usuario o contraseña incorrectos',
       })
     }
   }
