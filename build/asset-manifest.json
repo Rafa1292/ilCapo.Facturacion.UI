@@ -1,13 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.655a7696.css",
-    "main.js": "/static/js/main.da99aa4d.js",
+    "main.css": "/static/css/main.5f33f1ad.css",
+    "main.js": "/static/js/main.ce7edaee.js",
     "static/js/787.067c9ba2.chunk.js": "/static/js/787.067c9ba2.chunk.js",
     "static/media/loader.gif": "/static/media/loader.15fec6d0f1a0df3dc296.gif",
     "static/media/table.png": "/static/media/table.37909c212c1013e0bd49.png",
     "static/media/dish.png": "/static/media/dish.ee4f4e9075abb451ed79.png",
     "static/media/bar.png": "/static/media/bar.a7b6a1190110e18f06b1.png",
     "static/media/logoNebulosa.png": "/static/media/logoNebulosa.a283a5de080a313072a6.png",
+    "static/media/salonYL.png": "/static/media/salonYL.dca74ccffc173f77ca96.png",
+    "static/media/salon.png": "/static/media/salon.372029cbccaac7355e11.png",
     "static/media/white-discount.png": "/static/media/white-discount.462b3a7d7c89978b0e71.png",
     "static/media/black-discount.png": "/static/media/black-discount.693d70d56dc7c4cea384.png",
     "static/media/add.png": "/static/media/add.6145d0c33a497fa99c5d.png",
@@ -17,12 +19,12 @@
     "static/media/white-bell.png": "/static/media/white-bell.17088c44f386380f1e05.png",
     "static/media/black-bell.png": "/static/media/black-bell.21d1dabfb65d4bb18924.png",
     "index.html": "/index.html",
-    "main.655a7696.css.map": "/static/css/main.655a7696.css.map",
-    "main.da99aa4d.js.map": "/static/js/main.da99aa4d.js.map",
+    "main.5f33f1ad.css.map": "/static/css/main.5f33f1ad.css.map",
+    "main.ce7edaee.js.map": "/static/js/main.ce7edaee.js.map",
     "787.067c9ba2.chunk.js.map": "/static/js/787.067c9ba2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.655a7696.css",
-    "static/js/main.da99aa4d.js"
+    "static/css/main.5f33f1ad.css",
+    "static/js/main.ce7edaee.js"
   ]
 }
