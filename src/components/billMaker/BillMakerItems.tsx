@@ -253,7 +253,7 @@ const BillMakerItems = ({
     } else {
       setSaleItem(undefined)
     }
-  }, [saleItemCategory, editBilItem])
+  }, [saleItemCategory.saleItems, editBilItem])
 
   return (
     <>

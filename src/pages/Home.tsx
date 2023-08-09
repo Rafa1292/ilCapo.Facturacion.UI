@@ -11,49 +11,55 @@ import { Menu } from '../types/menu'
 
 const Home = () => {
   const { setRoomEdit, system } = useContext(AppContext)
-  const [saleItemCategories, setSaleItemCategories] = useState<
-    SaleItemCategory[]
-  >([])
+  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
+  const [tmpSaleItemCategories, setTmpSaleItemCategories] = useState<SaleItemCategory[]>([])
   const [menus, setMenus] = useState<Menu[]>([])
 
   const setPrices = (menuId: number) => {
-    const tmpSaleItemCategories = [...saleItemCategories]
-    for (const saleItemCategory of tmpSaleItemCategories) {
+    //init saleitemcategory empty array
+    const tmpSaleItemCategories: SaleItemCategory[] = []
+    for (const saleItemCategory of saleItemCategories) {
+      const tmpSaleItemCategory: SaleItemCategory = { ...saleItemCategory, saleItems: [] }
       for (const saleItem of saleItemCategory.saleItems) {
         for (const price of saleItem.prices) {
           if (price.menuId === menuId) {
             saleItem.price = price.price
-            break
-          }
-        }
-        for (const itemProduct of saleItem.saleItemProducts) {
-          for (const modifier of itemProduct.product.productModifiers) {
-            if (modifier.modifierGroup?.elements !== undefined) {
-              for (const element of modifier.modifierGroup.elements) {
-                for (const price of element.prices) {
-                  if (price.menuId === menuId) {
-                    element.price = price.price
-                    break
-                  }
-                }
-                if (
-                  element.modifierUpgrade !== undefined &&
-                  element.modifierUpgrade !== null
-                ) {
-                  for (const price of element.modifierUpgrade.prices) {
-                    if (price.menuId === menuId) {
-                      element.modifierUpgrade.price = price.price
-                      break
+            for (const itemProduct of saleItem.saleItemProducts) {
+              for (const modifier of itemProduct.product.productModifiers) {
+                if (modifier.modifierGroup?.elements !== undefined) {
+                  for (const element of modifier.modifierGroup.elements) {
+                    for (const price of element.prices) {
+                      console.log(price.menuId, menuId)
+                      if (price.menuId === menuId) {
+                        element.price = price.price
+                        break
+                      }
+                    }
+                    if (
+                      element.modifierUpgrade !== undefined &&
+                      element.modifierUpgrade !== null
+                    ) {
+                      for (const price of element.modifierUpgrade.prices) {
+                        if (price.menuId === menuId) {
+                          element.modifierUpgrade.price = price.price
+                          break
+                        }
+                      }
                     }
                   }
                 }
               }
             }
+            tmpSaleItemCategory.saleItems.push(saleItem)
+            break
           }
         }
+
       }
+      tmpSaleItemCategories.push(tmpSaleItemCategory)
     }
-    setSaleItemCategories(tmpSaleItemCategories)
+    console.log(tmpSaleItemCategories)
+    setTmpSaleItemCategories(tmpSaleItemCategories)
   }
 
   useEffect(() => {
@@ -98,13 +104,13 @@ const Home = () => {
         <SideMenu
           menus={menus}
           setPrices={setPrices}
-          saleItemCategories={saleItemCategories}
+          saleItemCategories={tmpSaleItemCategories}
         />
         {
           <RoomContainer
             menus={menus}
             setPrices={setPrices}
-            saleItemCategories={saleItemCategories}
+            saleItemCategories={tmpSaleItemCategories}
             tables={system.bussinessConfig.tables}
           />
         }

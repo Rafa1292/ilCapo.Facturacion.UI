@@ -189,6 +189,7 @@ const BillMaker = ({
   const handleChangeMenu = (tmpMenuId: number) => {
     setMenuId(tmpMenuId)
     setPrices(tmpMenuId)
+    setSaleItemCategory(undefined)
     billFunctions.resetBillItems(bill.id, bill.tableNumber)
   }
 
@@ -199,13 +200,9 @@ const BillMaker = ({
   }
 
   useEffect(() => {
-    const tmpMenuId = menuId !== 0? menuId : menus[1]?.id
-    if (tmpMenuId > 0) {
-      setMenuId(tmpMenuId)
-      setPrices(tmpMenuId)
-    }
+    console.log('bilmaker',saleItemCategories)
     initializeSearchProducts(saleItemCategories)
-  }, [bill, menus])
+  }, [bill, menus, saleItemCategories])
 
   return (
     (
