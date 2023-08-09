@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../../scss/billMaker.scss'
 import { SaleItemCategory } from '../../types/saleItemCategory'
-import { usePost, usePatch } from '../../hooks/useAPI'
+import { usePost, usePatch, useGet } from '../../hooks/useAPI'
 import BillMakerItems from '../../components/billMaker/BillMakerItems'
 import BillResume from '../../components/BillResume'
 import CustomInputSelect from '../../components/generics/CustomInputSelect'
@@ -11,6 +11,7 @@ import AppContext from '../../context/AppContext'
 import BillPayMethod from '../../components/BillPayMethod'
 import { Bill } from '../../types/bill'
 import { Menu } from '../../types/menu'
+import axios from 'axios'
 
 interface Props {
   close: () => void
@@ -191,8 +192,14 @@ const BillMaker = ({
     billFunctions.resetBillItems(bill.id, bill.tableNumber)
   }
 
+  const print = async () => {
+    console.log(bill)
+    const response = await axios.post('https://localhost:7130/', bill)
+    console.log(response)
+  }
+
   useEffect(() => {
-    const tmpMenuId = menus[1].id
+    const tmpMenuId = menuId !== 0? menuId : menus[1]?.id
     if (tmpMenuId > 0) {
       setMenuId(tmpMenuId)
       setPrices(tmpMenuId)
@@ -292,7 +299,7 @@ const BillMaker = ({
             <div className='position-absolute '>
               <button
                 className='btn btn-success'
-                onClick={() => console.log(billFunctions.bills)}
+                onClick={() => console.log(print())}
               >
                 bills
               </button>

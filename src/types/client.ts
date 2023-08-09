@@ -6,6 +6,8 @@ export interface Client {
   phone: string
   mail: string
   cedula: string
+  creditState: number
+  creditLimit: number
   addressess: Address[]
   delete: boolean
   createdBy?: number

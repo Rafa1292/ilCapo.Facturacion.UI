@@ -27,6 +27,8 @@ const initialClient: Client = {
   mail: '',
   cedula: '',
   addressess: [],
+  creditState: 3,
+  creditLimit: 0,
   delete: false,
   createdBy: 0,
   updatedBy: 0
@@ -42,6 +44,7 @@ const initialBill: Bill = {
   tableNumber: 0,
   workDayUserIdOpen: 0,
   workDayUserIdClose: 0,
+  isCredit: false,
   commandTime: new Date(Date.now()),
   isServed: false,
   isNull: false,

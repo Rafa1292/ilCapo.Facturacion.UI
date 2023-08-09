@@ -117,7 +117,7 @@ const BillResumeItem = ({ billItem, pullApartBill, billId, tableNumber, handleEd
                         </>
                       }
                       <div className="col-7 d-flex flex-wrap p-2 ">
-                        {product.name}
+                        {billItem.description !== product.name && product.name}
                         {
                           product?.modifiers?.map((modifier, index) => {
                             return (

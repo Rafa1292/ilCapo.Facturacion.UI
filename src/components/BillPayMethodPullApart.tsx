@@ -70,6 +70,8 @@ const BillPayMethodPullApart = ({
         phone: phone,
         mail: mail,
         cedula: cedula,
+        creditState: 3,
+        creditLimit: 0,
         addressess: [],
         createdBy: 1,
         updatedBy: 1,

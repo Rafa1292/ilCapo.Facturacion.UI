@@ -14,6 +14,7 @@ export interface Bill {
   workDayUserIdClose: number
   commandTime: Date
   items: BillItem[]
+  isCredit: boolean
   isCommanded: boolean
   isServed: boolean
   isNull: boolean

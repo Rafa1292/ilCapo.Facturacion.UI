@@ -167,6 +167,8 @@ const BillResume = ({
         mail: mail,
         cedula: cedula,
         addressess: [],
+        creditState:3,
+        creditLimit:0,
         createdBy: 1,
         updatedBy: 1,
       },
@@ -194,7 +196,6 @@ const BillResume = ({
       mail: mail,
       cedula: cedula,
     }
-    console.log(tmpClient)
     const response = await usePatch<Client>(
       'clients',
       tmpClient,
