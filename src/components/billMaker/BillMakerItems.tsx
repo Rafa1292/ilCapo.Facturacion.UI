@@ -270,16 +270,16 @@ const BillMakerItems = ({
                   className='col-3 p-2 pointer'
                   onClick={() => newBillItem(tmpSaleItem)}
                 >
-                  <div className='card shadow bill-item'>
+                  <div className='card bill-item'>
                     <div className='card-body d-flex flex-wrap justify-content-center align-content-center'>
-                      <h5 className='card-title mb-4 text-center'>
+                      <div className='card-title mb-1 text-center'>
                         {tmpSaleItem.name}
-                      </h5>
-                      <h5 className='card-text col-12 text-center'>
+                      </div>
+                      <div className='card-text col-12 text-center'>
                         {Number(tmpSaleItem.price) === 0
                           ? ''
                           : parseCurrency(Number(tmpSaleItem.price).toString())}
-                      </h5>
+                      </div>
                     </div>
                   </div>
                 </div>

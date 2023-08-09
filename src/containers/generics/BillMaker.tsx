@@ -225,7 +225,7 @@ const BillMaker = ({
           </div>
         )) || (
           <div className='col-8 bill-maker'>
-            <div className='col-12 d-flex flex-wrap justify-content-end p-2'>
+            <div className='col-12 d-flex flex-wrap justify-content-end px-2'>
               <div className='col-6'>
                 <CustomInputSelect
                   showLabel={false}
@@ -292,14 +292,6 @@ const BillMaker = ({
                     </div>
                   )
                 })}
-            </div>
-            <div className='position-absolute '>
-              <button
-                className='btn btn-success'
-                onClick={() => console.log(print())}
-              >
-                bills
-              </button>
             </div>
             {saleItemCategory && (
               <BillMakerItems

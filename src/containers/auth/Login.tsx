@@ -23,15 +23,11 @@ const Login = () => {
       [e.target.name]: e.target.value
     })
   }
-
-  useEffect(() => {
-    console.log('login')
-  }, [])
-  
+ 
 
   return (
     <div className='col-12 d-flex flex-wrap justify-content-center align-items-center' style={{ height: '100vh' }}>
-      <form className='col-4 d-flex flex-wrap justify-content-center p-4 login'>
+      <form className='col-4 d-flex flex-wrap justify-content-center p-4 login' onSubmit={() => login(user)}>
         <img className="mb-4" src={logoNebulosa} alt="" width="200" height="70" />
         <h1 className="h3 mb-3 fw-normal col-12 text-center">Inicio de sesion</h1>
         <div className="form-floating">
@@ -42,7 +38,7 @@ const Login = () => {
           <input type="password" name='password' className="form-control" onChange={handleChange} id="floatingPassword" placeholder="Password" />
           <label htmlFor="floatingPassword">Contraseña</label>
         </div>
-        <button className="col-12 btn btn-lg" type="button" onClick={() => login(user)}>Ingresar</button>
+        <button className="col-12 btn btn-lg" type="submit">Ingresar</button>
         <small className='col-12 text-center my-4'>¿Olvidaste tu contraseña?</small>
       </form>
     </div>

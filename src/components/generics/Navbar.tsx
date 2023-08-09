@@ -7,7 +7,7 @@ const Header = () => {
     <div className="custom_navbar shadow">
       <Link to={'/roomMaker'} className='nav_option px-2' style={{ width: '8vw' }}>
         <div className='col-12 d-flex justify-content-center'>
-          <div className='orders_icon'></div>
+          <div className='salon_icon'></div>
         </div>
         Salón
       </Link>

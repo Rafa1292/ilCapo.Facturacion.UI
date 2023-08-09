@@ -67,13 +67,13 @@ const BillMakerProducts = ({ saleItem, tableNumber, setSaleItem, billItem, newCo
 
   return (
     <>
-      <div className='col-12 d-flex justify-content-start align-items-center scroll' style={{ height: '24vh', overflowX: 'scroll' }}>
+      <div className='col-12 d-flex justify-content-start align-items-center scroll' style={{ height: '80px', overflowX: 'scroll', overflowY: 'hidden' }}>
         {
           saleItem !== undefined &&
           saleItem.saleItemProducts.map((saleItemProduct, index) => {
             return (
               <div key={index} className="p-2 pointer" onClick={() => addProduct(saleItemProduct.product, saleItemProduct.id)}>
-                <div className="card product_item" style={{ height: `${saleItemProduct.id === saleItemProductId ? '17vh' : '15vh'}`, color: saleItemProduct.id === saleItemProductId ? 'white' : 'black', boxShadow: `inset 0px 0px ${saleItemProduct.id === saleItemProductId ? '180px -5px' : '25px -15px'} rgba(0,0,0,.76)` }}>
+                <div className="card product_item" style={{ height: `${saleItemProduct.id === saleItemProductId ? '75px' : '68px'}`,  boxShadow: `0px 0px ${saleItemProduct.id === saleItemProductId ? '5px 2px' : '0px 0px'} rgba(0,0,0,.5)`, border: `${saleItemProduct.id === saleItemProductId ? '2px': '0'} solid rgba(255, 193, 7)` }}>
                   <div className="card-body d-flex flex-wrap justify-content-center align-items-center">
                     <span className="card-title text-center" >{saleItemProduct.product.name}</span>
                   </div>
@@ -89,7 +89,7 @@ const BillMakerProducts = ({ saleItem, tableNumber, setSaleItem, billItem, newCo
           })
         }
       </div>
-      <div className="col-12 d-flex flex-wrap pt-3 justify-content-end px-2" style={{borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)'}}>Grupos modificadores</div>
+      <div className="col-12 d-flex flex-wrap pt-1 justify-content-end px-2" style={{borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)'}}>Grupos modificadores</div>
       {
         product &&
         <BillMakerModifierGroups saleItemProductId={saleItemProductId} newCombinedLinkedProduct={newCombinedLinkedProduct} billItem={billItem} removeLinkedProductModifierElement={removeLinkedProductModifierElement} addLinkedProductModifierElement={addLinkedProductModifierElement} product={product} />

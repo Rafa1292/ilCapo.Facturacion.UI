@@ -131,7 +131,7 @@ const AccountHistoryForm = ({ handleAccountHistory, fastPayAction, isPay, select
           />
         </div>
         <div className="col-12 d-flex flex-wrap justify-content-center align-items-center">
-          <button className='col-12 btn btn-outline-success ' onClick={action}>Agregar forma de pago</button>
+          <button className='col-12 btn btn-outline-success py-1' style={{height: 'fit-content'}} onClick={action}>Agregar forma de pago</button>
         </div>
       </div>
     </>

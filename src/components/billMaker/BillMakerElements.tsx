@@ -93,23 +93,23 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
   }, [modifierGroup])
   return (
     <>
-      <div className="col-12 d-flex flex-wrap align-items-center justify-content-center" style={{ height: '24vh' }}>
+      <div className="col-12 d-flex flex-wrap align-items-center justify-content-center" style={{ height: '80px' }}>
         {
           modifierGroup !== undefined &&
           modifierGroup?.elements?.map((tmpElement, index) => {
             return (
-              <div key={index} className="col-3 pointer " style={{ height: '100%' }}>
+              <div key={index} className="col-3 p-2 pointer " >
                 <div className="card element_item" onClick={tmpElement?.quantity === 1 ? () => addElement(tmpElement) : undefined} style={{
-                  boxShadow: `inset 0px 0px ${elements.map(x => x.id).includes(tmpElement?.id) ?  '140px 20px': tmpElement?.quantity > 1 ? '140px 20px' : '20px -15px'} rgba(0,0,0,.76)`,
-                  color: `${elements.map(x => x.id).includes(tmpElement?.id) ? 'white' : tmpElement?.quantity > 1 ? 'white': 'black'}`,
-                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '22vh' : '12vh' : tmpElement?.quantity > 1 ? '22vh' : '10vh'}`
+                  boxShadow: `0px 0px ${elements.map(x => x.id).includes(tmpElement?.id) ?  '5px 2px': '0 0'} rgba(0,0,0,.5)`,
+                  border: `${elements.map(x => x.id).includes(tmpElement?.id) ?  '2px': '0'} solid rgba(255,193,7)`,
+                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '125px' : '65px' : tmpElement?.quantity > 1 ? '120px' : '60px'}`
                 }}>
                   <div className="card-body p-0 d-flex flex-wrap align-items-center">
-                    <span className="card-title col-12 flex-wrap justify-content-center text-center align-content-center d-flex m-0" style={{ height: '75px' }} >{tmpElement.name}</span>
+                    <span className="card-title col-12 flex-wrap justify-content-center text-center align-content-center d-flex m-0" style={{ height: '50px' }} >{tmpElement.name}</span>
                     {
                       tmpElement?.quantity > 1 &&
                       <>
-                        <h4 className="card-subtitle col-12 text-center mb-2" style={{ textShadow: '0px 2px 2px rgba(0,0,0,0.5)' }}>{Number(tmpElement.price) === 0 ? '' : parseCurrency(Number(tmpElement.price).toString())}</h4>
+                        <div className="card-subtitle col-12 text-center mb-2">{Number(tmpElement.price) === 0 ? '' : parseCurrency(Number(tmpElement.price).toString())}</div>
                         <div className="col-12 py-1 d-flex flex-wrap justify-content-center">
                           <CustomBtn action={() => downQuantity(tmpElement)} buttonType={buttonTypes.substract} height='20px' />
                           <span className="element_quantity mx-2">{getElementQuantity(tmpElement.id)}</span>

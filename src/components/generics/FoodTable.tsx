@@ -71,7 +71,7 @@ const FoodTable = ({
               style={{
                 zIndex: '10000',
                 cursor: 'pointer',
-                right: '30vw',
+                right: '29vw',
                 top: '1vw',
                 background: 'white',
                 borderRadius: '50px',
@@ -91,7 +91,7 @@ const FoodTable = ({
           </div>
           <div
             className='table_container d-flex flex-wrap p-2 position-absolute'
-            style={{ top: `${top}px`, left: `${left}px` }}
+            style={{ top: `${top}vh`, left: `${left}vw` }}
           >
             <div
               className='d-flex flex-wrap justify-content-center'

@@ -24,7 +24,7 @@ const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductM
 
   return (
     <>
-      <div className="col-12 d-flex flex-wrap justify-content-center align-items-center py-2" style={{boxSizing: 'border-box', height: '13vh'}}>
+      <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{boxSizing: 'border-box', height: '75px'}}>
         {
           product !== undefined &&
           product.productModifiers.map((productModifier, index) => {
@@ -33,9 +33,9 @@ const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductM
                 <div className="card modifier-group_item" style={{ 
                   color: modifierGroup?.id === productModifier.modifierGroupId ? 'white' : 'black', 
                   boxShadow: `inset 0px 0px ${modifierGroup?.id === productModifier.modifierGroupId ? '120px -5px' : '20px -15px'} rgba(0,0,0,.76)`,
-                  height: `${modifierGroup?.id === productModifier.modifierGroupId ? '75px' : '60px'}` }}>
-                  <div className="card-body align-items-center d-flex justify-content-center">
-                    <h6 className="card-subtitle m-0 text-center">{productModifier.modifierGroup.name}</h6>
+                  height: `${modifierGroup?.id === productModifier.modifierGroupId ? '55px' : '50px'}` }}>
+                  <div className="card-body align-items-center d-flex p-0 justify-content-center">
+                    <div className="card-subtitle m-0 text-center">{productModifier.modifierGroup.name}</div>
                   </div>
                 </div>
               </div>
@@ -43,7 +43,7 @@ const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductM
           })
         }
       </div>
-      <div className="col-12 d-flex flex-wrap pt-3 justify-content-end px-2" style={{borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)'}}>Elementos modificadores</div>
+      <div className="col-12 d-flex flex-wrap  justify-content-end px-2" style={{borderBottom: '1px solid rgba(0,0,0,.2)', color: 'rgba(0,0,0,.5)'}}>Elementos modificadores</div>
 
       {
         modifierGroup &&

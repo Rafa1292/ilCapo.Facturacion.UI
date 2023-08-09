@@ -275,7 +275,7 @@ const BillResume = ({
           {bill.deliveryMethod === 0 && (
             <div
               className='col-2 d-flex flex-wrap p-0 align-content-center position-absolute'
-              style={{ height: '25px !important', right: '12%' }}
+              style={{ height: '25px !important', right: '10%' }}
             >
               <CustomInputSelect
                 showLabel={false}
