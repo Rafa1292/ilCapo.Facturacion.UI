@@ -43,7 +43,7 @@ const Home = () => {
                         if (price.menuId === menuId) {
                           element.modifierUpgrade.price = price.price
                           break
-                        }
+                        } 
                       }
                     }
                   }
@@ -101,6 +101,7 @@ const Home = () => {
   return (
     <Content isLoading={system.loader}>
       <>
+
         <SideMenu
           menus={menus}
           setPrices={setPrices}

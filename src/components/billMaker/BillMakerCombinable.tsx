@@ -120,7 +120,7 @@ const BillMakerCombinable = ({
           </button>
         </div>
       )}
-      {combine && element.modifierUpgrade && (
+      {combine && element.modifierUpgrade.prices.length > 0 && (
         <div className='col-4 d-flex flex-wrap justify-content-center py-1'>
           {(tmpModifierGroup?.id === modifierGroup?.id && (
             <button

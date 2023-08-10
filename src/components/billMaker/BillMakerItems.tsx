@@ -267,7 +267,7 @@ const BillMakerItems = ({
               return (
                 <div
                   key={index}
-                  className='col-3 p-2 pointer'
+                  className='col-3 p-2'
                   onClick={() => newBillItem(tmpSaleItem)}
                 >
                   <div className='card bill-item'>
