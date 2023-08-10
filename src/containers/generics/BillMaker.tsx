@@ -146,7 +146,8 @@ const BillMaker = ({
     )
     if (!response.error) {
       const { id } = response.data
-      billFunctions.updateBillFromDB(id)
+      await billFunctions.updateBillFromDB(id)
+      await billFunctions.printCommand({...bill, id})
       close()
     }
   }
@@ -158,6 +159,7 @@ const BillMaker = ({
       true
     )
     if (!response.error) {
+      await billFunctions.printCommand(bill)
       billFunctions.updateBillFromDB(bill.id)
       close()
     }
@@ -195,12 +197,11 @@ const BillMaker = ({
 
   const print = async () => {
     console.log(bill)
-    const response = await axios.post('https://localhost:7130/', bill)
+    const response = await axios.post('https://localhost:5000/command', bill)
     console.log(response)
   }
 
   useEffect(() => {
-    console.log('bilmaker',saleItemCategories)
     initializeSearchProducts(saleItemCategories)
   }, [bill, menus, saleItemCategories])
 

@@ -5,10 +5,12 @@ import { BillItem } from '../types/billItem'
 import { AccountHistory } from '../types/accountHistory'
 import { BillAccountHistory } from '../types/billAccountHistory'
 import { BillItemLinkedProduct } from '../types/billItemLinkedProduct'
-import { useGet, useGetList, usePatch } from './useAPI'
+import { useGet, useGetList, usePatch, usePost } from './useAPI'
 import { Client } from '../types/client'
 import { LinkedProduct } from '../types/linkedProduct'
 import { LinkedProductModifierElement } from '../types/linkedProductModifierElement'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const initialBillAccounthistory: BillAccountHistory = {
   id: 0,
@@ -121,6 +123,7 @@ const useBill = (): BillFunctions => {
         billAccountHistories: [{ ...initialBillAccounthistory, accountHistory: accountHistory }]
       }, true)
     if (!response.error) {
+      printBill(billId, 0)
       updateBillFromDB(billId)
       return true
     }
@@ -261,9 +264,11 @@ const useBill = (): BillFunctions => {
   }
 
   const resetBillItems = (billId: number, tableNumber: number) => {
-    const currentBill = getBill(billId, tableNumber)
-    currentBill.items = []
-    addBill(currentBill)
+    if(billId === 0){
+      const currentBill = getBill(billId, tableNumber)
+      currentBill.items = []
+      addBill(currentBill)
+    }
   }
 
   const removeBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
@@ -406,9 +411,43 @@ const useBill = (): BillFunctions => {
     addBill(currentBill)
   }
 
-  const printBill = (billId: number, tableNumber: number) => {
-    const currentBill = getBill(billId, tableNumber)
-    console.log(currentBill)
+  const printBill = async (billId: number, tableNumber: number) => {
+    try {
+      const currentBill = getBill(billId, tableNumber)
+      const response = await axios.post('https://localhost:5000/billing', currentBill)
+      if (response.data === false) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo imprimir la factura'
+        })
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo imprimir la factura'
+      })
+    }
+  }
+
+  const printCommand = async (commandBill: Bill) => {
+    try {
+      const response = await axios.post('https://localhost:5000/command', commandBill)
+      if (response.data === false) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo imprimir la factura'
+        })
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo imprimir la factura'
+      })
+    }
   }
 
   const removeCombinedLinkedProduct = (saleItemProductId: number, productId: number, saleItemId: number, billId: number, tableNumber: number) => {
@@ -587,6 +626,7 @@ const useBill = (): BillFunctions => {
           currentBill.billAccountHistories
       }, true)
     if (!response.error) {
+      printBill(billId, 0)
       updateBillFromDB(billId)
       return true
     }
@@ -597,6 +637,7 @@ const useBill = (): BillFunctions => {
     const originalBill = getBillById(billId)
     const response = await usePatch('bills/closeApart', { bill: { ...apartBill, billAccountHistories: billHistories, workDayUserIdClose } as Bill, originalBill: originalBill }, true)
     if (!response.error) {
+      printBill(billId, 0)
       setApartBill(initialBill)
       return true
     }
@@ -625,6 +666,7 @@ const useBill = (): BillFunctions => {
     fastPayAction,
     closeBill,
     closeApartBill,
+    printCommand,
     updateBillFromDB,
     setBillAddress,
     setDiscount,

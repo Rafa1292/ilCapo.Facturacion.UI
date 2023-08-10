@@ -26,6 +26,7 @@ export interface BillFunctions {
   moveBillItem: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
   moveBillItemBack : (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
   printBill: (billId: number, tableNumber: number) => void
+  printCommand: (commandBill: Bill) => void
   removeCombinedLinkedProduct: (saleItemProductId: number, productId: number, saleItemId: number, billId: number, tableNumber: number) => void
   removeAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   removeBillItem: (billItem: BillItem, billId: number , tableNumber: number) => void
