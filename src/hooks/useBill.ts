@@ -434,6 +434,7 @@ const useBill = (): BillFunctions => {
   const printCommand = async (commandBill: Bill) => {
     try {
       const response = await axios.post('https://localhost:5000/command', commandBill)
+      console.log(commandBill)
       if (response.data === false) {
         Swal.fire({
           icon: 'error',
