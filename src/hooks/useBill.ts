@@ -66,6 +66,7 @@ const useBill = (): BillFunctions => {
   const [apartBill, setApartBill] = useState<Bill>(initialBill)
 
   const addDescriptionToBillProduct = async (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number): Promise<void> => {
+    console.log('add description')
     const currentBill = await getBill(billId, tableNumber)
     for (const billItem of currentBill.items) {
       if (billItem.saleItemId === saleItemId) {
@@ -144,13 +145,6 @@ const useBill = (): BillFunctions => {
     }
   }
 
-  const removeIncompleteBill = () => {
-    let billsForCarry = bills.filter(bill => bill.tableNumber === 0)
-    billsForCarry = billsForCarry.filter(bill => bill.id !== 0)
-    const tableBills = bills.filter(bill => bill.tableNumber !== 0)
-    setBills([...tableBills, ...billsForCarry])
-  }
-
   const getOpenBills = async () => {
     const response = await useGetList<Bill[]>('bills/openBills', true)
     if (!response.error) {
@@ -159,6 +153,7 @@ const useBill = (): BillFunctions => {
         const tmpBill = await completeBill(bill)
         tmpBills.push(tmpBill)
       }
+      console.log('open bills', tmpBills)
       setBills(tmpBills)
     }
   }
@@ -260,10 +255,12 @@ const useBill = (): BillFunctions => {
     const tmpBills = [...tableBills, ...memoryBills, ...toGoBills]
     if(!currentBill.close)
       tmpBills.push(currentBill)
+    console.log('addBill', tmpBills)
     setBills(tmpBills)
   }
 
   const resetBillItems = (billId: number, tableNumber: number) => {
+
     if(billId === 0){
       const currentBill = getBill(billId, tableNumber)
       currentBill.items = []
@@ -322,6 +319,7 @@ const useBill = (): BillFunctions => {
   }
 
   const changeTableNumber = async (tableNumber: number, newTableNumber: number) => {
+    console.log('change table number')
     const currentBill = getBillByTableNumber(tableNumber)
     const newBill = {
       ...currentBill,
@@ -414,7 +412,7 @@ const useBill = (): BillFunctions => {
   const printBill = async (billId: number, tableNumber: number) => {
     try {
       const currentBill = getBill(billId, tableNumber)
-      const response = await axios.post('https://localhost:5000/billing', currentBill)
+      const response = await axios.post('http://localhost:5000/billing', currentBill)
       if (response.data === false) {
         Swal.fire({
           icon: 'error',
@@ -433,7 +431,7 @@ const useBill = (): BillFunctions => {
 
   const printCommand = async (commandBill: Bill) => {
     try {
-      const response = await axios.post('https://localhost:5000/command', commandBill)
+      const response = await axios.post('http://localhost:5000/command', commandBill)
       console.log(commandBill)
       if (response.data === false) {
         Swal.fire({
@@ -672,7 +670,6 @@ const useBill = (): BillFunctions => {
     setBillAddress,
     setDiscount,
     setDeliveryMethod,
-    removeIncompleteBill,
     serve,
     addDescriptionToBillProduct,
     changeTableNumber,

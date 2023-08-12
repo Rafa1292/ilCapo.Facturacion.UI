@@ -227,7 +227,6 @@ const BillResume = ({
 
   useEffect(() => {
     if (bill.client) {
-      console.log(bill.client)
       setName(bill.client.name)
       setPhone(bill.client.phone)
       setAddressId(bill.addressId)

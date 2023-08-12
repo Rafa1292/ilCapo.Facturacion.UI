@@ -10,16 +10,23 @@ import SideMenu from '../components/generics/SideMenu'
 import { Menu } from '../types/menu'
 
 const Home = () => {
-  const { setRoomEdit, system } = useContext(AppContext)
-  const [saleItemCategories, setSaleItemCategories] = useState<SaleItemCategory[]>([])
-  const [tmpSaleItemCategories, setTmpSaleItemCategories] = useState<SaleItemCategory[]>([])
+  const { setRoomEdit, system, billFunctions } = useContext(AppContext)
+  const [saleItemCategories, setSaleItemCategories] = useState<
+    SaleItemCategory[]
+  >([])
+  const [tmpSaleItemCategories, setTmpSaleItemCategories] = useState<
+    SaleItemCategory[]
+  >([])
   const [menus, setMenus] = useState<Menu[]>([])
 
   const setPrices = (menuId: number) => {
     //init saleitemcategory empty array
     const tmpSaleItemCategories: SaleItemCategory[] = []
     for (const saleItemCategory of saleItemCategories) {
-      const tmpSaleItemCategory: SaleItemCategory = { ...saleItemCategory, saleItems: [] }
+      const tmpSaleItemCategory: SaleItemCategory = {
+        ...saleItemCategory,
+        saleItems: [],
+      }
       for (const saleItem of saleItemCategory.saleItems) {
         for (const price of saleItem.prices) {
           if (price.menuId === menuId) {
@@ -43,7 +50,7 @@ const Home = () => {
                         if (price.menuId === menuId) {
                           element.modifierUpgrade.price = price.price
                           break
-                        } 
+                        }
                       }
                     }
                   }
@@ -54,11 +61,9 @@ const Home = () => {
             break
           }
         }
-
       }
       tmpSaleItemCategories.push(tmpSaleItemCategory)
     }
-    console.log(tmpSaleItemCategories)
     setTmpSaleItemCategories(tmpSaleItemCategories)
   }
 
@@ -101,8 +106,8 @@ const Home = () => {
   return (
     <Content isLoading={system.loader}>
       <>
-
         <SideMenu
+          bills={billFunctions.bills}
           menus={menus}
           setPrices={setPrices}
           saleItemCategories={tmpSaleItemCategories}

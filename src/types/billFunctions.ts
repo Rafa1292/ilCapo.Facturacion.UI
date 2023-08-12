@@ -31,7 +31,6 @@ export interface BillFunctions {
   removeAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   removeBillItem: (billItem: BillItem, billId: number , tableNumber: number) => void
   removeLinkedProduct: (saleItemId: number, itemNumber: number, billId: number, tableNumber: number) => void
-  removeIncompleteBill : () => void
   serve : (billId: number) => void
   setBillAddress: (addressId: number, billId: number, tableNumber: number, forApartBill?: boolean) => void
   setDeliveryMethod: (deliveryMethod: number, billId: number, tableNumber: number) => void

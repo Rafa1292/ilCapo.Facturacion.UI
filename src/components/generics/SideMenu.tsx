@@ -21,8 +21,8 @@ const initialClient: Client = {
   mail: '',
   cedula: '',
   addressess: [],
-  creditState:3,
-  creditLimit:0,
+  creditState: 3,
+  creditLimit: 0,
   delete: false,
   createdBy: 0,
   updatedBy: 0,
@@ -56,15 +56,16 @@ interface Props {
   saleItemCategories: SaleItemCategory[]
   setPrices: (menuId: number) => void
   menus: Menu[]
+  bills: Bill[]
 }
 
-const SideMenu = ({ saleItemCategories, setPrices, menus }: Props) => {
+const SideMenu = ({ saleItemCategories, setPrices, menus, bills }: Props) => {
   const { user, logout, billFunctions } = useContext(AppContext)
   const [close, setClose] = useState(true)
   const [bill, setBill] = useState(initialBill)
-
+  
   const closeTable = () => {
-    billFunctions.removeIncompleteBill()
+    // billFunctions.removeIncompleteBill()
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.remove('bill-makerContainer_show')
     setClose(true)
@@ -80,7 +81,7 @@ const SideMenu = ({ saleItemCategories, setPrices, menus }: Props) => {
   useEffect(() => {
     const currentBill = billFunctions.getBill(0, 0)
     setBill(currentBill)
-  }, [billFunctions.bills])
+  }, [bills])
 
   return (
     <>
@@ -164,8 +165,7 @@ const SideMenu = ({ saleItemCategories, setPrices, menus }: Props) => {
             </div>
           </div>
           <ul className='nav flex-column'>
-            {billFunctions.bills
-              .filter((x) => x.id > 0 && x.tableNumber === 0 && !x.close)
+            {bills.filter((x) => x.id > 0 && x.tableNumber === 0 && !x.close)
               .map((bill, index) => {
                 return (
                   <li className='nav-item' key={index}>

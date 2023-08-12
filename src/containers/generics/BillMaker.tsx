@@ -146,6 +146,7 @@ const BillMaker = ({
     )
     if (!response.error) {
       const { id } = response.data
+      console.log('id a actualizar', id)
       await billFunctions.updateBillFromDB(id)
       await billFunctions.printCommand({...bill, id})
       close()
