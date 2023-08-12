@@ -43,6 +43,7 @@ const SideMenuItem = ({
   }
 
   const openTable = () => {
+    billFunctions.removeIncompleteBill()
     const container = document.getElementById(
       `billMakerContainerToGo${bill.id}`
     )

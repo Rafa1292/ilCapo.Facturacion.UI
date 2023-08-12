@@ -148,7 +148,8 @@ const BillMaker = ({
       const { id } = response.data
       console.log('id a actualizar', id)
       await billFunctions.updateBillFromDB(id)
-      await billFunctions.printCommand({...bill, id})
+      console.log('bill for command', bill)
+      await billFunctions.printCommand({ ...bill, id })
       close()
     }
   }
@@ -160,6 +161,7 @@ const BillMaker = ({
       true
     )
     if (!response.error) {
+      console.log('bill for command', bill)
       await billFunctions.printCommand(bill)
       billFunctions.updateBillFromDB(bill.id)
       close()
@@ -254,6 +256,7 @@ const BillMaker = ({
               style={{
                 borderBottom: '1px solid rgba(255,193,7,0.8)',
                 top: '0',
+                zIndex: '100',
               }}
             >
               <div
@@ -297,6 +300,7 @@ const BillMaker = ({
             </div>
             {saleItemCategory && (
               <BillMakerItems
+                billId={bill.id}
                 tableNumber={bill.tableNumber}
                 editBilItem={
                   editBillItem ? editBillItem : ({ saleItemId: 0 } as BillItem)

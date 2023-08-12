@@ -65,13 +65,14 @@ const SideMenu = ({ saleItemCategories, setPrices, menus, bills }: Props) => {
   const [bill, setBill] = useState(initialBill)
   
   const closeTable = () => {
-    // billFunctions.removeIncompleteBill()
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.remove('bill-makerContainer_show')
     setClose(true)
   }
 
   const openTable = () => {
+    billFunctions.removeIncompleteBill()
+    console.log(bills)
     setBill(initialBill)
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.add('bill-makerContainer_show')

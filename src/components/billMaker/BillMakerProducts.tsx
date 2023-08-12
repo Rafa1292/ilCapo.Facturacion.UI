@@ -9,6 +9,7 @@ import { LinkedProduct } from '../../types/linkedProduct'
 import AppContext from '../../context/AppContext'
 
 interface Props {
+  billId: number
   saleItem: SaleItem
   billItem: BillItem
   tableNumber: number
@@ -33,6 +34,7 @@ const BillMakerProducts = ({
   tableNumber,
   setSaleItem,
   billItem,
+  billId,
   newCombinedLinkedProduct,
   setNewBillItem,
   addLinkedProductModifierElement,
@@ -46,7 +48,8 @@ const BillMakerProducts = ({
 
   const addNewBillItem = () => {
     if (validateBillItem()) {
-      billFunctions.addBillItem(billItem, billItem.billId, tableNumber)
+      billFunctions.addBillItem(billItem, billId, tableNumber)
+      console.log('agregando item a factura', billItem.billId, tableNumber)
       setNewBillItem()
       setSaleItem(undefined)
     }

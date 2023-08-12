@@ -13,6 +13,7 @@ import { ModifierElement } from '../../types/modifierElement'
 import { parseCurrency } from '../../utils/currencyParser'
 
 interface Props {
+  billId: number
   saleItemCategory: SaleItemCategory
   editBilItem: BillItem
   tableNumber: number
@@ -75,6 +76,7 @@ const initialLinkedProductModifierElement: LinkedProductModifierElement = {
 const BillMakerItems = ({
   saleItemCategory,
   tableNumber,
+  billId,
   editBilItem,
 }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
@@ -244,6 +246,7 @@ const BillMakerItems = ({
   }
 
   useEffect(() => {
+    console.log('este es el id de items', editBilItem?.billId)
     if (editBilItem?.saleItemId > 0) {
       const tmpSaleItem = saleItemCategory?.saleItems.find(
         (saleItem) => saleItem.id === editBilItem?.saleItemId
@@ -288,6 +291,7 @@ const BillMakerItems = ({
         </div>
         {saleItem && (
           <BillMakerProducts
+            billId={billId}
             setSaleItem={setSaleItem}
             newCombinedLinkedProduct={newCombinedLinkedProduct}
             setNewBillItem={setNewBillItem}

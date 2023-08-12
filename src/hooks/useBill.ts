@@ -145,6 +145,14 @@ const useBill = (): BillFunctions => {
     }
   }
 
+  const removeIncompleteBill = () => {
+    console.log('remove incomplete bill')
+    let billsForCarry = bills.filter(bill => bill.tableNumber === 0)
+    billsForCarry = billsForCarry.filter(bill => bill.id !== 0)
+    const tableBills = bills.filter(bill => bill.tableNumber !== 0)
+    setBills([...tableBills, ...billsForCarry])
+  }
+
   const getOpenBills = async () => {
     const response = await useGetList<Bill[]>('bills/openBills', true)
     if (!response.error) {
@@ -670,6 +678,7 @@ const useBill = (): BillFunctions => {
     setBillAddress,
     setDiscount,
     setDeliveryMethod,
+    removeIncompleteBill,
     serve,
     addDescriptionToBillProduct,
     changeTableNumber,
