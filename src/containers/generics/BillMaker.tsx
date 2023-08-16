@@ -200,7 +200,7 @@ const BillMaker = ({
 
   const print = async () => {
     console.log(bill)
-    const response = await axios.post('https://localhost:5000/command', bill)
+    const response = await axios.post('https://localhost:5001/command', bill)
     console.log(response)
   }
 

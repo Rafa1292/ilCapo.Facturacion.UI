@@ -161,7 +161,6 @@ const useBill = (): BillFunctions => {
         const tmpBill = await completeBill(bill)
         tmpBills.push(tmpBill)
       }
-      console.log('open bills', tmpBills)
       setBills(tmpBills)
     }
   }
@@ -263,7 +262,6 @@ const useBill = (): BillFunctions => {
     const tmpBills = [...tableBills, ...memoryBills, ...toGoBills]
     if(!currentBill.close)
       tmpBills.push(currentBill)
-    console.log('addBill', tmpBills)
     setBills(tmpBills)
   }
 

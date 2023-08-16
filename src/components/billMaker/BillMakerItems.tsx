@@ -130,21 +130,23 @@ const BillMakerItems = ({
   ): LinkedProductModifier[] => {
     const linkedProductModifiers: LinkedProductModifier[] = []
     product.productModifiers.map((productModifier) => {
-      const linkedProductModifier: LinkedProductModifier = {
-        id: 0,
-        linkedProductId: 0,
-        delete: false,
-        modifierGroupId: productModifier.modifierGroup.id,
-        elements: [],
-        label: productModifier.modifierGroup.label,
-        maxSelectable: productModifier.modifierGroup.maxSelectable,
-        minSelectable: productModifier.modifierGroup.minSelectable,
-        name: productModifier.modifierGroup.name,
-        quantity: 1,
-        createdBy: 0,
-        updatedBy: 0,
+      if (productModifier !== null) {
+        const linkedProductModifier: LinkedProductModifier = {
+          id: 0,
+          linkedProductId: 0,
+          delete: false,
+          modifierGroupId: productModifier.modifierGroup?.id,
+          elements: [],
+          label: productModifier.modifierGroup?.label,
+          maxSelectable: productModifier.modifierGroup?.maxSelectable,
+          minSelectable: productModifier.modifierGroup?.minSelectable,
+          name: productModifier.modifierGroup?.name,
+          quantity: 1,
+          createdBy: 0,
+          updatedBy: 0,
+        }
+        linkedProductModifiers.push(linkedProductModifier)
       }
-      linkedProductModifiers.push(linkedProductModifier)
     })
     return linkedProductModifiers
   }
@@ -246,7 +248,6 @@ const BillMakerItems = ({
   }
 
   useEffect(() => {
-    console.log('este es el id de items', editBilItem?.billId)
     if (editBilItem?.saleItemId > 0) {
       const tmpSaleItem = saleItemCategory?.saleItems.find(
         (saleItem) => saleItem.id === editBilItem?.saleItemId

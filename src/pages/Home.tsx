@@ -36,7 +36,6 @@ const Home = () => {
                 if (modifier.modifierGroup?.elements !== undefined) {
                   for (const element of modifier.modifierGroup.elements) {
                     for (const price of element.prices) {
-                      console.log(price.menuId, menuId)
                       if (price.menuId === menuId) {
                         element.price = price.price
                         break

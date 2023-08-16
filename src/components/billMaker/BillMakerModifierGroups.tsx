@@ -35,7 +35,7 @@ const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductM
                   boxShadow: `inset 0px 0px ${modifierGroup?.id === productModifier.modifierGroupId ? '120px -5px' : '20px -15px'} rgba(0,0,0,.76)`,
                   height: `${modifierGroup?.id === productModifier.modifierGroupId ? '55px' : '50px'}` }}>
                   <div className="card-body align-items-center d-flex p-0 justify-content-center">
-                    <div className="card-subtitle m-0 text-center">{productModifier.modifierGroup.name}</div>
+                    <div className="card-subtitle m-0 text-center">{productModifier.modifierGroup?.name}</div>
                   </div>
                 </div>
               </div>
