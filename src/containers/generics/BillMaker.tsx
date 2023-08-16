@@ -198,13 +198,8 @@ const BillMaker = ({
     billFunctions.resetBillItems(bill.id, bill.tableNumber)
   }
 
-  const print = async () => {
-    console.log(bill)
-    const response = await axios.post('https://localhost:5001/command', bill)
-    console.log(response)
-  }
-
   useEffect(() => {
+    console.log('bill', bill)
     initializeSearchProducts(saleItemCategories)
   }, [bill, menus, saleItemCategories])
 
@@ -287,7 +282,7 @@ const BillMaker = ({
                       onClick={() =>
                         handleChangeSaleItemCategory(tmpSaleItemCategory)
                       }
-                      className={`px-3 mx-1 py-1 rounded pointer ${
+                      className={`px-3 m-1 py-1 rounded pointer ${
                         tmpSaleItemCategory.id === saleItemCategory?.id
                           ? 'item-category_selected'
                           : 'item-category'

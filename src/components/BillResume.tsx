@@ -156,7 +156,6 @@ const BillResume = ({
   }
 
   const saveNewClient = async () => {
-    console.log(mail)
     const response = await usePost<Client>(
       'clients',
       {
@@ -226,6 +225,8 @@ const BillResume = ({
   }
 
   useEffect(() => {
+    billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)
+    console.log('resume',bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)

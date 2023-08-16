@@ -72,7 +72,7 @@ const SideMenuItem = ({
           for (const modifier of product.modifiers) {
             if (typeof modifier.elements === 'undefined') continue
             for (const element of modifier.elements) {
-              price += Number(element.price)
+              price += Number(element.price) * Number(element.quantity)
             }
           }
         }

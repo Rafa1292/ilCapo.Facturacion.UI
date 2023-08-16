@@ -25,7 +25,7 @@ const initialWordayUser: WorkDayUser = {
   workDayId: 0,
   userId: 0,
   createdBy: 0,
-  updatedBy: 0
+  updatedBy: 0,
 }
 interface currencyCount {
   value: number
@@ -51,7 +51,8 @@ interface Props {
 }
 
 const WorkDayUserPage = ({ isClose = false }: Props) => {
-  const [currentWorkDayUser, setCurrentWorkDayUser] = useState<WorkDayUser>(initialWordayUser)
+  const [currentWorkDayUser, setCurrentWorkDayUser] =
+    useState<WorkDayUser>(initialWordayUser)
   const { user, logout, setWorkDayUser, billFunctions } = useContext(AppContext)
   const [currencies, setCurrencies] = useState([...initialCurrencies])
   const [payMethods, setPayMethods] = useState<PayMethod[]>([])
@@ -59,11 +60,17 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
   const [totalBills, setTotalBills] = useState(0)
   const navigate = useNavigate()
 
-  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleCurrencyChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const value = Number(event.target.value)
     const newCurrencies = [...currencies]
     newCurrencies[index].count = value
-    const total = newCurrencies.reduce((total, currency) => total + (currency.value * currency.count), 0)
+    const total = newCurrencies.reduce(
+      (total, currency) => total + currency.value * currency.count,
+      0
+    )
     setCurrentWorkDayUser({ ...currentWorkDayUser, finalCash: total })
     setCurrencies(newCurrencies)
   }
@@ -76,7 +83,11 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
   const getBillTotal = (bill: Bill) => {
     let billTotal = 0
     for (const billItem of bill.items) {
-      billTotal += Number(billItem.unitPrice) * Number(billItem.quantity) + getBillItemModifiersPrice(billItem) + Number(billItem.tax) - Number(billItem.discount)
+      billTotal +=
+        Number(billItem.unitPrice) * Number(billItem.quantity) +
+        getBillItemModifiersPrice(billItem) +
+        Number(billItem.tax) -
+        Number(billItem.discount)
     }
     return billTotal
   }
@@ -90,7 +101,7 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
           for (const modifier of product.modifiers) {
             if (typeof modifier.elements === 'undefined') continue
             for (const element of modifier.elements) {
-              price += Number(element.price)
+              price += Number(element.price) * Number(element.quantity)
             }
           }
         }
@@ -99,7 +110,6 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
     } catch (error) {
       return 0
     }
-
   }
 
   const getTotalBills = (bills: Bill[]) => {
@@ -154,7 +164,11 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
   }
 
   const closeWorkDayUser = async () => {
-    const response = await usePatch<WorkDayUser>('workDayUsers', currentWorkDayUser, true)
+    const response = await usePatch<WorkDayUser>(
+      'workDayUsers',
+      currentWorkDayUser,
+      true
+    )
     if (!response.error) {
       await logout()
       await setWorkDayUser()
@@ -164,9 +178,12 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
 
   useEffect(() => {
     const getBillsByWorkDay = async () => {
-      const response = await useGetList<Bill[]>(`bills/billsByWorkDayUserClose/${user.workDayUser.id}`, true)
+      const response = await useGetList<Bill[]>(
+        `bills/billsByWorkDayUserClose/${user.workDayUser.id}`,
+        true
+      )
       if (!response.error) {
-        const bills = response.data.filter(bill => bill.close && !bill.isNull)
+        const bills = response.data.filter((bill) => bill.close && !bill.isNull)
         const tmpTotalBills = getTotalBills(bills)
         setTotalBills(tmpTotalBills)
         setBills(bills)
@@ -175,7 +192,7 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
     const getPayMethods = async () => {
       const response = await useGetList<PayMethod[]>('paymethods', true)
       if (!response.error) {
-        setPayMethods(response.data.filter(paymethod => paymethod.isPublic))
+        setPayMethods(response.data.filter((paymethod) => paymethod.isPublic))
       }
     }
     getPayMethods()
@@ -184,168 +201,204 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
     user.workDayUser.id !== 0 && setCurrentWorkDayUser(user.workDayUser)
   }, [billFunctions.bills])
 
-
   return (
-    <div className='col-12 d-flex flex-wrap justify-content-center align-items-center'>
-      {currentWorkDayUser.id === 0 &&
-        <WorkDayUserForm />
-        ||
+    <div
+      className='col-12 d-flex flex-wrap justify-content-center py-3 align-items-center scroll'
+      style={{ maxHeight: 'calc(100vh - 90px)', overflowY: 'scroll' }}
+    >
+      {(currentWorkDayUser.id === 0 && <WorkDayUserForm />) || (
         <div className='d-flex col-10 justify-content-center flex-wrap'>
           <h4 className='col-12 text-center'>Esta es tu jornada de hoy</h4>
-          <div className="col-12 justify-content-center d-flex flex-wrap mt-3">
-            <div className="col-12 d-flex flex-wrap justify-content-center border-bottom border-secondary py-2">
-              <div className="col-3 fw-bold text-end">
-                Usuario:
-              </div>
-              <div className="col-3 px-3 text-start">
-                Mariela  Gonzales
-              </div>
-              <div className="col-3 fw-bold text-end">
-                Dinero inicial:
-              </div>
-              <div className="col-3 px-3 text-start">
+          <div className='col-12 justify-content-center d-flex flex-wrap mt-3'>
+            <div className='col-12 d-flex flex-wrap justify-content-center border-bottom border-secondary py-2'>
+              <div className='col-2 fw-bold text-end'>Usuario:</div>
+              <div className='col-3 px-3 text-start'>Mariela Gonzales</div>
+              <div className='col-2 fw-bold text-end'>Dinero inicial:</div>
+              <div className='col-3 px-3 text-start'>
                 {parseCurrency(currentWorkDayUser.initialCash.toString())}
               </div>
-              {
-                payMethods.map((payMethod, index) => (
-                  <div key={index} className="col-2 mt-3 text-center fw-bold">
+              <div className='col-2'>
+                <button className='btn btn-danger' onClick={logout}>
+                  Cerrar sesion
+                </button>
+              </div>
+              <div className='col-12 d-flex flex-wrap'>
+                <div className='col-2'></div>
+                {payMethods.map((payMethod, index) => (
+                  <div key={index} className='col-2 mt-3 text-center fw-bold'>
                     -{payMethod.name}:
                   </div>
-                ))
-              }
-            </div>
-            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
-              <div className="col-3 fw-bold text-end">
-                Gastos:
-              </div>
-              <div className="col-3 px-3 text-start">
-                {parseCurrency(currentWorkDayUser.expenses.reduce((total, expense) => total + Number(expense.amount), 0).toString())}
-              </div>
-              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
-                {
-                  payMethods.map((payMethod, index) => (
-                    <div key={index} className="col-2 text-center">
-                      {parseCurrency(getTotalExpensesByPayMethod(payMethod.id).toString())}
-                    </div>
-                  ))
-                }
+                ))}
               </div>
             </div>
-            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
-              <div className="col-3 fw-bold text-end">
-                Inversiones:
+            <div className='col-12 d-flex flex-wrap border-bottom border-secondary py-2'>
+              <div className='col-1 fw-bold text-end'>Gastos:</div>
+              <div className='col-1 px-3 text-start'>
+                {parseCurrency(
+                  currentWorkDayUser.expenses
+                    .reduce(
+                      (total, expense) => total + Number(expense.amount),
+                      0
+                    )
+                    .toString()
+                )}
               </div>
-              <div className="col-3 px-3 text-start">
-                {parseCurrency(currentWorkDayUser.investments.reduce((total, investment) => total + Number(investment.amount), 0).toString())}
-              </div>
-              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
-                {
-                  payMethods.map((payMethod, index) => (
-                    <div key={index} className="col-2 text-center">
-                      {parseCurrency(getTotalInvestmentsByPayMethod(payMethod.id).toString())}
-                    </div>
-                  ))
-                }
-              </div>
-            </div>
-            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
-              <div className="col-3 fw-bold text-end">
-                Ingresos:
-              </div>
-              <div className="col-3 px-3 text-start">
-                {parseCurrency(currentWorkDayUser.entries.reduce((total, entry) => total + entry.accountHistory.amount, 0).toString())}
-              </div>
-              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
-                {
-                  payMethods.map((payMethod, index) => (
-                    <div key={index} className="col-2 text-center">
-                      {parseCurrency(getTotalEntriesByPayMethod(payMethod.id).toString())}
-                    </div>
-                  ))
-                }
+              <div className='col-12 d-flex flex-wrap py-2'>
+                <div className='col-2'></div>
+                {payMethods.map((payMethod, index) => (
+                  <div key={index} className='col-2 text-center'>
+                    {parseCurrency(
+                      getTotalExpensesByPayMethod(payMethod.id).toString()
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="col-12 d-flex flex-wrap border-bottom border-secondary py-2">
-              <div className="col-3 fw-bold text-end">
-                Venta total:
+            <div className='col-12 d-flex flex-wrap border-bottom border-secondary py-2'>
+              <div className='col-1 fw-bold text-end'>Inversiones:</div>
+              <div className='col-1 px-3 text-start'>
+                {parseCurrency(
+                  currentWorkDayUser.investments
+                    .reduce(
+                      (total, investment) => total + Number(investment.amount),
+                      0
+                    )
+                    .toString()
+                )}
               </div>
-              <div className="col-3 px-3 text-start">
-                {
-                  parseCurrency(totalBills.toString())
-                }
-              </div>
-              <div className="col-12 d-flex flex-wrap justify-content-center py-2">
-                {
-                  payMethods.map((payMethod, index) => (
-                    <div key={index} className="col-2 text-center">
-                      {parseCurrency(getTotalBillsByPayMethod(payMethod.id).toString())}
-                    </div>
-                  ))
-                }
-              </div>
-            </div>
-            <div className="col-12 d-flex my-4 flex-wrap">
-              <div className="col-4 d-flex flex-wrap">
-                <div className="col-6 fw-bold text-end">
-                  Dinero esperado:
-                </div>
-                <div className="col-3 px-3 text-start">
-                  {
-                    currentWorkDayUser.finalCash - currentWorkDayUser.diference
-                  }
-                </div>
-              </div>
-              <div className="col-4 d-flex flex-wrap">
-                <div className="col-6 fw-bold text-end">
-                  Dinero actual:
-                </div>
-                <div className="col-3 px-3 text-start">
-                  {
-                    currentWorkDayUser.finalCash
-                  }
-                </div>
-              </div>
-              <div className="col-4 d-flex flex-wrap">
-                <div className="col-6 fw-bold text-end">
-                  Diferencia:
-                </div>
-                <div className="col-3 px-3 text-start">
-                  {
-                    currentWorkDayUser.diference
-                  }
-                </div>
+              <div className='col-12 d-flex flex-wrap py-2'>
+                <div className='col-2'></div>
+                {payMethods.map((payMethod, index) => (
+                  <div key={index} className='col-2 text-center'>
+                    {parseCurrency(
+                      getTotalInvestmentsByPayMethod(payMethod.id).toString()
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
-            <button className='btn btn-outline-danger' onClick={logout}>Cerrar sesion</button>
+            <div className='col-12 d-flex flex-wrap border-bottom border-secondary py-2'>
+              <div className='col-1 fw-bold text-end'>Ingresos:</div>
+              <div className='col-1 px-3 text-start'>
+                {parseCurrency(
+                  currentWorkDayUser.entries
+                    .reduce(
+                      (total, entry) => total + entry.accountHistory.amount,
+                      0
+                    )
+                    .toString()
+                )}
+              </div>
+              <div className='col-12 d-flex flex-wrap py-2'>
+                <div className='col-2'></div>
+                {payMethods.map((payMethod, index) => (
+                  <div key={index} className='col-2 text-center'>
+                    {parseCurrency(
+                      getTotalEntriesByPayMethod(payMethod.id).toString()
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className='col-12 d-flex flex-wrap border-bottom border-secondary py-2'>
+              <div className='col-1 fw-bold text-end'>Venta:</div>
+              <div className='col-1 px-3 text-start'>
+                {parseCurrency(totalBills.toString())}
+              </div>
+              <div className='col-12 d-flex flex-wrap py-2'>
+                <div className='col-2'></div>
+                {payMethods.map((payMethod, index) => (
+                  <div key={index} className='col-2 text-center'>
+                    {parseCurrency(
+                      getTotalBillsByPayMethod(payMethod.id).toString()
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className='col-12 d-flex my-4 flex-wrap'>
+              <div className='col-4 d-flex flex-wrap'>
+                <div className='col-6 fw-bold text-end'>Dinero esperado:</div>
+                <div className='col-3 px-3 text-start'>
+                  {currentWorkDayUser.finalCash - currentWorkDayUser.diference}
+                </div>
+              </div>
+              <div className='col-4 d-flex flex-wrap'>
+                <div className='col-6 fw-bold text-end'>Dinero actual:</div>
+                <div className='col-3 px-3 text-start'>
+                  {currentWorkDayUser.finalCash}
+                </div>
+              </div>
+              <div className='col-4 d-flex flex-wrap'>
+                <div className='col-6 fw-bold text-end'>Diferencia:</div>
+                <div className='col-3 px-3 text-start'>
+                  {currentWorkDayUser.diference}
+                </div>
+              </div>
+            </div>
           </div>
-          {
-            !isClose &&
+          {!isClose && (
             <>
-              {
-                !currentWorkDayUser.close &&
-                <button className="btn btn-outline-danger col-5 mt-3" onClick={() => setCurrentWorkDayUser({ ...currentWorkDayUser, close: true })}>Cerrar jornada</button>
-                ||
+              {(!currentWorkDayUser.close && (
+                <button
+                  className='btn btn-outline-danger col-5 mt-3'
+                  onClick={() =>
+                    setCurrentWorkDayUser({
+                      ...currentWorkDayUser,
+                      close: true,
+                    })
+                  }
+                >
+                  Cerrar jornada
+                </button>
+              )) || (
                 <>
-                  <CustomInputNumber value={currentWorkDayUser.finalCash} showLabel={false} customInputNumber={
-                    {
-                      label: 'Dinero final', name: 'finalCash',
-                      handleChange: handleChange, pattern: regexOptions.decimal, validationMessage: 'Cantidad final invalida'
-                    }
-                  } />
-                  <button className="btn btn-outline-danger col-5 mt-3" onClick={closeWorkDayUser}>Enviar</button>
-                  <div className="col-12 text-center fs-5 my-3">
+                  <CustomInputNumber
+                    value={currentWorkDayUser.finalCash}
+                    showLabel={false}
+                    customInputNumber={{
+                      label: 'Dinero final',
+                      name: 'finalCash',
+                      handleChange: handleChange,
+                      pattern: regexOptions.decimal,
+                      validationMessage: 'Cantidad final invalida',
+                    }}
+                  />
+                  <button
+                    className='btn btn-outline-danger col-5 mt-3'
+                    onClick={closeWorkDayUser}
+                  >
+                    Enviar
+                  </button>
+                  <div className='col-12 text-center fs-5 my-3'>
                     Conteo individual de dinero
                   </div>
-                  <div className="col-12">
-                    <div className="row">
+                  <div className='col-12'>
+                    <div className='row'>
                       {currencies.map((currency, index) => (
-                        <div className="col-4 my-2" key={index}>
-                          <div className="row">
-                            <div className="col-4 m-0 d-flex p-0 justify-content-end" style={{ alignContent: 'center' }}>
-                              <label className="form-label d-flex flex-wrap m-0 fw-bold" style={{ alignContent: 'center' }}>{currency.value}</label>
+                        <div className='col-4 my-2' key={index}>
+                          <div className='row'>
+                            <div
+                              className='col-4 m-0 d-flex p-0 justify-content-end'
+                              style={{ alignContent: 'center' }}
+                            >
+                              <label
+                                className='form-label d-flex flex-wrap m-0 fw-bold'
+                                style={{ alignContent: 'center' }}
+                              >
+                                {currency.value}
+                              </label>
                             </div>
-                            <div className="col-8">
-                              <input type="number" className="form-control bg-transparent border border-secondary" name={`currency${currency.value}`} value={currency.count} onChange={(event) => handleCurrencyChange(event, index)} />
+                            <div className='col-8'>
+                              <input
+                                type='number'
+                                className='form-control bg-transparent border border-secondary'
+                                name={`currency${currency.value}`}
+                                value={currency.count}
+                                onChange={(event) =>
+                                  handleCurrencyChange(event, index)
+                                }
+                              />
                             </div>
                           </div>
                         </div>
@@ -353,11 +406,11 @@ const WorkDayUserPage = ({ isClose = false }: Props) => {
                     </div>
                   </div>
                 </>
-              }
+              )}
             </>
-          }
+          )}
         </div>
-      }
+      )}
     </div>
   )
 }

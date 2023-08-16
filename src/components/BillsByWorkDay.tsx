@@ -122,7 +122,7 @@ const BillsByWorkDay = ({ bills, getBillsByWorkDay }: Props) => {
                 { content: getBillTotal(bill).toString(), col: 3 }
               ]}>
               <BillReview bill={bill} />
-              <button disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
+              <button onClick={()=> billFunctions.printBill(bill.id, bill.tableNumber)} disabled={bill.isNull} className="btn btn-outline-secondary mx-2">Reimprimir</button>
               {
                 showState === 2 && !user.workDayUser.close &&
                 <button disabled={bill.isNull} className="btn btn-outline-danger mx-2" onClick={() => cancelBill(bill.id)}>Anular</button>

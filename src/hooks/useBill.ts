@@ -146,7 +146,6 @@ const useBill = (): BillFunctions => {
   }
 
   const removeIncompleteBill = () => {
-    console.log('remove incomplete bill')
     let billsForCarry = bills.filter(bill => bill.tableNumber === 0)
     billsForCarry = billsForCarry.filter(bill => bill.id !== 0)
     const tableBills = bills.filter(bill => bill.tableNumber !== 0)
@@ -631,8 +630,8 @@ const useBill = (): BillFunctions => {
           currentBill.billAccountHistories
       }, true)
     if (!response.error) {
-      printBill(billId, 0)
       updateBillFromDB(billId)
+      printBill(billId, 0)
       return true
     }
     return false

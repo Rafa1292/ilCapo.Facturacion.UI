@@ -34,7 +34,7 @@ const initialBill: Bill = {
   client: initialClient,
   clientId: 0,
   close: false,
-  deliveryMethod: 0,
+  deliveryMethod: 1,
   tableNumber: 0,
   workDayUserIdOpen: 0,
   workDayUserIdClose: 0,
@@ -71,8 +71,8 @@ const SideMenu = ({ saleItemCategories, setPrices, menus, bills }: Props) => {
   }
 
   const openTable = () => {
+    console.log(initialBill)
     billFunctions.removeIncompleteBill()
-    console.log(bills)
     setBill(initialBill)
     const container = document.getElementById(`billMakerContainerToGo${0}`)
     container?.classList.add('bill-makerContainer_show')
@@ -167,6 +167,7 @@ const SideMenu = ({ saleItemCategories, setPrices, menus, bills }: Props) => {
           </div>
           <ul className='nav flex-column'>
             {bills.filter((x) => x.id > 0 && x.tableNumber === 0 && !x.close)
+              .sort((a, b) => b.id - a.id)
               .map((bill, index) => {
                 return (
                   <li className='nav-item' key={index}>
