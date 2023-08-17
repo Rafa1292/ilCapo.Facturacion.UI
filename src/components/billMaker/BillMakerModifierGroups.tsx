@@ -27,7 +27,7 @@ const BillMakerModifierGroups = ({ product, saleItemProductId, addLinkedProductM
       <div className="col-12 d-flex flex-wrap justify-content-center align-items-center" style={{boxSizing: 'border-box', height: '75px'}}>
         {
           product !== undefined &&
-          product.productModifiers.map((productModifier, index) => {
+          product.productModifiers.sort((a, b) => a.order - b.order).map((productModifier, index) => {
             return (
               <div key={index} className="col-3 p-2 pointer" onClick={() => setModifierGroup(productModifier.modifierGroup)}>
                 <div className="card modifier-group_item" style={{ 
