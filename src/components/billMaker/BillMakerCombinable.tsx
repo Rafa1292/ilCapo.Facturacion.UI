@@ -21,6 +21,7 @@ const initialLinkedProduct: LinkedProduct = {
   delete: false,
   modifiers: [],
   isCommanded: false,
+  needsCommand: false,
   name: '',
   productId: 0,
   unitPrice: 0,

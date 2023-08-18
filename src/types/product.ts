@@ -7,6 +7,7 @@ export interface Product {
   description: string
   pictureUrl: string
   allowsModify: boolean
+  needsCommand: boolean
   productModifiers: ProductModifier[]
   delete: boolean
   createdBy?: number

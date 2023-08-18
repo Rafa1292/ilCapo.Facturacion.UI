@@ -101,8 +101,8 @@ const BillMakerElements = ({ modifierGroup, saleItemProductId, addLinkedProductM
               <div key={index} className="col-3 p-2 pointer " >
                 <div className="card element_item" onClick={tmpElement?.quantity === 1 ? () => addElement(tmpElement) : undefined} style={{
                   boxShadow: `0px 0px ${elements.map(x => x.id).includes(tmpElement?.id) ?  '5px 2px': '0 0'} rgba(0,0,0,.5)`,
-                  border: `${elements.map(x => x.id).includes(tmpElement?.id) ?  '2px': '0'} solid rgba(255,193,7)`,
-                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '125px' : '65px' : tmpElement?.quantity > 1 ? '120px' : '60px'}`
+                  border: `2px solid ${elements.map(x => x.id).includes(tmpElement?.id) ?  'rgba(255,193,7)': 'rgba(255,255,255,0)'} `,
+                  height: `${elements.map(x => x.id).includes(tmpElement?.id) ? tmpElement?.quantity > 1 ? '125px' : '65px' : tmpElement?.quantity > 1 ? '125px' : '65px'}`
                 }}>
                   <div className="card-body p-0 d-flex flex-wrap align-items-center">
                     <span className="card-title col-12 flex-wrap justify-content-center text-center align-content-center d-flex m-0" style={{ height: '50px' }} >{tmpElement.name}</span>

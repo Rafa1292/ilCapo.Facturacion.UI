@@ -54,6 +54,7 @@ const initialLinkedProduct: LinkedProduct = {
   delete: false,
   modifiers: [],
   isCommanded: false,
+  needsCommand: false,
   name: '',
   productId: 0,
   unitPrice: 0,
@@ -114,10 +115,11 @@ const BillMakerItems = ({
   const newLinkedProduct = (
     saleItemProduct: SaleItemProduct
   ): LinkedProduct => {
-    const linkedProduct = {
+    const linkedProduct: LinkedProduct = {
       ...initialLinkedProduct,
       id: billItem.billProducts.length + 1,
       productId: saleItemProduct.product.id,
+      needsCommand: saleItemProduct.product.needsCommand,
       unitPrice: saleItemProduct.product.price || 0,
       name: saleItemProduct.product.name,
       modifiers: newLinkedProductModifiers(saleItemProduct.product),
@@ -274,7 +276,7 @@ const BillMakerItems = ({
                   className='col-3 p-2'
                   onClick={() => newBillItem(tmpSaleItem)}
                 >
-                  <div className='card bill-item'>
+                  <div className='card bill-item pointer'>
                     <div className='card-body d-flex flex-wrap justify-content-center align-content-center'>
                       <div className='card-title mb-1 text-center'>
                         {tmpSaleItem.name}

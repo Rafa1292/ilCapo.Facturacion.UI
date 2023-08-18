@@ -70,7 +70,7 @@ const Home = () => {
     setRoomEdit(false)
     const getSaleItemCategories = async () => {
       const response = await useGetList<SaleItemCategory[]>(
-        'saleItemCategories',
+        'saleItemCategories/activeProducts',
         false
       )
       if (!response.error) {
