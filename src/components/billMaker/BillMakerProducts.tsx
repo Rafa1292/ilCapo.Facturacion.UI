@@ -7,6 +7,7 @@ import { BillItem } from '../../types/billItem'
 import { ModifierElement } from '../../types/modifierElement'
 import { LinkedProduct } from '../../types/linkedProduct'
 import AppContext from '../../context/AppContext'
+import Swal from 'sweetalert2'
 
 interface Props {
   billId: number
@@ -67,6 +68,17 @@ const BillMakerProducts = ({
             elementsQuantity < productModifier.minSelectable ||
             elementsQuantity > productModifier.maxSelectable
           ) {
+            Swal.fire({
+              position: 'top-end',
+              toast: true,
+              background: '#7F270C',
+              color: 'white',
+              title: `Producto incompleto ${productModifier.name} es necesario`,
+              showConfirmButton: false,
+              timer: 2000,
+              heightAuto: false,
+            })
+            console.log('Producto incompleto', billItemLinkedProduct.id)
             tmpIncompleteProducts.push(billItemLinkedProduct.id)
             isValid = false
           }

@@ -139,7 +139,7 @@ const BillMaker = ({
   const newBill = async () => {
     bill.workDayUserIdOpen = user.workDayUser.id
     bill.workDayUserIdClose = user.workDayUser.id
-    console.log('billcommand', bill)
+
     const response = await usePost<Bill>(
       'bills',
       { ...bill, commandTime: new Date(Date.now()) },
