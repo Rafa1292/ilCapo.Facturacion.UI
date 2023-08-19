@@ -37,6 +37,7 @@ const initialBill: Bill = {
   deliveryMethod: 1,
   tableNumber: 0,
   workDayUserIdOpen: 0,
+  menuId: 0,
   workDayUserIdClose: 0,
   commandTime: new Date(Date.now()),
   isServed: false,

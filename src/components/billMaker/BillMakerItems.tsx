@@ -17,6 +17,7 @@ interface Props {
   saleItemCategory: SaleItemCategory
   editBilItem: BillItem
   tableNumber: number
+  menuId: number
 }
 
 const initialBillItem: BillItem = {
@@ -79,6 +80,7 @@ const BillMakerItems = ({
   tableNumber,
   billId,
   editBilItem,
+  menuId
 }: Props) => {
   const [saleItem, setSaleItem] = useState<SaleItem>()
   const [billItem, setBillItem] = useState<BillItem>(initialBillItem)
@@ -294,6 +296,7 @@ const BillMakerItems = ({
         </div>
         {saleItem && (
           <BillMakerProducts
+            menuId={menuId}
             billId={billId}
             setSaleItem={setSaleItem}
             newCombinedLinkedProduct={newCombinedLinkedProduct}

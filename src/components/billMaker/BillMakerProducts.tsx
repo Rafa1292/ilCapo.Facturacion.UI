@@ -10,6 +10,7 @@ import AppContext from '../../context/AppContext'
 import Swal from 'sweetalert2'
 
 interface Props {
+  menuId: number
   billId: number
   saleItem: SaleItem
   billItem: BillItem
@@ -40,6 +41,7 @@ const BillMakerProducts = ({
   setNewBillItem,
   addLinkedProductModifierElement,
   removeLinkedProductModifierElement,
+  menuId
 }: Props) => {
   const [product, setProduct] = useState<Product>()
   const [incompleteProducts, setIncompleteProducts] = useState<number[]>([])
@@ -49,8 +51,7 @@ const BillMakerProducts = ({
 
   const addNewBillItem = () => {
     if (validateBillItem()) {
-      billFunctions.addBillItem(billItem, billId, tableNumber)
-      console.log('agregando item a factura', billItem.billId, tableNumber)
+      billFunctions.addBillItem(billItem, billId, tableNumber, menuId)
       setNewBillItem()
       setSaleItem(undefined)
     }
@@ -78,7 +79,6 @@ const BillMakerProducts = ({
               timer: 2000,
               heightAuto: false,
             })
-            console.log('Producto incompleto', billItemLinkedProduct.id)
             tmpIncompleteProducts.push(billItemLinkedProduct.id)
             isValid = false
           }

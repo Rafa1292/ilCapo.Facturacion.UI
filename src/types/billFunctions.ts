@@ -10,7 +10,7 @@ export interface BillFunctions {
   
   //Refactor  
   resetBillItems: (billId: number, tableNumber: number) => void
-  addBillItem: (billItem: BillItem, billId: number, tableNumber: number) => void
+  addBillItem: (billItem: BillItem, billId: number, tableNumber: number, menuId: number) => void
   addDescriptionToBillProduct: (saleItemId: number, itemNumber: number, saleItemProductId: number, description: string, billId: number, tableNumber: number) => void
   addAccountHistory: (accountHistory: AccountHistory, billId: number) => void
   closeBill: (workDayUserIdClose: number, billId: number, billHistories?: BillAccountHistory[]) => Promise<boolean>

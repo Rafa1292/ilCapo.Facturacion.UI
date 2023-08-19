@@ -230,7 +230,6 @@ const BillResume = ({
 
   useEffect(() => {
     billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)
-    console.log('resume', bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)

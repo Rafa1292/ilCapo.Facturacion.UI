@@ -60,7 +60,7 @@ const BillMaker = ({
   const [showPayMethods, setShowPayMethods] = useState(false)
   const [pullApartBill, setPullApartBill] = useState<boolean>(false)
   const [menuId, setMenuId] = useState<number>(0)
-
+  const [tmpMenus, setTmpMenus] = useState<Menu[]>([])
   const handleEditLinkedProduct = (saleItemId: number, itemNumber: number) => {
     const tmpBillItem = billFunctions.editLinkedProduct(
       saleItemId,
@@ -198,8 +198,14 @@ const BillMaker = ({
   }
 
   useEffect(() => {
-    console.log('bill', bill)
     initializeSearchProducts(saleItemCategories)
+    if (bill.items.length > 0) {
+      const tmpMenuId = bill.menuId > 0 ? bill.menuId : menuId
+      setMenuId(tmpMenuId)
+      setTmpMenus(menus.filter((menu) => menu.id === tmpMenuId))
+    } else {
+      setTmpMenus(menus)
+    }
   }, [bill, menus, saleItemCategories])
 
   return (
@@ -257,7 +263,7 @@ const BillMaker = ({
                 className='col-12 pb-2 mb-2 d-flex justify-content-center flex-wrap'
                 style={{ borderBottom: '1px solid rgba(255,255,255,.6)' }}
               >
-                {menus.map((tmpMenu, index) => {
+                {tmpMenus.map((tmpMenu, index) => {
                   return (
                     <div
                       key={index}
@@ -294,6 +300,7 @@ const BillMaker = ({
             </div>
             {saleItemCategory && (
               <BillMakerItems
+                menuId={menuId}
                 billId={bill.id}
                 tableNumber={bill.tableNumber}
                 editBilItem={

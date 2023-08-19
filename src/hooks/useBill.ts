@@ -46,6 +46,7 @@ const initialBill: Bill = {
   tableNumber: 0,
   workDayUserIdOpen: 0,
   workDayUserIdClose: 0,
+  menuId: 0,
   isCredit: false,
   commandTime: new Date(Date.now()),
   isServed: false,
@@ -467,9 +468,12 @@ const useBill = (): BillFunctions => {
     addBill(currentBill)
   }
 
-  const addBillItem = (billItem: BillItem, billId: number, tableNumber: number) => {
+  const addBillItem = (billItem: BillItem, billId: number, tableNumber: number, menuId: number) => {
     const currentBill = getBill(billId, tableNumber)
     let newBill = { ...currentBill }
+    if(menuId > 0)
+      newBill.menuId = menuId
+
     if (currentBill.items.map(item => item.saleItemId).includes(billItem.saleItemId)) {
       const tmpBillItems = currentBill.items.filter(item => item.saleItemId !== billItem.saleItemId)
       const tmpBillItem = currentBill.items.find(item => item.saleItemId === billItem.saleItemId)
@@ -612,7 +616,7 @@ const useBill = (): BillFunctions => {
             tmpBillProducts.push({ ...billProduct, itemNumber: 1 })
           }
         }
-        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, billId, tableNumber)
+        addBillItem({ ...billItem, billProducts: tmpBillProducts, quantity: 1 } as BillItem, billId, tableNumber, 0)
         removeApartLinkedProduct(saleItemId, itemNumber)
       }
     }

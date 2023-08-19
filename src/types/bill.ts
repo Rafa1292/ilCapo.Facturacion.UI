@@ -5,6 +5,7 @@ import { Client } from './client'
 export interface Bill {
   id: number
   close: boolean
+  menuId: number
   client: Client
   tableNumber: number
   deliveryMethod: number

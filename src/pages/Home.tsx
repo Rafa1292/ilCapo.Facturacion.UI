@@ -89,7 +89,6 @@ const Home = () => {
             }
           }
         }
-        console.log(tmpSaleItemCategories, 'tmpSaleItemCategories')
         setSaleItemCategories(tmpSaleItemCategories)
       }
     }
