@@ -49,6 +49,8 @@ const BillResume = ({
   const [updatingClient, setUpdatingClient] = React.useState<boolean>(false)
   const [showMoreInfo, setShowMoreInfo] = React.useState<boolean>(false)
   const { billFunctions } = useContext(AppContext)
+  const [disableCommandButton, setDisableCommandButton] =
+    React.useState<boolean>(false)
 
   const getBillTax = () => {
     let billTax = 0
@@ -67,7 +69,7 @@ const BillResume = ({
           for (const modifier of product.modifiers) {
             if (typeof modifier.elements === 'undefined') continue
             for (const element of modifier.elements) {
-              price += (Number(element.price) * Number(element.quantity))
+              price += Number(element.price) * Number(element.quantity)
             }
           }
         }
@@ -166,8 +168,8 @@ const BillResume = ({
         mail: mail,
         cedula: cedula,
         addressess: [],
-        creditState:3,
-        creditLimit:0,
+        creditState: 3,
+        creditLimit: 0,
         createdBy: 1,
         updatedBy: 1,
       },
@@ -195,11 +197,7 @@ const BillResume = ({
       mail: mail,
       cedula: cedula,
     }
-    const response = await usePatch<Client>(
-      'clients',
-      tmpClient,
-      true
-    )
+    const response = await usePatch<Client>('clients', tmpClient, true)
     if (!response.error) {
       billFunctions.getClient(response.data.phone, bill.id, bill.tableNumber)
     }
@@ -224,9 +222,15 @@ const BillResume = ({
     billFunctions.setDeliveryMethod(0, bill.id, bill.tableNumber)
   }
 
+  const handleCommandBill = async () => {
+    setDisableCommandButton(true)
+    await commandBill()
+    setDisableCommandButton(false)
+  }
+
   useEffect(() => {
     billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)
-    console.log('resume',bill)
+    console.log('resume', bill)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)
@@ -531,9 +535,11 @@ const BillResume = ({
         >
           <div className='col-12 d-flex flex-wrap py-4'>
             <div className='col-8 d-flex flex-wrap justify-content-around'>
-              <div className='command_btn' onClick={commandBill}>
-                <div className='command_icon'></div>
-              </div>
+              {!disableCommandButton && (
+                <div className='command_btn' onClick={commandBill}>
+                  <div className='command_icon'></div>
+                </div>
+              )}
               <div className='cash_btn' onClick={showPayMethods}>
                 <div className='cash_icon'></div>
               </div>
