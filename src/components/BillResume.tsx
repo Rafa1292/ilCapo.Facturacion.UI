@@ -535,8 +535,12 @@ const BillResume = ({
         >
           <div className='col-12 d-flex flex-wrap py-4'>
             <div className='col-8 d-flex flex-wrap justify-content-around'>
-              {!disableCommandButton && (
+              {(!disableCommandButton && (
                 <div className='command_btn' onClick={handleCommandBill}>
+                  <div className='command_icon'></div>
+                </div>
+              )) || (
+                <div className='command_btn' style={{opacity: '0.8'}}>
                   <div className='command_icon'></div>
                 </div>
               )}
