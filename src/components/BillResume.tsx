@@ -536,7 +536,7 @@ const BillResume = ({
           <div className='col-12 d-flex flex-wrap py-4'>
             <div className='col-8 d-flex flex-wrap justify-content-around'>
               {!disableCommandButton && (
-                <div className='command_btn' onClick={commandBill}>
+                <div className='command_btn' onClick={handleCommandBill}>
                   <div className='command_icon'></div>
                 </div>
               )}
