@@ -204,6 +204,7 @@ const BillMaker = ({
       setMenuId(tmpMenuId)
       setTmpMenus(menus.filter((menu) => menu.id === tmpMenuId))
     } else {
+      console.log(menus)
       setTmpMenus(menus)
     }
   }, [bill, menus, saleItemCategories])

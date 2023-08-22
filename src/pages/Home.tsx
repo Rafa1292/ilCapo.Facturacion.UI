@@ -94,7 +94,9 @@ const Home = () => {
     }
     const getMenus = async () => {
       const response = await useGetList<Menu[]>('menus', false)
+      console.log(response)
       if (!response.error) {
+        console.log(response.data)
         setMenus(response.data)
       }
     }
