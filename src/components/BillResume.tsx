@@ -229,7 +229,8 @@ const BillResume = ({
   }
 
   useEffect(() => {
-    billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)
+    //reparar, no deja cargar cliente
+    // billFunctions.setDeliveryMethod(2, bill.id, bill.tableNumber)
     if (bill.client) {
       setName(bill.client.name)
       setPhone(bill.client.phone)

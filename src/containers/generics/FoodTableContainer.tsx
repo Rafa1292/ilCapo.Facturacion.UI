@@ -32,11 +32,13 @@ const FoodTableContainer = ({
   const { system, billFunctions } = useContext(AppContext)
 
   const calcRemainingMinutes = (currentBill: Bill) => {
+    console.log(currentBill)
     if (currentBill.isServed) setInitialTime(null)
     let tmpInitialTime = null
     let tmpFinalTime = null
     if (currentBill.isCommanded) {
       tmpInitialTime = new Date(currentBill.commandTime)
+      
       tmpFinalTime = new Date(
         tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000
       )

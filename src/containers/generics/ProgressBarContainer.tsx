@@ -10,16 +10,31 @@ interface Props {
   timeMargin?: boolean
 }
 
-const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, isCommanded, styleClass, isServe }: Props) => {
+const ProgressBarContainer = ({
+  initialTime,
+  timeMargin,
+  finalTime,
+  isCommanded,
+  styleClass,
+  isServe,
+}: Props) => {
   const [waitingSeconds, setWaitingSeconds] = useState(0)
   const [widthValueBySecond, setWidthValueBySecond] = useState(0)
-  const [waitingTime, setWaitingTime] = useState(finalTime && initialTime ? ((finalTime.getTime() - initialTime.getTime()) / 60000) : 0)
+  const [waitingTime, setWaitingTime] = useState(
+    finalTime && initialTime
+      ? (finalTime.getTime() - initialTime.getTime()) / 60000
+      : 0
+  )
 
   useEffect(() => {
+    console.log(initialTime, finalTime)
     if (initialTime !== null && finalTime !== null) {
-      const tmpWaitingTime = (finalTime.getTime() - initialTime.getTime()) / 60000
+      const tmpWaitingTime =
+        (finalTime.getTime() - initialTime.getTime()) / 60000
       const widthValue = 120 / (tmpWaitingTime * 60)
-      const tmpElapsedTime = (new Date(Date.now()).getTime() - initialTime.getTime()) / 1000
+      const now = new Date(Date.now())
+      now.setHours(now.getHours() - 6)
+      const tmpElapsedTime = (now.getTime() - initialTime.getTime()) / 1000
       setWaitingSeconds(Math.floor(tmpElapsedTime))
       setWidthValueBySecond(widthValue)
       setWaitingTime(tmpWaitingTime)
@@ -28,8 +43,7 @@ const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, isCommanded,
 
   return (
     <>
-      {
-        initialTime !== null && finalTime !== null &&
+      {initialTime !== null && finalTime !== null && (
         <ProgressBar
           waitingTime={waitingTime}
           initialWaitingSeconds={waitingSeconds}
@@ -39,7 +53,7 @@ const ProgressBarContainer = ({ initialTime, timeMargin, finalTime, isCommanded,
           timeMargin={timeMargin}
           widthValueBySecond={widthValueBySecond}
         />
-      }
+      )}
     </>
   )
 }
