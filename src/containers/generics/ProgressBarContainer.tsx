@@ -27,7 +27,6 @@ const ProgressBarContainer = ({
   )
 
   useEffect(() => {
-    console.log(initialTime, finalTime)
     if (initialTime !== null && finalTime !== null) {
       const tmpWaitingTime =
         (finalTime.getTime() - initialTime.getTime()) / 60000
