@@ -93,6 +93,8 @@ const SideMenuItem = ({
         tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000
       )
     }
+    const now = new Date(Date.now())
+    now.setHours(now.getHours() - 6)
     setFinalTime(tmpFinalTime)
     setInitialTime(tmpInitialTime)
   }

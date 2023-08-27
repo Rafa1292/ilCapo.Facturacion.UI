@@ -264,7 +264,7 @@ const BillMaker = ({
                 className='col-12 pb-2 mb-2 d-flex justify-content-center flex-wrap'
                 style={{ borderBottom: '1px solid rgba(255,255,255,.6)' }}
               >
-                {tmpMenus.map((tmpMenu, index) => {
+                {menus.map((tmpMenu, index) => {
                   return (
                     <div
                       key={index}

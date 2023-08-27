@@ -32,7 +32,6 @@ const ProgressBarContainer = ({
         (finalTime.getTime() - initialTime.getTime()) / 60000
       const widthValue = 120 / (tmpWaitingTime * 60)
       const now = new Date(Date.now())
-      now.setHours(now.getHours() - 6)
       const tmpElapsedTime = (now.getTime() - initialTime.getTime()) / 1000
       setWaitingSeconds(Math.floor(tmpElapsedTime))
       setWidthValueBySecond(widthValue)
