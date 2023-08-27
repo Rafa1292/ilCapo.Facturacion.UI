@@ -140,6 +140,7 @@ const BillMaker = ({
     bill.workDayUserIdOpen = user.workDayUser.id
     bill.workDayUserIdClose = user.workDayUser.id
 
+    console.log('bill', bill)
     const response = await usePost<Bill>(
       'bills',
       { ...bill, commandTime: new Date(Date.now()) },
@@ -199,12 +200,12 @@ const BillMaker = ({
 
   useEffect(() => {
     initializeSearchProducts(saleItemCategories)
+    console.log(saleItemCategories)
     if (bill.items.length > 0) {
       const tmpMenuId = bill.menuId > 0 ? bill.menuId : menuId
       setMenuId(tmpMenuId)
       setTmpMenus(menus.filter((menu) => menu.id === tmpMenuId))
     } else {
-      console.log(menus)
       setTmpMenus(menus)
     }
   }, [bill, menus, saleItemCategories])

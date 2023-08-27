@@ -116,7 +116,7 @@ const BillMakerItems = ({
 
   const newLinkedProduct = (
     saleItemProduct: SaleItemProduct
-  ): LinkedProduct => {
+    ): LinkedProduct => {
     const linkedProduct: LinkedProduct = {
       ...initialLinkedProduct,
       id: billItem.billProducts.length + 1,
