@@ -35,9 +35,10 @@ const FoodTableContainer = ({
     if (currentBill.isServed) setInitialTime(null)
     let tmpInitialTime = null
     let tmpFinalTime = null
+
     if (currentBill.isCommanded) {
       tmpInitialTime = new Date(currentBill.commandTime)
-      tmpInitialTime.setHours(tmpInitialTime.getHours() + 6)
+      tmpInitialTime.setHours(tmpInitialTime.getHours())
       tmpFinalTime = new Date(
         tmpInitialTime.getTime() + system.bussinessConfig.serveWaitTime * 60000
       )
@@ -47,6 +48,7 @@ const FoodTableContainer = ({
         tmpInitialTime.getTime() + system.bussinessConfig.menuWaitTime * 60000
       )
     }
+
     setFinalTime(tmpFinalTime)
     setInitialTime(tmpInitialTime)
   }
